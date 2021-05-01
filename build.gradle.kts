@@ -3,9 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.4.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+
     kotlin("jvm") version "1.4.31"
     kotlin("plugin.spring") version "1.4.31"
     kotlin("plugin.jpa") version "1.4.31"
+    kotlin("kapt") version "1.4.10"
 }
 
 group = "cube8540.book"
@@ -14,6 +16,10 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+}
+
+sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+    kotlin.srcDir("$buildDir/generated/source/kapt/main")
 }
 
 dependencies {
@@ -27,7 +33,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("com.querydsl:querydsl-core:4.4.0")
+    implementation("com.querydsl:querydsl-jpa:4.4.0")
+
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
+    implementation("io.github.cube8540:validator-core:1.2.0-RELEASE")
 
     testImplementation("com.h2database:h2:1.4.200")
     testImplementation("io.mockk:mockk:1.10.6")
@@ -36,6 +47,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+
+    kapt("com.querydsl:querydsl-apt:4.4.0:jpa")
 }
 
 tasks.withType<KotlinCompile> {

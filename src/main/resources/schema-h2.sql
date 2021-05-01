@@ -78,3 +78,80 @@ CREATE TABLE BATCH_JOB_EXECUTION_CONTEXT  (
 CREATE SEQUENCE BATCH_STEP_EXECUTION_SEQ;
 CREATE SEQUENCE BATCH_JOB_EXECUTION_SEQ;
 CREATE SEQUENCE BATCH_JOB_SEQ;
+
+create table if not exists book_details (
+    isbn varchar(13) not null primary key,
+    title varchar(128) not null,
+    series_code varchar(32),
+    publisher_code varchar(32) not null,
+    publish_date date not null,
+    lage_thumbnail_url varchar(128),
+    medium_thumbnail_url varchar(128),
+    small_thumbnail_url varchar(128),
+    description varchar(248),
+    price double,
+    created_at timestamp not null
+);
+
+create table if not exists book_detail_divisions (
+    isbn varchar(13) not null,
+    division_code varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+);
+
+create table if not exists book_detail_authors (
+    isbn varchar(13) not null,
+    author varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+);
+
+create table if not exists book_detail_keywords (
+    isbn varchar(13) not null,
+    keyword varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+);
+
+create table if not exists book_detail_originals (
+    isbn varchar(32) not null,
+    property varchar(32) not null,
+    mapping_type varchar(32) not null,
+    value varchar(128),
+
+    foreign key (isbn) references book_details(isbn)
+);
+
+create table if not exists divisions (
+    division_code varchar(32) not null primary key,
+    depth integer not null
+);
+
+create table if not exists division_raw_mappings (
+    division_code varchar(32) not null,
+    raw varchar(32) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (division_code) references divisions(division_code)
+);
+
+create table if not exists publishers (
+    publisher_code varchar(32) not null primary key
+);
+
+create table if not exists publisher_raw_mappings (
+    publisher_code varchar(32) not null,
+    raw varchar(32) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (publisher_code) references publishers(publisher_code)
+);
+
+create table if not exists publisher_keyword_mappings (
+    publisher_code varchar(32) not null,
+    keyword varchar(32) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (publisher_code) references publishers(publisher_code)
+);
