@@ -17,8 +17,12 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.batch:spring-batch-integration:4.3.2")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security:spring-security-oauth2-client:5.4.5")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -26,6 +30,8 @@ dependencies {
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     testImplementation("com.h2database:h2:1.4.200")
+    testImplementation("io.mockk:mockk:1.10.6")
+    testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("org.springframework.batch:spring-batch-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
