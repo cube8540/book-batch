@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Naver Open API - book_adv ::''</title>
+        <link>https://search.naver.com</link>
+        <description>Naver Search Result</description>
+        <lastBuildDate>Wed, 05 May 2021 01:43:05 +0900</lastBuildDate>
+        <total>4</total>
+        <start>1</start>
+        <display>4</display>
+        <item>
+            <title>&lt;b&gt;학교생활&lt;/b&gt; 12</title>
+            <link>http://book.naver.com/bookdb/book_detail.php?bid=16313001</link>
+            <image>https://bookthumb-phinf.pstatic.net/cover/163/130/16313001.jpg?type=m1&amp;udate=20200401</image>
+            <author>카이호 노리미츠</author>
+            <price>5000</price>
+            <discount>4500</discount>
+            <publisher>&lt;b&gt;대원씨아이&lt;/b&gt;</publisher>
+            <pubdate>20200305</pubdate>
+            <isbn>1136226257 9791136226259</isbn>
+            <description></description>
+        </item>
+        <item>
+            <title>&lt;b&gt;학교생활&lt;/b&gt; 11</title>
+            <link>http://book.naver.com/bookdb/book_detail.php?bid=15076492</link>
+            <image>https://bookthumb-phinf.pstatic.net/cover/150/764/15076492.jpg?type=m1&amp;udate=20190715</image>
+            <author>카이호노리미츠</author>
+            <price>5000</price>
+            <discount>4500</discount>
+            <publisher>&lt;b&gt;대원씨아이&lt;/b&gt;</publisher>
+            <pubdate>20190731</pubdate>
+            <isbn>1136202099 9791136202093</isbn>
+            <description>‘&lt;b&gt;학교&lt;/b&gt;에서 살자!’&amp;#x0D;&amp;#x0D;삽에 대한 애정이 각별한(?) 쿠루미.&amp;#x0D;모두를 아우르는 리.&amp;#x0D;서글서글한 고문 메구 언니.&amp;#x0D;천진난만한 무드메이커 유키.&amp;#x0D;이들 &lt;b&gt;학교생활&lt;/b&gt;부의 행복한 일상.&amp;#x0D;그러나ㅡ……?!&amp;#x0D;&amp;#x0D;평온한 일상 X 압도적 절망이 교차하는&amp;#x0D;스쿨 서바이벌... </description>
+        </item>
+        <item>
+            <title>&lt;b&gt;학교생활&lt;/b&gt;! 10</title>
+            <link>http://book.naver.com/bookdb/book_detail.php?bid=14524754</link>
+            <image>https://bookthumb-phinf.pstatic.net/cover/145/247/14524754.jpg?type=m1&amp;udate=20190402</image>
+            <author>Norimitsu Kaihou</author>
+            <price>5000</price>
+            <discount>4500</discount>
+            <publisher>&lt;b&gt;대원씨아이&lt;/b&gt;</publisher>
+            <pubdate>20190228</pubdate>
+            <isbn>1164120123 9791164120123</isbn>
+            <description>NORIMITSU KAIHOU의 만화 [&lt;b&gt;학교생활&lt;/b&gt;] 제10권. 사립 메구리가오카 학원고등&lt;b&gt;학교&lt;/b&gt;의 ‘&lt;b&gt;학교생활&lt;/b&gt;부’. 교내 합숙을 통해 수업만으로는 접할 수 없는 &lt;b&gt;학교&lt;/b&gt;의 다양한 시설을 체험, 다양한 부서와의 친목을 목표로 하는, &apos;아주 특별한&apos; 동아리. 삽을 사랑해 마지않는(?) 에비스자와 쿠루미. 청소와 요리를 담당하는 리더... </description>
+        </item>
+        <item>
+            <title>&lt;b&gt;학교생활&lt;/b&gt; 1~11 세트</title>
+            <link>http://book.naver.com/bookdb/book_detail.php?bid=16261840</link>
+            <image>https://bookthumb-phinf.pstatic.net/cover/162/618/16261840.jpg?type=m1&amp;udate=20200211</image>
+            <author>카이호 노리미츠</author>
+            <price>55000</price>
+            <discount>49500</discount>
+            <publisher>&lt;b&gt;대원씨아이&lt;/b&gt;(만화/잡지)</publisher>
+            <pubdate>20190730</pubdate>
+            <isbn>0024909351 8820024909354</isbn>
+            <description></description>
+        </item>
+    </channel>
+</rss>

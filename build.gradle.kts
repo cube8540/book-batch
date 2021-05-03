@@ -36,6 +36,9 @@ dependencies {
     implementation("com.querydsl:querydsl-core:4.4.0")
     implementation("com.querydsl:querydsl-jpa:4.4.0")
 
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1")
+
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     implementation("io.github.cube8540:validator-core:1.2.0-RELEASE")
