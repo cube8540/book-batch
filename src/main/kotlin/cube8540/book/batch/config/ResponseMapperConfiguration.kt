@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import cube8540.book.batch.domain.DivisionRawMapper
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapper
 import cube8540.book.batch.external.naver.com.NaverAPIJsonNodeDeserializer
 import cube8540.book.batch.external.naver.com.NaverBookAPIDeserializer
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializer
@@ -28,5 +30,7 @@ class ResponseMapperConfiguration {
                 .addDeserializer(JsonNode::class.java, NaverAPIJsonNodeDeserializer())
                 .addDeserializer(BookAPIResponse::class.java, NaverBookAPIDeserializer(publisherRawMapper))
         )
+
+    fun kyoboBookDocumentMapper(divisionRawMapper: DivisionRawMapper) = KyoboBookDocumentMapper(divisionRawMapper)
 
 }

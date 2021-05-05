@@ -43,6 +43,8 @@ dependencies {
 
     implementation("io.github.cube8540:validator-core:1.2.0-RELEASE")
 
+    implementation("org.jsoup:jsoup:1.13.1")
+
     testImplementation("com.h2database:h2:1.4.200")
     testImplementation("io.mockk:mockk:1.10.6")
     testImplementation("org.assertj:assertj-core:3.11.1")
