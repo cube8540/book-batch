@@ -38,6 +38,7 @@ dependencies {
 
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
@@ -52,6 +53,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+
+    testImplementation("com.squareup.okhttp3:okhttp:4.9.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.0")
 
     kapt("com.querydsl:querydsl-apt:4.4.0:jpa")
 }
