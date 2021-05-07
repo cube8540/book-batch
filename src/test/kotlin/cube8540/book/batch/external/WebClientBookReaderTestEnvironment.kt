@@ -22,6 +22,9 @@ object WebClientBookReaderTestEnvironment {
             })
         )
 
+    internal const val errorCode = "errorCode0001"
+    internal const val errorMessage = "errorMessage0001"
+
     internal const val pageRequestName = "PageRequestName"
     internal const val pageSizeRequestName = "PageSizeRequestName"
 
@@ -34,5 +37,9 @@ object WebClientBookReaderTestEnvironment {
     internal val mockResponse = MockResponse()
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .setBody(kotlinObjectMapper.writeValueAsString(BookAPIResponse(totalCount, pageNumber, listOf(bookDetails))))
+    internal val mockErrorResponse = MockResponse()
+        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .setResponseCode(400)
+        .setBody(kotlinObjectMapper.writeValueAsString(BookAPIErrorResponse(errorCode, errorMessage)))
 
 }

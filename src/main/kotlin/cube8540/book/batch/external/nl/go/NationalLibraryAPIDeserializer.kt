@@ -10,14 +10,25 @@ import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.OriginalPropertyKey
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class NationalLibraryAPIDeserializer(private val publisherRawMapper: PublisherRawMapper)
     : StdDeserializer<BookAPIResponse>(BookAPIResponse::class.java) {
 
+    internal var exceptionCreator: ErrorCodeExternalExceptionCreator = NationalLibraryAPIErrorCodeExceptionCreator()
+
     override fun deserialize(p0: JsonParser, p1: DeserializationContext?): BookAPIResponse {
         val responseNode = p0.codec.readTree<JsonNode>(p0)
+
+        // 국립중앙도서관 API는 요청에 실패하여도 응답값을 200으로 내려주기 때문에 응답값을 체크하여 에러 처리를 해야 한다.
+        if (responseNode.get(NationalLibraryAPIResponseNames.result)?.asText() == "ERROR") {
+            throw exceptionCreator.create(
+                responseNode.get(NationalLibraryAPIResponseNames.errorCode).asText(),
+                responseNode.get(NationalLibraryAPIResponseNames.errorMessage).asText()
+            )
+        }
 
         val page = responseNode.get(NationalLibraryAPIResponseNames.pageNo).asText()
         val totalCount = responseNode.get(NationalLibraryAPIResponseNames.totalCount).asText()

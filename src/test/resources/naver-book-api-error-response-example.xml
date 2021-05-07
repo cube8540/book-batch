@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+    <errorMessage>
+        <![CDATA[Not Exist Client ID : Authentication failed. (인증에 실패했습니다.)]]>
+    </errorMessage>
+    <errorCode>
+        <![CDATA[024]]>
+    </errorCode>
+</result>

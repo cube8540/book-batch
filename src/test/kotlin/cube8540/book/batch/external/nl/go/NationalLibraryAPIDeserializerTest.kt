@@ -10,8 +10,13 @@ import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.OriginalPropertyKey
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
+import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.additionalCode0
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.author
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorCode
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorMessage
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorResult
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.isbn0
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.isbn1
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.isbn2
@@ -35,6 +40,7 @@ import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvi
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.jupiter.api.Test
 
 class NationalLibraryAPIDeserializerTest {
@@ -42,6 +48,28 @@ class NationalLibraryAPIDeserializerTest {
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
     private val deserializer = NationalLibraryAPIDeserializer(publisherRawMapper)
+
+    @Test
+    fun `response is error`() {
+        val jsonParser: JsonParser = mockk(relaxed = true)
+        val codec: JsonMapper = mockk(relaxed = true)
+        val responseNode: JsonNode = mockk(relaxed = true)
+
+        deserializer.exceptionCreator = mockk(relaxed = true) {
+            every { create(errorCode, errorMessage) } returns InternalBadRequestException(errorMessage)
+        }
+
+        every { responseNode.get(NationalLibraryAPIResponseNames.result) } returns TextNode(errorResult)
+        every { responseNode.get(NationalLibraryAPIResponseNames.errorCode) } returns TextNode(errorCode)
+        every { responseNode.get(NationalLibraryAPIResponseNames.errorMessage) } returns TextNode(errorMessage)
+
+        every { jsonParser.codec } returns codec
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
+
+        val thrown = catchThrowable { deserializer.deserialize(jsonParser, mockk(relaxed = true)) }
+        assertThat(thrown).isInstanceOf(InternalBadRequestException::class.java)
+        assertThat((thrown as InternalBadRequestException).message).isEqualTo(errorMessage)
+    }
 
     @Test
     fun `response deserialization when book is empty`() {

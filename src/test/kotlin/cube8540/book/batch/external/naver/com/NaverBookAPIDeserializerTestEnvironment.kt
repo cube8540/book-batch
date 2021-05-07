@@ -34,4 +34,7 @@ object NaverBookAPIDeserializerTestEnvironment {
 
     internal const val description = "description0000"
 
+    internal const val errorCode = "errorCode0001"
+    internal const val errorMessage = "errorMessage0001"
+
 }
