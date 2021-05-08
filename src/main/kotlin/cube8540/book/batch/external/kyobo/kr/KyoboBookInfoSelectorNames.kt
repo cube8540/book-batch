@@ -6,6 +6,7 @@ object KyoboBookMetaTagNameSelector {
 
 object KyoboBookMetaTagPropertySelector {
     const val isbn = "eg:itemId"
+    const val originalBarcode = "og:barcode"
     const val title = "eg:itemName"
     const val largeThumbnail = "og:image"
     const val mediumThumbnail = "eg:itemImage"

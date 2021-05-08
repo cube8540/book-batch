@@ -1,6 +1,8 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.domain.DivisionRawMapper
+import cube8540.book.batch.external.exception.InternalBadRequestException
+import cube8540.book.batch.external.exception.InvalidAuthenticationException
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.author
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.categoryDepth0
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.categoryDepth1
@@ -12,6 +14,7 @@ import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironm
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.isbn
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.largeThumbnail
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.mediumThumbnail
+import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.originalBarcode
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.originalPrice
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.responseAuthor
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.responseCategoryCode
@@ -20,6 +23,7 @@ import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironm
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.catchThrowable
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
 import java.net.URI
@@ -32,7 +36,7 @@ class KyoboBookDocumentMapperTest {
 
     @Test
     fun `document mapping`() {
-        val document = getDocument()
+        val document = getDocument(isbn, originalBarcode)
 
         every { divisionRawMapper.mapping(listOf(categoryDepth0, categoryDepth1, categoryDepth2)) } returns
                 listOf(categoryDepthCode0, categoryDepthCode1, categoryDepthCode2)
@@ -49,16 +53,28 @@ class KyoboBookDocumentMapperTest {
         assertThat(result.description).isEqualTo(description)
     }
 
-    private fun getDocument(): Document {
+    @Test
+    fun `document original barcode is null`() {
+        val document = getDocument(isbn, null)
+
+        val thrown = catchThrowable { documentMapper.convertValue(document) }
+        assertThat(thrown).isInstanceOf(InternalBadRequestException::class.java)
+    }
+
+    @Test
+    fun `document isbn is null`() {
+        val document = getDocument(null, originalBarcode)
+
+        val thrown = catchThrowable { documentMapper.convertValue(document) }
+        assertThat(thrown).isInstanceOf(InvalidAuthenticationException::class.java)
+    }
+
+    private fun getDocument(isbn: String?, originalBarcode: String?): Document {
         val document = Document("http://localhost")
 
         document.appendElement("meta")
                 .attr("name", KyoboBookMetaTagNameSelector.author)
                 .attr("content", responseAuthor)
-                .parent()
-            .appendElement("meta")
-                .attr("property", KyoboBookMetaTagPropertySelector.isbn)
-                .attr("content", isbn)
                 .parent()
             .appendElement("meta")
                 .attr("property", KyoboBookMetaTagPropertySelector.title)
@@ -93,6 +109,19 @@ class KyoboBookDocumentMapperTest {
                         .appendElement("div")
                             .addClass("box_detail_article")
                             .text(description)
+
+        if (isbn != null) {
+            document.appendElement("meta")
+                .attr("property", KyoboBookMetaTagPropertySelector.isbn)
+                .attr("content", isbn)
+                .parent()
+        }
+        if (originalBarcode != null) {
+            document.appendElement("meta")
+                .attr("property", KyoboBookMetaTagPropertySelector.originalBarcode)
+                .attr("content", originalBarcode)
+                .parent()
+        }
 
         return document
     }
