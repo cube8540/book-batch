@@ -3,6 +3,7 @@ package cube8540.book.batch.external.kyobo.kr
 object KyoboBookDocumentMapperTestEnvironment {
 
     const val isbn = "9791133447831"
+    const val originalBarcode = "og:9791133447831"
     const val title = "title0000"
 
     const val responseAuthor = "author 0001 , author 0002 "

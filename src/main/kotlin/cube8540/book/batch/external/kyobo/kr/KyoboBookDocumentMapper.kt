@@ -3,6 +3,8 @@ package cube8540.book.batch.external.kyobo.kr
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.DivisionRawMapper
 import cube8540.book.batch.external.BookDocumentMapper
+import cube8540.book.batch.external.exception.InternalBadRequestException
+import cube8540.book.batch.external.exception.InvalidAuthenticationException
 import org.jsoup.nodes.Document
 import java.net.URI
 
@@ -21,9 +23,13 @@ class KyoboBookDocumentMapper(private val divisionRawMapper: DivisionRawMapper):
         val metaTags = document.getElementsByTag(meta)
         val inputTags = document.getElementsByTag(input)
 
-        val isbn = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }.attr(content)
+        if (metaTags.none { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalBarcode) }) {
+            throw InternalBadRequestException("requested isbn is not found")
+        }
 
-        val bookDetails = BookDetails(isbn)
+        val isbnTag = metaTags.firstOrNull { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }
+            ?: throw InvalidAuthenticationException("login info is invalid")
+        val bookDetails = BookDetails(isbnTag.attr(content))
         bookDetails.authors = metaTags.first { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }.attr(content).split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
         bookDetails.title = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }.attr(content)
         bookDetails.largeThumbnail = URI.create(metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }.attr(content))

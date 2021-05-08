@@ -2,6 +2,7 @@ package cube8540.book.batch.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
 import io.mockk.every
 import io.mockk.mockk
@@ -15,17 +16,17 @@ class NationalLibraryObjectMapperTest {
 
     companion object {
         const val exampleJsonFile = "national-library-response-example.json"
+        const val exampleErrorJsonFile = "national-library-response-error-example.json"
     }
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
-    private val jsonFile = File(javaClass.classLoader.getResource(exampleJsonFile)!!.file)
 
     private val objectMapper: ObjectMapper = ResponseMapperConfiguration()
         .nationalLibraryObjectMapper(publisherRawMapper)
 
     @Test
-    fun deserialization() {
-        val json = getJsonString()
+    fun `book details deserialization`() {
+        val json = getJsonString(exampleJsonFile)
 
         every { publisherRawMapper.mapping("대원씨아이(주)") } returns "publishCode0001"
         every { publisherRawMapper.mapping("대원씨아이") } returns "publishCode0002"
@@ -50,7 +51,17 @@ class NationalLibraryObjectMapperTest {
         assertThat(result.books[2].publishDate).isEqualTo(LocalDate.of(2020, 4, 30))
     }
 
-    private fun getJsonString(): String {
+    @Test
+    fun `error deserialization`() {
+        val json = getJsonString(exampleErrorJsonFile)
+
+        val result = objectMapper.readValue(json, BookAPIErrorResponse::class.java)
+        assertThat(result.code).isEqualTo("010")
+        assertThat(result.message).isEqualTo("인증키 정보가 없습니다.")
+    }
+
+    private fun getJsonString(filePath: String): String {
+        val jsonFile = File(javaClass.classLoader.getResource(filePath)!!.file)
         val builder = StringBuilder()
         val reader = Files.newBufferedReader(jsonFile.toPath())
 

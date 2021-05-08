@@ -2,6 +2,7 @@ package cube8540.book.batch.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
 import io.mockk.every
 import io.mockk.mockk
@@ -14,18 +15,18 @@ import java.time.LocalDate
 class NaverBookAPIObjectMapperTest {
 
     companion object {
-        const val exampleXmlFile = "naver-book-api-response-exmaple.xml"
+        const val exampleXmlFile = "naver-book-api-response-example.xml"
+        const val exampleErrorXmlFile = "naver-book-api-error-response-example.xml"
     }
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
-    private val xmlFile = File(javaClass.classLoader.getResource(exampleXmlFile)!!.file)
 
     private val objectMapper: ObjectMapper = ResponseMapperConfiguration()
         .naverLibraryObjectMapper(publisherRawMapper)
 
     @Test
-    fun deserialization() {
-        val xml = getXmlString()
+    fun `book details deserialization`() {
+        val xml = getXmlString(exampleXmlFile)
 
         every { publisherRawMapper.mapping("<b>대원씨아이</b>") } returns "publishCode0001"
         every { publisherRawMapper.mapping("<b>대원씨아이</b>(만화/잡지)") } returns "publishCode0002"
@@ -55,7 +56,17 @@ class NaverBookAPIObjectMapperTest {
         assertThat(result.books[3].publishDate).isEqualTo(LocalDate.of(2019, 7, 30))
     }
 
-    private fun getXmlString(): String {
+    @Test
+    fun `error deserialization`() {
+        val xml = getXmlString(exampleErrorXmlFile)
+
+        val result = objectMapper.readValue(xml, BookAPIErrorResponse::class.java)
+        assertThat(result.code).isEqualTo("024")
+        assertThat(result.message).isEqualTo("Not Exist Client ID : Authentication failed. (인증에 실패했습니다.)")
+    }
+
+    private fun getXmlString(filePath: String): String {
+        val xmlFile = File(javaClass.classLoader.getResource(filePath)!!.file)
         val builder = StringBuilder()
         val reader = Files.newBufferedReader(xmlFile.toPath())
 

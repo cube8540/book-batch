@@ -2,6 +2,10 @@ package cube8540.book.batch.external.nl.go
 
 object NationalLibraryAPIResponseNames {
 
+    const val result = "RESULT"
+    const val errorMessage = "ERR_MESSAGE"
+    const val errorCode = "ERR_CODE"
+
     const val pageNo = "PAGE_NO"
     const val totalCount = "TOTAL_COUNT"
 

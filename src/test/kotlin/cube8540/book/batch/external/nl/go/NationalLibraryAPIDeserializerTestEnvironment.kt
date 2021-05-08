@@ -5,6 +5,10 @@ import java.time.format.DateTimeFormatter
 
 object NationalLibraryAPIDeserializerTestEnvironment {
 
+    internal const val errorResult = "ERROR"
+    internal const val errorMessage = "errorMessage0001"
+    internal const val errorCode = "errorCode0001"
+
     internal const val pageNumber = "1"
     internal const val totalCount = "100"
 

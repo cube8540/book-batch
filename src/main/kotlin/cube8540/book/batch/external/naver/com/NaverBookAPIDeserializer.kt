@@ -23,17 +23,13 @@ class NaverBookAPIDeserializer(private val publisherRawMapper: PublisherRawMappe
 
         val books: List<BookDetails> = when (val bookNode = responseBody.get(NaverBookAPIResponseNames.item)) {
             null -> emptyList()
-            is ArrayNode -> arrayBookDeserialization(bookNode)
+            is ArrayNode -> bookNode.map { singleBookDeserialization(it) }
             else -> listOf(singleBookDeserialization(bookNode))
         }
 
         val totalCount = responseBody.get(NaverBookAPIResponseNames.totalCount).asLong()
         val page = responseBody.get(NaverBookAPIResponseNames.start).asLong()
         return BookAPIResponse(totalCount, page, books)
-    }
-
-    private fun arrayBookDeserialization(bookNode: ArrayNode): List<BookDetails> {
-        return bookNode.map { singleBookDeserialization(it) }
     }
 
     private fun singleBookDeserialization(bookNode: JsonNode): BookDetails {

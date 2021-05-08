@@ -2,6 +2,9 @@ package cube8540.book.batch.external.naver.com
 
 object NaverBookAPIResponseNames {
 
+    const val errorCode = "errorCode"
+    const val errorMessage = "errorMessage"
+
     const val channel = "channel"
 
     const val totalCount = "total"
