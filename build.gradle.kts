@@ -61,6 +61,8 @@ dependencies {
     testImplementation("com.squareup.okhttp3:okhttp:4.9.0")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.0")
 
+    testImplementation("org.mockito:mockito-inline:3.9.0")
+
     kapt("com.querydsl:querydsl-apt:4.4.0:jpa")
 }
 
