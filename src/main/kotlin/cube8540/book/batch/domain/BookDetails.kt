@@ -70,6 +70,9 @@ class BookDetails(
     @Column(name = "value", length = 128)
     var original: Map<OriginalPropertyKey, String?>? = null
 
+    @Column(name = "upstream_target", nullable = false)
+    var isUpstreamTarget: Boolean? = false
+
     override fun equals(other: Any?): Boolean = when {
         other == null -> false
         other is BookDetails && other.isbn == isbn -> true

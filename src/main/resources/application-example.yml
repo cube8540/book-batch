@@ -18,3 +18,6 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+mybatis:
+  mapper-locations: mapper/**/*.xml
+  type-handlers-package: cube8540.book.batch.config

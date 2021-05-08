@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cube8540.book.batch.domain.repository.BookDetailsPersistMapper">
+    <insert id="persistBookDetails" parameterType="java.util.List">
+        insert into book_details
+            (isbn, title, series_code, publisher_code, publish_date, lage_thumbnail_url, medium_thumbnail_url, small_thumbnail_url, description, price, created_at)
+        values
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.isbn}, #{item.title}, #{item.seriesCode}, #{item.publisher}, #{item.publishDate}, #{item.largeThumbnail}, #{item.mediumThumbnail}, #{item.smallThumbnail}, #{item.description}, #{item.price}, #{item.createdAt})
+        </foreach>
+    </insert>
+
+    <update id="mergeBookDetails" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" separator=";" close="">
+            update book_details
+            set title = #{item.title},
+                series_code = #{item.seriesCode},
+                publisher_code = #{item.publisher},
+                publish_date = #{item.publishDate},
+                lage_thumbnail_url = #{item.largeThumbnail},
+                medium_thumbnail_url = #{item.mediumThumbnail},
+                small_thumbnail_url = #{item.smallThumbnail},
+                description = #{item.description},
+                price = #{item.price}
+            where isbn = #{item.isbn}
+        </foreach>
+    </update>
+
+    <insert id="persistDivisions" parameterType="java.util.List">
+        insert into book_detail_divisions
+            (isbn, division_code)
+        values
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.isbn}, #{item.value})
+        </foreach>
+    </insert>
+
+    <delete id="deleteDivisions" parameterType="java.util.List">
+        delete from book_detail_divisions
+        where isbn in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.isbn}
+        </foreach>
+    </delete>
+
+    <insert id="persistAuthors" parameterType="java.util.List">
+        insert into book_detail_authors
+            (isbn, author)
+        values
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.isbn}, #{item.value})
+        </foreach>
+    </insert>
+
+    <delete id="deleteAuthors" parameterType="java.util.List">
+        delete from book_detail_authors
+        where isbn in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.isbn}
+        </foreach>
+    </delete>
+
+    <insert id="persistKeywords" parameterType="java.util.List">
+        insert into book_detail_keywords
+            (isbn, keyword)
+        values
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.isbn}, #{item.value})
+        </foreach>
+    </insert>
+
+    <delete id="deleteKeywords" parameterType="java.util.List">
+        delete from book_detail_keywords
+        where isbn in 
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.isbn}
+        </foreach>
+    </delete>
+
+    <insert id="persistOriginals" parameterType="java.util.List">
+        insert into book_detail_originals
+            (isbn, property, mapping_type, value)
+        values
+        <foreach collection="list" item="item" open="" separator="," close="">
+            (#{item.isbn}, #{item.property}, #{item.mappingType}, #{item.value})
+        </foreach>
+    </insert>
+
+    <delete id="deleteOriginals" parameterType="java.util.List">
+        delete from book_detail_originals
+        where isbn in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.isbn}
+        </foreach>
+    </delete>
+
+    <update id="updateForUpstreamTarget" parameterType="java.util.List">
+        <foreach collection="list" item="item" open="" separator=";" close="">
+            update book_details
+            set upstream_target = #{item.isUpstreamTarget}
+            where isbn = #{item.isbn}
+        </foreach>
+    </update>
+</mapper>

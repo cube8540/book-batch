@@ -36,6 +36,10 @@ dependencies {
     implementation("com.querydsl:querydsl-core:4.4.0")
     implementation("com.querydsl:querydsl-jpa:4.4.0")
 
+    implementation("org.mybatis:mybatis:3.5.7")
+    implementation("org.mybatis:mybatis-spring:2.0.6")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3")
+
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.0")

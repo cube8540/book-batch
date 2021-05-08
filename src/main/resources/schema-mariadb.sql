@@ -112,6 +112,9 @@ create table if not exists book_details (
     price double,
     created_at timestamp not null
 ) engine = InnoDB;
+alter table book_details add column upstream_target boolean not null default false;
+create index if not exists book_publish_date_index on book_details (publish_date);
+create index if not exists book_created_at_index on book_details (created_at desc);
 
 create table if not exists book_detail_divisions (
     isbn varchar(13) not null,
