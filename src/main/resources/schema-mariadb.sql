@@ -162,6 +162,7 @@ create table if not exists division_raw_mappings (
 create table if not exists publishers (
     publisher_code varchar(32) not null primary key
 ) engine = InnoDB;
+alter table publishers add column if not exists name varchar(32);
 
 create table if not exists publisher_raw_mappings (
     publisher_code varchar(32) not null,
