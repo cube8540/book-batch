@@ -1,21 +1,14 @@
-package cube8540.book.batch.external
+package cube8540.book.batch.external.naver.com
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.external.BookDetailsController
 
-interface BookDetailsController {
-    fun merge(base: BookDetails, item: BookDetails): BookDetails?
-}
-
-class DefaultBookDetailsController: BookDetailsController {
+class NaverBookDetailsController: BookDetailsController {
     override fun merge(base: BookDetails, item: BookDetails): BookDetails {
         base.title = item.title
         base.publisher = item.publisher
         base.publishDate = item.publishDate
-        base.largeThumbnail = item.largeThumbnail
-        base.mediumThumbnail = item.mediumThumbnail
         base.smallThumbnail = item.smallThumbnail
-        base.description = item.description
-        base.price = item.price
 
         if (base.original != null && item.original != null) {
             base.original = base.original!! + item.original!!
@@ -25,8 +18,4 @@ class DefaultBookDetailsController: BookDetailsController {
 
         return base
     }
-}
-
-class ReturnsNullBookDetailsController: BookDetailsController {
-    override fun merge(base: BookDetails, item: BookDetails): BookDetails? = null
 }

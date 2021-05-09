@@ -1,9 +1,9 @@
-package cube8540.book.batch.external
+package cube8540.book.batch.external.naver.com
 
 import java.net.URI
 import java.time.LocalDate
 
-object DefaultBookDetailsControllerTestEnvironment {
+object NaverBookDetailsControllerTestEnvironment {
     internal const val isbn = "isbn0000"
 
     internal const val itemOriginalProperty0000 = "originalProperty0000"
@@ -23,10 +23,5 @@ object DefaultBookDetailsControllerTestEnvironment {
     internal const val mergedTitle = "mergedTitle0000"
     internal const val mergedPublisher = "mergedPublisher0000"
     internal val mergedPublishDate = LocalDate.of(2021, 5, 9)
-    internal val mergedLargeThumbnail = URI.create("http://localhost/merged-large-thumbnail")
-    internal val mergedMediumThumbnail = URI.create("http://localhost/merged-medium-thumbnail")
     internal val mergedSmallThumbnail = URI.create("http://localhost/mreged-small-thumbnail")
-    internal const val mergedDescription = "mergedDesc"
-    internal const val mergedPrice = 5000.0
-
 }
