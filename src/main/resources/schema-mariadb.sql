@@ -150,6 +150,7 @@ create table if not exists divisions (
     division_code varchar(32) not null primary key,
     depth integer not null
 ) engine = InnoDB;
+alter table divisions add column if not exists name varchar(32);
 
 create table if not exists division_raw_mappings (
     division_code varchar(32) not null,
