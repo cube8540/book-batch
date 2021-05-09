@@ -92,7 +92,7 @@ create table if not exists book_details (
     price double,
     created_at timestamp not null
 );
-alter table book_details add column upstream_target boolean not null default false;
+alter table book_details add column if not exists upstream_target boolean not null default false;
 create index if not exists book_publish_date_index on book_details (publish_date);
 create index if not exists book_created_at_index on book_details (created_at desc);
 
@@ -150,6 +150,7 @@ create table if not exists publisher_raw_mappings (
 
     foreign key (publisher_code) references publishers(publisher_code)
 );
+alter table publisher_raw_mappings alter column raw varchar(64) not null;
 
 create table if not exists publisher_keyword_mappings (
     publisher_code varchar(32) not null,
