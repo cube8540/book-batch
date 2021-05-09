@@ -22,7 +22,7 @@ class NaverBookAPIObjectMapperTest {
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
     private val objectMapper: ObjectMapper = ResponseMapperConfiguration()
-        .naverLibraryObjectMapper(publisherRawMapper)
+        .naverBookAPIObjectMapper(publisherRawMapper)
 
     @Test
     fun `book details deserialization`() {
