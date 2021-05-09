@@ -12,6 +12,10 @@ object NationalLibraryAPIDeserializerTestEnvironment {
     internal const val pageNumber = "1"
     internal const val totalCount = "100"
 
+    internal const val responseTitle0 = "responseTitle0000"
+    internal const val responseTitle1 = "responseTitle0001"
+    internal const val responseTitle2 = "responseTitle0002"
+
     internal const val title0 = "title0000"
     internal const val title1 = "title0001"
     internal const val title2 = "title0002"

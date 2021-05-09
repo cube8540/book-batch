@@ -19,6 +19,8 @@ class NationalLibraryAPIDeserializer(private val publisherRawMapper: PublisherRa
 
     internal var exceptionCreator: ErrorCodeExternalExceptionCreator = NationalLibraryAPIErrorCodeExceptionCreator()
 
+    var titleExtractor: BookTitleExtractor = DefaultNationalLibraryAPITitleExtractor()
+
     override fun deserialize(p0: JsonParser, p1: DeserializationContext?): BookAPIResponse {
         val responseNode = p0.codec.readTree<JsonNode>(p0)
 
@@ -45,7 +47,7 @@ class NationalLibraryAPIDeserializer(private val publisherRawMapper: PublisherRa
         val isbn = bookNode.get(NationalLibraryAPIResponseNames.isbn)!!.asText()
 
         val bookDetails = BookDetails(isbn)
-        bookDetails.title = bookNode.get(NationalLibraryAPIResponseNames.title).asText()
+        bookDetails.title = titleExtractor.extract(bookNode)
         bookDetails.publisher = bookNode.get(NationalLibraryAPIResponseNames.publisher)
             ?.let { publisherRawMapper.mapping(it.asText()) }
 
