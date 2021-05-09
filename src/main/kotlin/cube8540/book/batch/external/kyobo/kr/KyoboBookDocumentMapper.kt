@@ -2,6 +2,8 @@ package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.DivisionRawMapper
+import cube8540.book.batch.domain.MappingType
+import cube8540.book.batch.domain.OriginalPropertyKey
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.external.exception.InvalidAuthenticationException
@@ -30,11 +32,19 @@ class KyoboBookDocumentMapper(private val divisionRawMapper: DivisionRawMapper):
         val isbnTag = metaTags.firstOrNull { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }
             ?: throw InvalidAuthenticationException("login info is invalid")
         val bookDetails = BookDetails(isbnTag.attr(content))
-        bookDetails.authors = metaTags.first { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }.attr(content).split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+
+        val authors = metaTags.first { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }.attr(content)
+        bookDetails.authors = authors.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+
         bookDetails.title = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }.attr(content)
-        bookDetails.largeThumbnail = URI.create(metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }.attr(content))
-        bookDetails.mediumThumbnail = URI.create(metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }.attr(content))
-        bookDetails.price = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }.attr(content).toDouble()
+
+        val largeThumbnail = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }.attr(content)
+        val mediumThumbnail = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }.attr(content)
+        bookDetails.largeThumbnail = URI.create(largeThumbnail)
+        bookDetails.mediumThumbnail = URI.create(mediumThumbnail)
+
+        val price = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }.attr(content)
+        bookDetails.price = price.toDouble()
 
         bookDetails.seriesCode = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }.attr(value)
 
@@ -42,6 +52,17 @@ class KyoboBookDocumentMapper(private val divisionRawMapper: DivisionRawMapper):
         bookDetails.divisions = divisionRawMapper.mapping(convertCategoryCodeToRawDivisions(rawDivisions)).toSet()
 
         bookDetails.description = document.select(KyoboBookClassSelector.description).first().text()
+
+        val original = HashMap<OriginalPropertyKey, String?>()
+        original[OriginalPropertyKey(KyoboBookMetaTagNameSelector.author, MappingType.KYOBO)] = authors
+        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.title, MappingType.KYOBO)] = bookDetails.title
+        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.largeThumbnail, MappingType.KYOBO)] = largeThumbnail
+        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.mediumThumbnail, MappingType.KYOBO)] = mediumThumbnail
+        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.originalPrice, MappingType.KYOBO)] = price
+        original[OriginalPropertyKey(KyoboBookInputNameSelector.seriesBarcode, MappingType.KYOBO)] = bookDetails.seriesCode
+        original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, MappingType.KYOBO)] = rawDivisions
+
+        bookDetails.original = original
 
         return bookDetails
     }

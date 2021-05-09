@@ -1,6 +1,8 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.domain.DivisionRawMapper
+import cube8540.book.batch.domain.MappingType
+import cube8540.book.batch.domain.OriginalPropertyKey
 import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.external.exception.InvalidAuthenticationException
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapperTestEnvironment.author
@@ -51,6 +53,24 @@ class KyoboBookDocumentMapperTest {
         assertThat(result.divisions).isEqualTo(setOf(categoryDepthCode0, categoryDepthCode1, categoryDepthCode2))
         assertThat(result.seriesCode).isEqualTo(seriesBarcode)
         assertThat(result.description).isEqualTo(description)
+    }
+
+    @Test
+    fun `save original data`() {
+        val document = getDocument(isbn, originalBarcode)
+
+        every { divisionRawMapper.mapping(listOf(categoryDepth0, categoryDepth1, categoryDepth2)) } returns
+                listOf(categoryDepthCode0, categoryDepthCode1, categoryDepthCode2)
+
+        val result = documentMapper.convertValue(document)
+        val original = result.original!!
+        assertThat(original[OriginalPropertyKey(KyoboBookMetaTagNameSelector.author, MappingType.KYOBO)]).isEqualTo(responseAuthor)
+        assertThat(original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.title, MappingType.KYOBO)]).isEqualTo(title)
+        assertThat(original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.largeThumbnail, MappingType.KYOBO)]).isEqualTo(largeThumbnail)
+        assertThat(original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.mediumThumbnail, MappingType.KYOBO)]).isEqualTo(mediumThumbnail)
+        assertThat(original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.originalPrice, MappingType.KYOBO)]).isEqualTo(originalPrice)
+        assertThat(original[OriginalPropertyKey(KyoboBookInputNameSelector.seriesBarcode, MappingType.KYOBO)]).isEqualTo(seriesBarcode)
+        assertThat(original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, MappingType.KYOBO)]).isEqualTo(responseCategoryCode)
     }
 
     @Test
