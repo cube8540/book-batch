@@ -27,6 +27,9 @@ import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvi
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responsePublishPreDate
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responsePublisher
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responseRealPublishDate
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responseTitle0
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responseTitle1
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.responseTitle2
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.seriesNo
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.setAdditionalCode
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.setExpression
@@ -46,8 +49,13 @@ import org.junit.jupiter.api.Test
 class NationalLibraryAPIDeserializerTest {
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
+    private val titleExtractor: BookTitleExtractor = mockk(relaxed = true)
 
     private val deserializer = NationalLibraryAPIDeserializer(publisherRawMapper)
+
+    init {
+        deserializer.titleExtractor = titleExtractor
+    }
 
     @Test
     fun `response is error`() {
@@ -98,6 +106,8 @@ class NationalLibraryAPIDeserializerTest {
         val documentsNode = ArrayNode(mockk(relaxed = true))
         val bookNode: JsonNode = mockk(relaxed = true)
 
+        every { titleExtractor.extract(bookNode) } returns title0
+
         every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
         every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns null
         every { bookNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
@@ -123,6 +133,8 @@ class NationalLibraryAPIDeserializerTest {
         val documentsNode = ArrayNode(mockk(relaxed = true))
         val bookNode: JsonNode = mockk(relaxed = true)
 
+        every { titleExtractor.extract(bookNode) } returns title0
+
         every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
         every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode("")
         every { bookNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
@@ -147,6 +159,8 @@ class NationalLibraryAPIDeserializerTest {
         val responseNode: JsonNode = mockk(relaxed = true)
         val documentsNode = ArrayNode(mockk(relaxed = true))
         val bookNode: JsonNode = mockk(relaxed = true)
+
+        every { titleExtractor.extract(bookNode) } returns title0
 
         every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
         every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
@@ -175,22 +189,26 @@ class NationalLibraryAPIDeserializerTest {
         val bookNode1: JsonNode = mockk(relaxed = true)
         val bookNode2: JsonNode = mockk(relaxed = true)
 
+        every { titleExtractor.extract(bookNode0) } returns title0
+        every { titleExtractor.extract(bookNode1) } returns title1
+        every { titleExtractor.extract(bookNode2) } returns title2
+
         every { bookNode0.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
-        every { bookNode0.get(NationalLibraryAPIResponseNames.title) } returns TextNode(title0)
+        every { bookNode0.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle0)
         every { bookNode0.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
         every { bookNode0.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
         every { bookNode0.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
         documentsNode.add(bookNode0)
 
         every { bookNode1.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn1)
-        every { bookNode1.get(NationalLibraryAPIResponseNames.title) } returns TextNode(title1)
+        every { bookNode1.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle1)
         every { bookNode1.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
         every { bookNode1.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
         every { bookNode1.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
         documentsNode.add(bookNode1)
 
         every { bookNode2.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn2)
-        every { bookNode2.get(NationalLibraryAPIResponseNames.title) } returns TextNode(title2)
+        every { bookNode2.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle2)
         every { bookNode2.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
         every { bookNode2.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
         every { bookNode2.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
@@ -233,8 +251,10 @@ class NationalLibraryAPIDeserializerTest {
         val documentsNode = ArrayNode(mockk(relaxed = true))
         val bookNode: JsonNode = mockk(relaxed = true)
 
+        every { titleExtractor.extract(bookNode) } returns title0
+
         every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
-        every { bookNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(title0)
+        every { bookNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle0)
         every { bookNode.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
         every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
         every { bookNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
@@ -262,7 +282,7 @@ class NationalLibraryAPIDeserializerTest {
         assertThat(original[OriginalPropertyKey(NationalLibraryAPIResponseNames.isbn, MappingType.NATIONAL_LIBRARY)])
             .isEqualTo(isbn0)
         assertThat(original[OriginalPropertyKey(NationalLibraryAPIResponseNames.title, MappingType.NATIONAL_LIBRARY)])
-            .isEqualTo(title0)
+            .isEqualTo(responseTitle0)
         assertThat(original[OriginalPropertyKey(NationalLibraryAPIResponseNames.publisher, MappingType.NATIONAL_LIBRARY)])
             .isEqualTo(responsePublisher)
         assertThat(original[OriginalPropertyKey(NationalLibraryAPIResponseNames.realPublishDate, MappingType.NATIONAL_LIBRARY)])
