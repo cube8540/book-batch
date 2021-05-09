@@ -41,12 +41,12 @@ class NationalLibraryObjectMapperTest {
         assertThat(result.books[0].publishDate).isEqualTo(LocalDate.of(2020, 8, 14))
 
         assertThat(result.books[1].isbn).isEqualTo("9791136242792")
-        assertThat(result.books[1].title).isEqualTo("학교생활!")
+        assertThat(result.books[1].title).isEqualTo("학교생활! 12")
         assertThat(result.books[1].publisher).isEqualTo("publishCode0001")
         assertThat(result.books[1].publishDate).isEqualTo(LocalDate.of(2020, 8, 14))
 
         assertThat(result.books[2].isbn).isEqualTo("9791136226259")
-        assertThat(result.books[2].title).isEqualTo("학교생활!")
+        assertThat(result.books[2].title).isEqualTo("학교생활! 12")
         assertThat(result.books[2].publisher).isEqualTo("publishCode0002")
         assertThat(result.books[2].publishDate).isEqualTo(LocalDate.of(2020, 4, 30))
     }
