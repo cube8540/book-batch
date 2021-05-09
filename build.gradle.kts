@@ -64,6 +64,7 @@ dependencies {
     testImplementation("org.mockito:mockito-inline:3.9.0")
 
     kapt("com.querydsl:querydsl-apt:4.4.0:jpa")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.withType<KotlinCompile> {

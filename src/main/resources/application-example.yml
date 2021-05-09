@@ -21,3 +21,12 @@ spring:
 mybatis:
   mapper-locations: mapper/**/*.xml
   type-handlers-package: cube8540.book.batch.config
+api-authentication:
+  national-library:
+    key: # your national library api key
+  naver-book:
+    client-id: # your naver book api client id
+    client-secret: # your naver api client secret
+  kyobo:
+    username: # your https://www.kyobobook.co.kr login username
+    password: # your https://www.kyobobook.co.kr login password

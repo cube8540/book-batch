@@ -1,12 +1,16 @@
 package cube8540.book.batch
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import java.time.Clock
 import java.time.ZoneOffset
 import java.util.*
 
 @SpringBootApplication
+@EnableConfigurationProperties
+@ConfigurationPropertiesScan(basePackages = ["cube8540.book.batch.config"])
 class BatchApplication {
     companion object {
         val DEFAULT_ZONE_OFFSET: ZoneOffset = ZoneOffset.of("+09:00")
