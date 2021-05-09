@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties("api-authentication")
+@ConfigurationProperties(prefix = "api-authentication")
 class AuthenticationProperty(
     val nationalLibrary: NationalLibraryAPIKey,
     val naverBook: NaverBookAPIKey,
