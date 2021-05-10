@@ -37,6 +37,11 @@ object WebClientBookReaderTestEnvironment {
     internal val mockResponse = MockResponse()
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .setBody(kotlinObjectMapper.writeValueAsString(BookAPIResponse(totalCount, pageNumber, listOf(bookDetails))))
+
+    internal val mockEmptyResponse = MockResponse()
+        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .setBody(kotlinObjectMapper.writeValueAsString(BookAPIResponse(totalCount, pageNumber, emptyList())))
+
     internal val mockErrorResponse = MockResponse()
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .setResponseCode(400)

@@ -2,10 +2,8 @@ package cube8540.book.batch.external
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import io.mockk.verifyOrder
+import io.mockk.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class RepositoryBasedBookWriterTest {
@@ -14,6 +12,13 @@ class RepositoryBasedBookWriterTest {
     private val controller: BookDetailsController = mockk(relaxed = true)
 
     private val writer = RepositoryBasedBookWriter(repository, controller)
+
+    @Test
+    fun `item is empty`() {
+        writer.write(emptyList<BookDetails>().toMutableList())
+
+        verify { repository wasNot Called }
+    }
 
     @Test
     fun `upsert to merged returns null`() {
@@ -82,5 +87,10 @@ class RepositoryBasedBookWriterTest {
             repository.persistKeywords(collection)
             repository.persistOriginals(collection)
         }
+    }
+
+    @AfterEach
+    fun cleanup() {
+        clearAllMocks()
     }
 }

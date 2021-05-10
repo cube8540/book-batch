@@ -64,7 +64,7 @@ class ResponseMapperConfiguration {
 
     @Bean
     fun nationalLibraryObjectMapper(
-        @Qualifier("naverPublisherRawMapper") publisherRawMapper: PublisherRawMapper
+        @Qualifier("nationalPublisherRawMapper") publisherRawMapper: PublisherRawMapper
     ): ObjectMapper = ObjectMapper()
         .registerModule(
             SimpleModule()
@@ -75,7 +75,7 @@ class ResponseMapperConfiguration {
 
     @Bean
     fun naverBookAPIObjectMapper(
-        @Qualifier("nationalPublisherRawMapper") publisherRawMapper: PublisherRawMapper
+        @Qualifier("naverPublisherRawMapper") publisherRawMapper: PublisherRawMapper
     ): ObjectMapper = XmlMapper()
         .registerModule(
             SimpleModule()

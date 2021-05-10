@@ -6,9 +6,9 @@ import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
 import org.springframework.batch.item.database.AbstractPagingItemReader
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriBuilderFactory
+import org.springframework.web.util.UriBuilder
 
-class WebClientBookReader(private val uriBuilderFactory: UriBuilderFactory, private val webClient: WebClient)
+open class WebClientBookReader(private val uriBuilder: UriBuilder, private val webClient: WebClient)
     : AbstractPagingItemReader<BookDetails>() {
 
     lateinit var requestPageParameterName: String
@@ -25,6 +25,8 @@ class WebClientBookReader(private val uriBuilderFactory: UriBuilderFactory, priv
 
         if (results == null) {
             results = ArrayList<BookDetails>()
+        } else {
+            results.clear()
         }
         if (response != null) {
             results.addAll((response as BookAPIResponse).books)
@@ -36,9 +38,9 @@ class WebClientBookReader(private val uriBuilderFactory: UriBuilderFactory, priv
 
     private fun exchange() = webClient.get()
         .uri(
-            uriBuilderFactory.builder()
-                .queryParam(requestPageParameterName, page + 1)
-                .queryParam(requestPageSizeParameterName, pageSize)
+            uriBuilder
+                .replaceQueryParam(requestPageParameterName, page + 1)
+                .replaceQueryParam(requestPageSizeParameterName, pageSize)
                 .build()
         )
         .accept(MediaType.APPLICATION_JSON)

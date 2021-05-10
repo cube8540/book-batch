@@ -13,18 +13,20 @@ open class RepositoryBasedBookWriter(
         val persistList = ArrayList<BookDetails>()
         val mergeList = ArrayList<BookDetails>()
 
-        val existsBookDetails = bookDetailsRepository.findById(items.map { it.isbn })
-        items.forEach { item ->
-            val exists = existsBookDetails.find { book -> item.isbn == book.isbn }
-            if (exists != null) {
-                controller.merge(exists, item)?.let { mergeList.add(it) }
-            } else {
-                persistList.add(item)
+        if (items.isNotEmpty()) {
+            val existsBookDetails = bookDetailsRepository.findById(items.map { it.isbn })
+            items.forEach { item ->
+                val exists = existsBookDetails.find { book -> item.isbn == book.isbn }
+                if (exists != null) {
+                    controller.merge(exists, item)?.let { mergeList.add(it) }
+                } else {
+                    persistList.add(item)
+                }
             }
-        }
 
-        persist(persistList)
-        merge(mergeList)
+            persist(persistList)
+            merge(mergeList)
+        }
     }
 
     private fun persist(items: Collection<BookDetails>) {
