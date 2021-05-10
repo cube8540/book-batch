@@ -180,6 +180,70 @@ class NationalLibraryAPIDeserializerTest {
     }
 
     @Test
+    fun `response book isbn is null and set isbn is not null`() {
+        val jsonParser: JsonParser = mockk(relaxed = true)
+        val codec: JsonMapper = mockk(relaxed = true)
+        val responseNode: JsonNode = mockk(relaxed = true)
+        val documentsNode = ArrayNode(mockk(relaxed = true))
+        val bookNode: JsonNode = mockk(relaxed = true)
+
+        every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns null
+        every { bookNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+        every { bookNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle0)
+        every { bookNode.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
+        every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
+        every { bookNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
+        documentsNode.add(bookNode)
+
+        every { responseNode.get(NationalLibraryAPIResponseNames.pageNo) } returns TextNode(pageNumber)
+        every { responseNode.get(NationalLibraryAPIResponseNames.totalCount) } returns TextNode(totalCount)
+        every { responseNode.get(NationalLibraryAPIResponseNames.documents) } returns documentsNode
+
+        every { publisherRawMapper.mapping(responsePublisher) } returns publisherCode
+
+        every { jsonParser.codec } returns codec
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
+
+        val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
+        assertThat(response.page).isEqualTo(pageNumber.toLong())
+        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
+
+        assertThat(response.books[0].isbn).isEqualTo(isbn0)
+    }
+
+    @Test
+    fun `response book isbn is empty and set isbn is not null`() {
+        val jsonParser: JsonParser = mockk(relaxed = true)
+        val codec: JsonMapper = mockk(relaxed = true)
+        val responseNode: JsonNode = mockk(relaxed = true)
+        val documentsNode = ArrayNode(mockk(relaxed = true))
+        val bookNode: JsonNode = mockk(relaxed = true)
+
+        every { bookNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode("")
+        every { bookNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+        every { bookNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(responseTitle0)
+        every { bookNode.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
+        every { bookNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
+        every { bookNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
+        documentsNode.add(bookNode)
+
+        every { responseNode.get(NationalLibraryAPIResponseNames.pageNo) } returns TextNode(pageNumber)
+        every { responseNode.get(NationalLibraryAPIResponseNames.totalCount) } returns TextNode(totalCount)
+        every { responseNode.get(NationalLibraryAPIResponseNames.documents) } returns documentsNode
+
+        every { publisherRawMapper.mapping(responsePublisher) } returns publisherCode
+
+        every { jsonParser.codec } returns codec
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
+
+        val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
+        assertThat(response.page).isEqualTo(pageNumber.toLong())
+        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
+
+        assertThat(response.books[0].isbn).isEqualTo(isbn0)
+    }
+
+    @Test
     fun `response deserialization`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: JsonMapper = mockk(relaxed = true)

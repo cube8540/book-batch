@@ -44,7 +44,15 @@ class NationalLibraryAPIDeserializer(private val publisherRawMapper: PublisherRa
     }
 
     private fun singleBookDeserialization(bookNode: JsonNode): BookDetails {
-        val isbn = bookNode.get(NationalLibraryAPIResponseNames.isbn)!!.asText()
+        val isbnNode = bookNode.get(NationalLibraryAPIResponseNames.isbn)
+        val isbn = when {
+            isbnNode == null || isbnNode.asText().isEmpty() -> {
+                bookNode.get(NationalLibraryAPIResponseNames.setIsbn).asText()
+            }
+            else -> {
+                isbnNode.asText()
+            }
+        }
 
         val bookDetails = BookDetails(isbn)
         bookDetails.title = titleExtractor.extract(bookNode)
