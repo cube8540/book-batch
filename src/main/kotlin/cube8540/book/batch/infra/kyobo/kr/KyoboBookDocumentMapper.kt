@@ -1,9 +1,6 @@
 package cube8540.book.batch.infra.kyobo.kr
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.DivisionRawMapper
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.OriginalPropertyKey
+import cube8540.book.batch.domain.*
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.external.exception.InvalidAuthenticationException
@@ -40,9 +37,11 @@ class KyoboBookDocumentMapper(private val divisionRawMapper: DivisionRawMapper):
 
         val largeThumbnail = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }.attr(content)
         val mediumThumbnail = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }.attr(content)
-        bookDetails.largeThumbnail = URI.create(largeThumbnail)
-        bookDetails.mediumThumbnail = URI.create(mediumThumbnail)
-
+        bookDetails.thumbnail = Thumbnail(
+            largeThumbnail = URI.create(largeThumbnail),
+            mediumThumbnail = URI.create(mediumThumbnail),
+            smallThumbnail = null
+        )
         val price = metaTags.first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }.attr(content)
         bookDetails.price = price.toDouble()
 

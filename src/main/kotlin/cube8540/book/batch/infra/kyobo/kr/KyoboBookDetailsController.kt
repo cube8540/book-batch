@@ -1,6 +1,7 @@
 package cube8540.book.batch.infra.kyobo.kr
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.external.BookDetailsController
 
 class KyoboBookDetailsController: BookDetailsController {
@@ -11,8 +12,12 @@ class KyoboBookDetailsController: BookDetailsController {
         base.authors = item.authors
         base.divisions = item.divisions
 
-        base.largeThumbnail = item.largeThumbnail
-        base.mediumThumbnail = item.mediumThumbnail
+        if (base.thumbnail == null) {
+            base.thumbnail = Thumbnail(item.thumbnail?.largeThumbnail, item.thumbnail?.mediumThumbnail, null)
+        } else {
+            base.thumbnail?.largeThumbnail = item.thumbnail?.largeThumbnail
+            base.thumbnail?.mediumThumbnail = item.thumbnail?.mediumThumbnail
+        }
 
         base.description = item.description
         base.price = item.price

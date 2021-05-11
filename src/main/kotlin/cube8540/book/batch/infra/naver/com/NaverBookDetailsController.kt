@@ -1,6 +1,7 @@
 package cube8540.book.batch.infra.naver.com
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.external.BookDetailsController
 
 class NaverBookDetailsController: BookDetailsController {
@@ -8,7 +9,12 @@ class NaverBookDetailsController: BookDetailsController {
         base.title = item.title
         base.publisher = item.publisher
         base.publishDate = item.publishDate
-        base.smallThumbnail = item.smallThumbnail
+
+        if (base.thumbnail == null) {
+            base.thumbnail = Thumbnail(null, null, item.thumbnail?.smallThumbnail)
+        } else {
+            base.thumbnail?.smallThumbnail = item.thumbnail?.smallThumbnail
+        }
 
         if (base.original != null && item.original != null) {
             base.original = base.original!! + item.original!!

@@ -12,6 +12,7 @@ object KyoboBookDetailsControllerTestEnvironment {
 
     internal val mergedLargeThumbnail = URI.create("http://localhost/merged-large-thumbnail")
     internal val mergedMediumThumbnail = URI.create("http://localhost/merged-medium-thumbnail")
+    internal val mergedSmallThumbnail = URI.create("http://localhost/merged-small-thumbnail")
 
     internal const val mergedDescription = "mergedDesc"
     internal const val mergedPrice = 5000.0

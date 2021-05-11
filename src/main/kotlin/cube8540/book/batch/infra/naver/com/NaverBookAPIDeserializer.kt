@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.OriginalPropertyKey
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.domain.*
 import cube8540.book.batch.external.BookAPIResponse
 import java.net.URI
 import java.time.LocalDate
@@ -43,8 +40,8 @@ class NaverBookAPIDeserializer(private val publisherRawMapper: PublisherRawMappe
         bookDetails.price = bookNode.get(NaverBookAPIResponseNames.price)?.asDouble()
         bookDetails.publishDate = bookNode.get(NaverBookAPIResponseNames.publishDate)
             ?.let { LocalDate.parse(it.textValue(), DateTimeFormatter.BASIC_ISO_DATE) }
-        bookDetails.smallThumbnail = bookNode.get(NaverBookAPIResponseNames.image)
-            ?.let { URI.create(it.asText()) }
+        bookDetails.thumbnail = bookNode.get(NaverBookAPIResponseNames.image)
+            ?.let { Thumbnail(smallThumbnail = URI.create(it.asText()), mediumThumbnail = null, largeThumbnail = null) }
 
         val original = HashMap<OriginalPropertyKey, String?>()
         setOriginalNodeData(NaverBookAPIResponseNames.isbn, bookNode, original)

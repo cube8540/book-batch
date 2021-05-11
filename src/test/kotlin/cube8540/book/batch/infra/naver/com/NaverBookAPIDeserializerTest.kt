@@ -102,7 +102,7 @@ class NaverBookAPIDeserializerTest {
         assertThat(response.books.first().title).isEqualTo(title0)
         assertThat(response.books.first().publisher).isEqualTo(publisherCode)
         assertThat(response.books.first().publishDate).isEqualTo(publishDate)
-        assertThat(response.books.first().smallThumbnail).isEqualTo(URI.create(image))
+        assertThat(response.books.first().thumbnail?.smallThumbnail).isEqualTo(URI.create(image))
     }
 
     @Test
@@ -161,19 +161,19 @@ class NaverBookAPIDeserializerTest {
         assertThat(response.books[0].title).isEqualTo(title0)
         assertThat(response.books[0].publisher).isEqualTo(publisherCode)
         assertThat(response.books[0].publishDate).isEqualTo(publishDate)
-        assertThat(response.books[0].smallThumbnail).isEqualTo(URI.create(image))
+        assertThat(response.books[0].thumbnail?.smallThumbnail).isEqualTo(URI.create(image))
 
         assertThat(response.books[1].isbn).isEqualTo(isbn1)
         assertThat(response.books[1].title).isEqualTo(title1)
         assertThat(response.books[1].publisher).isEqualTo(publisherCode)
         assertThat(response.books[1].publishDate).isEqualTo(publishDate)
-        assertThat(response.books[1].smallThumbnail).isEqualTo(URI.create(image))
+        assertThat(response.books[1].thumbnail?.smallThumbnail).isEqualTo(URI.create(image))
 
         assertThat(response.books[2].isbn).isEqualTo(isbn2)
         assertThat(response.books[2].title).isEqualTo(title2)
         assertThat(response.books[2].publisher).isEqualTo(publisherCode)
         assertThat(response.books[2].publishDate).isEqualTo(publishDate)
-        assertThat(response.books[2].smallThumbnail).isEqualTo(URI.create(image))
+        assertThat(response.books[2].thumbnail?.smallThumbnail).isEqualTo(URI.create(image))
     }
 
     @Test

@@ -1,8 +1,6 @@
 package cube8540.book.batch.domain
 
-import cube8540.book.batch.domain.converter.ThumbnailConverter
 import org.hibernate.annotations.CreationTimestamp
-import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -37,17 +35,8 @@ class BookDetails(
     @Column(name = "author", length = 32)
     var authors: Set<String>? = null
 
-    @Convert(converter = ThumbnailConverter::class)
-    @Column(name = "lage_thumbnail_url", length = 128)
-    var largeThumbnail: URI? = null
-
-    @Convert(converter = ThumbnailConverter::class)
-    @Column(name = "medium_thumbnail_url", length = 128)
-    var mediumThumbnail: URI? = null
-
-    @Convert(converter = ThumbnailConverter::class)
-    @Column(name = "small_thumbnail_url", length = 128)
-    var smallThumbnail: URI? = null
+    @Embedded
+    var thumbnail: Thumbnail? = null
 
     @Column(name = "description", length = 248)
     var description: String? = null

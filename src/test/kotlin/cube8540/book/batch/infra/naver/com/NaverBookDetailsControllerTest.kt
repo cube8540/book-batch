@@ -3,6 +3,7 @@ package cube8540.book.batch.infra.naver.com
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.OriginalPropertyKey
+import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0000
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0001
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0002
@@ -16,6 +17,8 @@ import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnviron
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalValue0000
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalValue0001
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalValue0002
+import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedLargeThumbnail
+import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedMediumThumbnail
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedPublishDate
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedPublisher
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedSmallThumbnail
@@ -28,6 +31,50 @@ class NaverBookDetailsControllerTest {
     private val controller = NaverBookDetailsController()
 
     @Test
+    fun `merge base and item`() {
+        val base = BookDetails(isbn)
+        val item = BookDetails(isbn)
+
+        item.title = mergedTitle
+        item.publisher = mergedPublisher
+        item.publishDate = mergedPublishDate
+
+        val result = controller.merge(base, item)
+        assertThat(result.title).isEqualTo(mergedTitle)
+        assertThat(result.publisher).isEqualTo(mergedPublisher)
+        assertThat(result.publishDate).isEqualTo(mergedPublishDate)
+    }
+
+    @Test
+    fun `merge when base thumbnail is null`() {
+        val base = BookDetails(isbn)
+        val item = BookDetails(isbn)
+
+        item.thumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, mergedSmallThumbnail)
+
+        val result = controller.merge(base, item)
+        assertThat(result.thumbnail?.largeThumbnail).isNull()
+        assertThat(result.thumbnail?.mediumThumbnail).isNull()
+        assertThat(result.thumbnail?.smallThumbnail).isEqualTo(mergedSmallThumbnail)
+
+    }
+
+    @Test
+    fun `merge when base thumbnail is not null`() {
+        val base = BookDetails(isbn)
+        val item = BookDetails(isbn)
+
+        base.thumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, null)
+        item.thumbnail = Thumbnail(null, null, mergedSmallThumbnail)
+
+        val result = controller.merge(base, item)
+        assertThat(result.thumbnail?.largeThumbnail).isEqualTo(mergedLargeThumbnail)
+        assertThat(result.thumbnail?.mediumThumbnail).isEqualTo(mergedMediumThumbnail)
+        assertThat(result.thumbnail?.smallThumbnail).isEqualTo(mergedSmallThumbnail)
+
+    }
+
+    @Test
     fun `merged when base original is null`() {
         val base = BookDetails(isbn)
         val item = BookDetails(isbn)
@@ -38,15 +85,8 @@ class NaverBookDetailsControllerTest {
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.NATIONAL_LIBRARY)] =  itemOriginalValue0002
 
         item.original = itemOriginalProperty
-        item.title = mergedTitle
-        item.publisher = mergedPublisher
-        item.publishDate = mergedPublishDate
-        item.smallThumbnail = mergedSmallThumbnail
 
         val result = controller.merge(base, item)
-        assertThat(result.title).isEqualTo(mergedTitle)
-        assertThat(result.publisher).isEqualTo(mergedPublisher)
-        assertThat(result.smallThumbnail).isEqualTo(mergedSmallThumbnail)
         assertThat(result.original).isEqualTo(itemOriginalProperty)
     }
 
@@ -70,15 +110,8 @@ class NaverBookDetailsControllerTest {
 
         base.original = baseOriginalProperty
         item.original = itemOriginalProperty
-        item.title = mergedTitle
-        item.publisher = mergedPublisher
-        item.publishDate = mergedPublishDate
-        item.smallThumbnail = mergedSmallThumbnail
 
         val result = controller.merge(base, item)
-        assertThat(result.title).isEqualTo(mergedTitle)
-        assertThat(result.publisher).isEqualTo(mergedPublisher)
-        assertThat(result.smallThumbnail).isEqualTo(mergedSmallThumbnail)
         assertThat(result.original).isEqualTo(baseOriginalProperty + itemOriginalProperty)
     }
 

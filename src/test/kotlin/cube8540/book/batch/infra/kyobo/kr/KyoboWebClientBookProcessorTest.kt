@@ -3,16 +3,8 @@ package cube8540.book.batch.infra.kyobo.kr
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.author
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.categories
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.description
 import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.isbn
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.largeThumbnail
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.mediumThumbnail
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.originalPrice
 import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.responseBody
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.seriesBarcode
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.title
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.mockwebserver.Dispatcher
@@ -73,14 +65,6 @@ class KyoboWebClientBookProcessorTest {
 
         val mappedBook = BookDetails(isbn)
 
-        mappedBook.title = title
-        mappedBook.authors = author
-        mappedBook.largeThumbnail = largeThumbnail
-        mappedBook.mediumThumbnail = mediumThumbnail
-        mappedBook.price = originalPrice
-        mappedBook.seriesCode = seriesBarcode
-        mappedBook.divisions = categories
-        mappedBook.description = description
         every { bookDocumentMapper.convertValue(document) } returns mappedBook
         mockWebServer.dispatcher = object: Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse = when (request.path!! == expectedPath) {
@@ -89,14 +73,7 @@ class KyoboWebClientBookProcessorTest {
             }
         }
 
-        val result = processor.process(bookDetails)!!
-        assertThat(result.title).isEqualTo(title)
-        assertThat(result.authors).isEqualTo(author)
-        assertThat(result.largeThumbnail).isEqualTo(largeThumbnail)
-        assertThat(result.mediumThumbnail).isEqualTo(mediumThumbnail)
-        assertThat(result.price).isEqualTo(originalPrice)
-        assertThat(result.divisions).isEqualTo(categories)
-        assertThat(result.seriesCode).isEqualTo(seriesBarcode)
-        assertThat(result.description).isEqualTo(description)
+        val result = processor.process(bookDetails)
+        assertThat(result).isEqualTo(mappedBook)
     }
 }

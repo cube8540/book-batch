@@ -13,25 +13,12 @@ class KyoboWebClientBookProcessor(
 ): ItemProcessor<BookDetails, BookDetails> {
 
     override fun process(item: BookDetails): BookDetails? {
-        val result = exchange(item.isbn)
         return try {
-            merge(item, documentMapper.convertValue(Jsoup.parse(result)))
+            val result = exchange(item.isbn)
+            documentMapper.convertValue(Jsoup.parse(result))
         } catch (e: ExternalException) {
             null
         }
-    }
-
-    private fun merge(base: BookDetails, item: BookDetails): BookDetails {
-        base.title = item.title
-        base.authors = item.authors
-        base.largeThumbnail = item.largeThumbnail
-        base.mediumThumbnail = item.mediumThumbnail
-        base.price = item.price
-        base.divisions = item.divisions
-        base.seriesCode = item.seriesCode
-        base.description = item.description
-
-        return base
     }
 
     private fun exchange(isbn: String): String? = webClient.get()

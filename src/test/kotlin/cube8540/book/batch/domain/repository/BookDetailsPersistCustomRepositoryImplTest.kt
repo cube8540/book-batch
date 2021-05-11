@@ -2,6 +2,7 @@ package cube8540.book.batch.domain.repository
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.OriginalPropertyKey
+import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.author0
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.author1
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.author2
@@ -45,9 +46,7 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
         bookDetails0.seriesCode = seriesCode
         bookDetails0.publisher = publisher
         bookDetails0.publishDate = publishDate
-        bookDetails0.largeThumbnail = largeThumbnail
-        bookDetails0.mediumThumbnail = mediumThumbnail
-        bookDetails0.smallThumbnail = smallThumbnail
+        bookDetails0.thumbnail = Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
         bookDetails0.description = description
         bookDetails0.price = price
         bookDetails0.createdAt = createdAt
@@ -77,9 +76,9 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
         assertThat(insertBookDetails.seriesCode).isEqualTo(seriesCode)
         assertThat(insertBookDetails.publisher).isEqualTo(publisher)
         assertThat(insertBookDetails.publishDate).isEqualTo(publishDate)
-        assertThat(insertBookDetails.largeThumbnail).isEqualTo(largeThumbnail)
-        assertThat(insertBookDetails.mediumThumbnail).isEqualTo(mediumThumbnail)
-        assertThat(insertBookDetails.smallThumbnail).isEqualTo(smallThumbnail)
+        assertThat(insertBookDetails.thumbnail?.largeThumbnail).isEqualTo(largeThumbnail)
+        assertThat(insertBookDetails.thumbnail?.mediumThumbnail).isEqualTo(mediumThumbnail)
+        assertThat(insertBookDetails.thumbnail?.smallThumbnail).isEqualTo(smallThumbnail)
         assertThat(insertBookDetails.description).isEqualTo(description)
         assertThat(insertBookDetails.price).isEqualTo(price)
         assertThat(insertBookDetails.createdAt).isEqualTo(createdAt)
@@ -243,9 +242,7 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
         bookDetails.seriesCode = seriesCode
         bookDetails.publisher = publisher
         bookDetails.publishDate = publishDate
-        bookDetails.largeThumbnail = largeThumbnail
-        bookDetails.mediumThumbnail = mediumThumbnail
-        bookDetails.smallThumbnail = smallThumbnail
+        bookDetails.thumbnail = Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
         bookDetails.description = description
         bookDetails.price = price
         bookDetails.createdAt = createdAt
