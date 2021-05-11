@@ -2,11 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cube8540.book.batch.domain.repository.BookDetailsPersistMapper">
     <insert id="persistBookDetails" parameterType="java.util.List">
-        insert into book_details
-            (isbn, title, series_code, publisher_code, publish_date, lage_thumbnail_url, medium_thumbnail_url, small_thumbnail_url, description, price, created_at)
+        insert into book_details (
+            isbn,
+            title,
+            series_code,
+            publisher_code,
+            publish_date,
+            lage_thumbnail_url,
+            medium_thumbnail_url,
+            small_thumbnail_url,
+            description,
+            price,
+            created_at
+        )
         values
         <foreach collection="list" item="item" open="" separator="," close="">
-            (#{item.isbn}, #{item.title}, #{item.seriesCode}, #{item.publisher}, #{item.publishDate}, #{item.largeThumbnail}, #{item.mediumThumbnail}, #{item.smallThumbnail}, #{item.description}, #{item.price}, #{item.createdAt})
+            (
+                #{item.isbn},
+                #{item.title},
+                #{item.seriesCode},
+                #{item.publisher},
+                #{item.publishDate},
+                <choose>
+                    <when test="item.thumbnail != null">
+                        #{item.thumbnail.largeThumbnail},
+                        #{item.thumbnail.mediumThumbnail},
+                        #{item.thumbnail.smallThumbnail},
+                    </when>
+                    <otherwise>
+                        null,
+                        null,
+                        null,
+                    </otherwise>
+                </choose>
+                #{item.description},
+                #{item.price},
+                #{item.createdAt}
+            )
         </foreach>
     </insert>
 
@@ -17,9 +49,11 @@
                 series_code = #{item.seriesCode},
                 publisher_code = #{item.publisher},
                 publish_date = #{item.publishDate},
-                lage_thumbnail_url = #{item.largeThumbnail},
-                medium_thumbnail_url = #{item.mediumThumbnail},
-                small_thumbnail_url = #{item.smallThumbnail},
+                <if test="item.thumbnail != null">
+                    lage_thumbnail_url = #{item.thumbnail.largeThumbnail},
+                    medium_thumbnail_url = #{item.thumbnail.mediumThumbnail},
+                    small_thumbnail_url = #{item.thumbnail.smallThumbnail},
+                </if>
                 description = #{item.description},
                 price = #{item.price}
             where isbn = #{item.isbn}
@@ -97,7 +131,7 @@
     <update id="updateForUpstreamTarget" parameterType="java.util.List">
         <foreach collection="list" item="item" open="" separator=";" close="">
             update book_details
-            set upstream_target = #{item.isUpstreamTarget}
+            set upstream_target = #{item.upstreamTarget}
             where isbn = #{item.isbn}
         </foreach>
     </update>
