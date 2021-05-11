@@ -35,25 +35,25 @@ class NaverBookAPIObjectMapperTest {
         assertThat(result.totalCount).isEqualTo(4)
         assertThat(result.page).isEqualTo(1)
 
-        assertThat(result.books[0].isbn).isEqualTo("9791136226259")
-        assertThat(result.books[0].title).isEqualTo("<b>학교생활</b> 12")
-        assertThat(result.books[0].publisher).isEqualTo("publishCode0001")
-        assertThat(result.books[0].publishDate).isEqualTo(LocalDate.of(2020, 3, 5))
+        assertThat(result.books[0].resolveIsbn()).isEqualTo("9791136226259")
+        assertThat(result.books[0].resolveTitle()).isEqualTo("<b>학교생활</b> 12")
+        assertThat(result.books[0].resolvePublisher()).isEqualTo("publishCode0001")
+        assertThat(result.books[0].resolvePublishDate()).isEqualTo(LocalDate.of(2020, 3, 5))
 
-        assertThat(result.books[1].isbn).isEqualTo("9791136202093")
-        assertThat(result.books[1].title).isEqualTo("<b>학교생활</b> 11")
-        assertThat(result.books[1].publisher).isEqualTo("publishCode0001")
-        assertThat(result.books[1].publishDate).isEqualTo(LocalDate.of(2019, 7, 31))
+        assertThat(result.books[1].resolveIsbn()).isEqualTo("9791136202093")
+        assertThat(result.books[1].resolveTitle()).isEqualTo("<b>학교생활</b> 11")
+        assertThat(result.books[1].resolvePublisher()).isEqualTo("publishCode0001")
+        assertThat(result.books[1].resolvePublishDate()).isEqualTo(LocalDate.of(2019, 7, 31))
 
-        assertThat(result.books[2].isbn).isEqualTo("9791164120123")
-        assertThat(result.books[2].title).isEqualTo("<b>학교생활</b>! 10")
-        assertThat(result.books[2].publisher).isEqualTo("publishCode0001")
-        assertThat(result.books[2].publishDate).isEqualTo(LocalDate.of(2019, 2, 28))
+        assertThat(result.books[2].resolveIsbn()).isEqualTo("9791164120123")
+        assertThat(result.books[2].resolveTitle()).isEqualTo("<b>학교생활</b>! 10")
+        assertThat(result.books[2].resolvePublisher()).isEqualTo("publishCode0001")
+        assertThat(result.books[2].resolvePublishDate()).isEqualTo(LocalDate.of(2019, 2, 28))
 
-        assertThat(result.books[3].isbn).isEqualTo("8820024909354")
-        assertThat(result.books[3].title).isEqualTo("<b>학교생활</b> 1~11 세트")
-        assertThat(result.books[3].publisher).isEqualTo("publishCode0002")
-        assertThat(result.books[3].publishDate).isEqualTo(LocalDate.of(2019, 7, 30))
+        assertThat(result.books[3].resolveIsbn()).isEqualTo("8820024909354")
+        assertThat(result.books[3].resolveTitle()).isEqualTo("<b>학교생활</b> 1~11 세트")
+        assertThat(result.books[3].resolvePublisher()).isEqualTo("publishCode0002")
+        assertThat(result.books[3].resolvePublishDate()).isEqualTo(LocalDate.of(2019, 7, 30))
     }
 
     @Test

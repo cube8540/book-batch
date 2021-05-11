@@ -131,7 +131,7 @@
     <update id="updateForUpstreamTarget" parameterType="java.util.List">
         <foreach collection="list" item="item" open="" separator=";" close="">
             update book_details
-            set upstream_target = #{item.isUpstreamTarget}
+            set upstream_target = #{item.upstreamTarget}
             where isbn = #{item.isbn}
         </foreach>
     </update>

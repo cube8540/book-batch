@@ -1,6 +1,7 @@
 package cube8540.book.batch.infra.kyobo.kr
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
 import org.jsoup.Jsoup
@@ -10,9 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient
 class KyoboWebClientBookProcessor(
     private val webClient: WebClient,
     private val documentMapper: BookDocumentMapper
-): ItemProcessor<BookDetails, BookDetails> {
+): ItemProcessor<BookDetails, BookDetailsContext> {
 
-    override fun process(item: BookDetails): BookDetails? {
+    override fun process(item: BookDetails): BookDetailsContext? {
         return try {
             val result = exchange(item.isbn)
             documentMapper.convertValue(Jsoup.parse(result))

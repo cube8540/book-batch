@@ -27,6 +27,8 @@ import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryI
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.seriesCode
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.smallThumbnail
 import cube8540.book.batch.domain.repository.BookDetailsPersistCustomRepositoryImplTestEnvironment.title
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -39,27 +41,25 @@ import org.springframework.transaction.annotation.Transactional
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepository: BookDetailsRepository) {
 
-    private val bookDetails0 = BookDetails(isbn = isbn)
+    private val originalMap = HashMap<OriginalPropertyKey, String?>()
+    private val bookDetails0: BookDetails = mockk(relaxed = true)
 
     init {
-        bookDetails0.title = title
-        bookDetails0.seriesCode = seriesCode
-        bookDetails0.publisher = publisher
-        bookDetails0.publishDate = publishDate
-        bookDetails0.thumbnail = Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
-        bookDetails0.description = description
-        bookDetails0.price = price
-        bookDetails0.createdAt = createdAt
-
-        bookDetails0.divisions = setOf(division0, division1, division2)
-        bookDetails0.authors = setOf(author0, author1, author2)
-        bookDetails0.keywords = setOf(keyword0, keyword1, keyword2)
-
-        val originalMap = HashMap<OriginalPropertyKey, String?>()
         originalMap[propertyKey0] = propertyValue0
         originalMap[propertyKey1] = propertyValue1
-
-        bookDetails0.original = originalMap
+        every { bookDetails0.isbn } returns isbn
+        every { bookDetails0.title } returns title
+        every { bookDetails0.seriesCode } returns seriesCode
+        every { bookDetails0.publisher } returns publisher
+        every { bookDetails0.publishDate } returns publishDate
+        every { bookDetails0.thumbnail } returns Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
+        every { bookDetails0.description } returns description
+        every { bookDetails0.price } returns price
+        every { bookDetails0.createdAt } returns createdAt
+        every { bookDetails0.divisions } returns setOf(division0, division1, division2)
+        every { bookDetails0.authors } returns setOf(author0, author1, author2)
+        every { bookDetails0.keywords } returns setOf(keyword0, keyword1, keyword2)
+        every { bookDetails0.original } returns originalMap
     }
 
     @Test
@@ -92,9 +92,9 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
         val bookDetails2 = createTestBook("book0002")
 
         bookDetailsRepository.persistBookDetails(listOf(bookDetails0, bookDetails1, bookDetails2))
-        bookDetails0.title = "title0000"
-        bookDetails1.title = "title0001"
-        bookDetails2.title = "title0002"
+        every { bookDetails0.title } returns "title0000"
+        every { bookDetails1.title } returns "title0001"
+        every { bookDetails2.title } returns "title0002"
         bookDetailsRepository.mergeBookDetails(listOf(bookDetails0, bookDetails1, bookDetails2))
 
         val completed0 = bookDetailsRepository.findById("book0000").orElse(null)
@@ -220,9 +220,10 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
         val bookDetails2 = createTestBook("book0002")
 
         bookDetailsRepository.persistBookDetails(listOf(bookDetails0, bookDetails1, bookDetails2))
-        bookDetails0.isUpstreamTarget = true
-        bookDetails1.isUpstreamTarget = true
-        bookDetails2.isUpstreamTarget = true
+
+        every { bookDetails0.isUpstreamTarget } returns true
+        every { bookDetails1.isUpstreamTarget } returns true
+        every { bookDetails2.isUpstreamTarget } returns true
         bookDetailsRepository.updateForUpstreamTarget(listOf(bookDetails0, bookDetails1, bookDetails2))
 
         val completed0 = bookDetailsRepository.findById("book0000").orElse(null)
@@ -237,15 +238,16 @@ class BookDetailsPersistCustomRepositoryImplTest constructor(val bookDetailsRepo
     }
 
     fun createTestBook(isbn: String): BookDetails {
-        val bookDetails = BookDetails(isbn)
-        bookDetails.title = title
-        bookDetails.seriesCode = seriesCode
-        bookDetails.publisher = publisher
-        bookDetails.publishDate = publishDate
-        bookDetails.thumbnail = Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
-        bookDetails.description = description
-        bookDetails.price = price
-        bookDetails.createdAt = createdAt
+        val bookDetails: BookDetails = mockk(relaxed = true)
+        every { bookDetails.isbn } returns isbn
+        every { bookDetails.title } returns title
+        every { bookDetails.seriesCode } returns seriesCode
+        every { bookDetails.publisher } returns publisher
+        every { bookDetails.publishDate } returns publishDate
+        every { bookDetails.thumbnail } returns Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
+        every { bookDetails.description } returns description
+        every { bookDetails.price } returns price
+        every { bookDetails.createdAt } returns createdAt
         return bookDetails
     }
 }

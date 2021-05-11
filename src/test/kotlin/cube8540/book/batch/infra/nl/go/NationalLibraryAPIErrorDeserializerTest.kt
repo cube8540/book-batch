@@ -4,15 +4,16 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.TextNode
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorCode
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorMessage
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIDeserializerTestEnvironment.errorResult
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class NationalLibraryAPIErrorDeserializerTest {
+
+    private val errorResult = "ERROR"
+    private val errorMessage = "errorMessage0001"
+    private val errorCode = "errorCode0001"
 
     private val deserializer = NationalLibraryAPIErrorDeserializer()
 

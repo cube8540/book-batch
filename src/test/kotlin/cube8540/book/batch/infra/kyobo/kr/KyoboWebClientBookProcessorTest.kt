@@ -1,6 +1,7 @@
 package cube8540.book.batch.infra.kyobo.kr
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
 import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.isbn
@@ -39,11 +40,12 @@ class KyoboWebClientBookProcessorTest {
 
     @Test
     fun `throws exception during parse document`() {
-        val bookDetails = BookDetails(isbn)
+        val bookDetails: BookDetails = mockk(relaxed = true)
 
         val expectedPath = "${KyoboBookRequestNames.kyoboBookDetailsPath}?${KyoboBookRequestNames.isbn}=${isbn}"
         val mockResponse = MockResponse().setBody(responseBody)
 
+        every { bookDetails.isbn } returns isbn
         every { bookDocumentMapper.convertValue(document) } throws ExternalException("TEST")
         mockWebServer.dispatcher = object: Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse = when (request.path!! == expectedPath) {
@@ -58,13 +60,14 @@ class KyoboWebClientBookProcessorTest {
 
     @Test
     fun `book details processing`() {
-        val bookDetails = BookDetails(isbn)
+        val bookDetails: BookDetails = mockk(relaxed = true)
 
         val expectedPath = "${KyoboBookRequestNames.kyoboBookDetailsPath}?${KyoboBookRequestNames.isbn}=${isbn}"
         val mockResponse = MockResponse().setBody(responseBody)
 
-        val mappedBook = BookDetails(isbn)
+        val mappedBook: BookDetailsContext = mockk(relaxed = true)
 
+        every { bookDetails.isbn } returns isbn
         every { bookDocumentMapper.convertValue(document) } returns mappedBook
         mockWebServer.dispatcher = object: Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse = when (request.path!! == expectedPath) {

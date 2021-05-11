@@ -36,15 +36,15 @@ class KyoboBookDocumentMapperTest {
     fun deserialization(document: Document, expectedBookDetails: ExpectedBookDetails) {
         val result = documentMapper.convertValue(document)
 
-        assertThat(result.isbn).isEqualTo(expectedBookDetails.isbn)
-        assertThat(result.authors).isEqualTo(expectedBookDetails.authors)
-        assertThat(result.title).isEqualTo(expectedBookDetails.title)
-        assertThat(result.thumbnail?.largeThumbnail).isEqualTo(expectedBookDetails.largeThumbnail)
-        assertThat(result.thumbnail?.mediumThumbnail).isEqualTo(expectedBookDetails.mediumThumbnail)
-        assertThat(result.price).isEqualTo(expectedBookDetails.price)
-        assertThat(result.seriesCode).isEqualTo(expectedBookDetails.seriesCode)
-        assertThat(result.divisions).isEqualTo(expectedBookDetails.divisions)
-        assertThat(result.description).isEqualTo(expectedBookDetails.description)
+        assertThat(result.resolveIsbn()).isEqualTo(expectedBookDetails.isbn)
+        assertThat(result.resolveAuthors()).isEqualTo(expectedBookDetails.authors)
+        assertThat(result.resolveTitle()).isEqualTo(expectedBookDetails.title)
+        assertThat(result.resolveThumbnail()?.largeThumbnail).isEqualTo(expectedBookDetails.largeThumbnail)
+        assertThat(result.resolveThumbnail()?.mediumThumbnail).isEqualTo(expectedBookDetails.mediumThumbnail)
+        assertThat(result.resolvePrice()).isEqualTo(expectedBookDetails.price)
+        assertThat(result.resolveSeriesCode()).isEqualTo(expectedBookDetails.seriesCode)
+        assertThat(result.resolveDivisions()).isEqualTo(expectedBookDetails.divisions)
+        assertThat(result.resolveDescription()).isEqualTo(expectedBookDetails.description)
     }
 
     private fun kyoboBookDetailsProvider() = Stream.of(

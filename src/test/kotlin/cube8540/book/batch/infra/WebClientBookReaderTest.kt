@@ -1,17 +1,17 @@
 package cube8540.book.batch.infra
 
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.bookDetails
+import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
+import cube8540.book.batch.external.exception.InternalBadRequestException
+import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.bookDetailsContext
+import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.bookDetailsMockTestKotlinObjectMapper
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.endpoint
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.errorCode
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.errorMessage
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.kotlinObjectMapper
- import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockEmptyResponse
+import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockEmptyResponse
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockErrorResponse
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockResponse
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.pageRequestName
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.pageSizeRequestName
-import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
-import cube8540.book.batch.external.exception.InternalBadRequestException
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verifyOrder
@@ -42,8 +42,8 @@ class WebClientBookReaderTest {
         .baseUrl(mockWebServer.url("/").toString())
         .exchangeStrategies(
             ExchangeStrategies.builder().codecs {
-                it.customCodecs().register(Jackson2JsonEncoder(kotlinObjectMapper))
-                it.customCodecs().register(Jackson2JsonDecoder(kotlinObjectMapper))
+                it.customCodecs().register(Jackson2JsonEncoder(bookDetailsMockTestKotlinObjectMapper))
+                it.customCodecs().register(Jackson2JsonDecoder(bookDetailsMockTestKotlinObjectMapper))
             }
             .build()
         )
@@ -78,7 +78,7 @@ class WebClientBookReaderTest {
             uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize)
             uriBuilder.build()
         }
-        assertThat(result).isEqualTo(bookDetails)
+        assertThat(result).isEqualTo(bookDetailsContext)
     }
 
     @Test

@@ -1,6 +1,6 @@
 package cube8540.book.batch.infra.kyobo.kr
 
-object KyoboBookDocumentMapperTestEnvironment {
+object KyoboBookJsoupDocumentContextTestEnvironment {
 
     const val isbn = "9791133447831"
     const val originalBarcode = "og:9791133447831"

@@ -23,13 +23,25 @@ class RepositoryBasedBookWriterTest {
 
     @Test
     fun `upsert to merged returns null`() {
-        val item0000 = BookDetails("isbn0000")
-        val item0001 = BookDetails("isbn0001")
-        val item0002 = BookDetails("isbn0002")
-        val item0003 = BookDetails("isbn0003")
+        val item0000: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0000"
+        }
+        val item0001: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0001"
+        }
+        val item0002: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0002"
+        }
+        val item0003: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0003"
+        }
 
-        val existsBook0 = BookDetails("isbn0001")
-        val existsBook1 = BookDetails("isbn0002")
+        val existsBook0: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0001"
+        }
+        val existsBook1: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0002"
+        }
 
         val mergedBook0: BookDetails = mockk(relaxed = true)
 
@@ -45,13 +57,25 @@ class RepositoryBasedBookWriterTest {
 
     @Test
     fun `upsert to repository`() {
-        val item0000 = BookDetails("isbn0000")
-        val item0001 = BookDetails("isbn0001")
-        val item0002 = BookDetails("isbn0002")
-        val item0003 = BookDetails("isbn0003")
+        val item0000: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0000"
+        }
+        val item0001: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0001"
+        }
+        val item0002: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0002"
+        }
+        val item0003: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0003"
+        }
 
-        val existsBook0 = BookDetails("isbn0001")
-        val existsBook1 = BookDetails("isbn0002")
+        val existsBook0: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0001"
+        }
+        val existsBook1: BookDetails = mockk(relaxed = true) {
+            every { isbn } returns "isbn0002"
+        }
 
         val mergedBook0: BookDetails = mockk(relaxed = true)
         val mergedBook1: BookDetails = mockk(relaxed = true)

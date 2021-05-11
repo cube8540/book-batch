@@ -3,14 +3,15 @@ package cube8540.book.batch.infra.naver.com
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import cube8540.book.batch.infra.naver.com.NaverBookAPIDeserializerTestEnvironment.errorCode
-import cube8540.book.batch.infra.naver.com.NaverBookAPIDeserializerTestEnvironment.errorMessage
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class NaverBookAPIErrorDeserializerTest {
+
+    private val errorCode = "errorCode0000"
+    private val errorMessage = "errorMessage0000"
 
     private val deserializer = NaverBookAPIErrorDeserializer()
 

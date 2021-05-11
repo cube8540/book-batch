@@ -10,7 +10,6 @@ import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnviron
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalValue0000
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalValue0001
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalValue0002
-import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.isbn
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalProperty0000
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalProperty0001
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.itemOriginalProperty0002
@@ -23,6 +22,9 @@ import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnviron
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedPublisher
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedSmallThumbnail
 import cube8540.book.batch.infra.naver.com.NaverBookDetailsControllerTestEnvironment.mergedTitle
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -32,53 +34,63 @@ class NaverBookDetailsControllerTest {
 
     @Test
     fun `merge base and item`() {
-        val base = BookDetails(isbn)
-        val item = BookDetails(isbn)
-
-        item.title = mergedTitle
-        item.publisher = mergedPublisher
-        item.publishDate = mergedPublishDate
+        val base: BookDetails = mockk(relaxed = true)
+        val item: BookDetails = mockk(relaxed = true) {
+            every { title } returns mergedTitle
+            every { publisher } returns mergedPublisher
+            every { publishDate } returns mergedPublishDate
+        }
 
         val result = controller.merge(base, item)
-        assertThat(result.title).isEqualTo(mergedTitle)
-        assertThat(result.publisher).isEqualTo(mergedPublisher)
-        assertThat(result.publishDate).isEqualTo(mergedPublishDate)
+        assertThat(result).isEqualTo(base)
+        verify {
+            base.title = mergedTitle
+            base.publisher = mergedPublisher
+            base.publishDate = mergedPublishDate
+        }
     }
 
     @Test
     fun `merge when base thumbnail is null`() {
-        val base = BookDetails(isbn)
-        val item = BookDetails(isbn)
-
-        item.thumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, mergedSmallThumbnail)
+        val base: BookDetails = mockk(relaxed = true) {
+            every { thumbnail } returns null
+        }
+        val item: BookDetails = mockk(relaxed = true) {
+            every { thumbnail } returns Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, mergedSmallThumbnail)
+        }
 
         val result = controller.merge(base, item)
-        assertThat(result.thumbnail?.largeThumbnail).isNull()
-        assertThat(result.thumbnail?.mediumThumbnail).isNull()
-        assertThat(result.thumbnail?.smallThumbnail).isEqualTo(mergedSmallThumbnail)
+        assertThat(result).isEqualTo(base)
+        verify { result.thumbnail = Thumbnail(null, null, mergedSmallThumbnail) }
 
     }
 
     @Test
     fun `merge when base thumbnail is not null`() {
-        val base = BookDetails(isbn)
-        val item = BookDetails(isbn)
-
-        base.thumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, null)
-        item.thumbnail = Thumbnail(null, null, mergedSmallThumbnail)
+        val baseThumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, null)
+        val itemThumbnail = Thumbnail(null, null, mergedSmallThumbnail)
+        val base: BookDetails = mockk(relaxed = true) {
+            every { thumbnail } returns baseThumbnail
+        }
+        val item: BookDetails = mockk(relaxed = true) {
+            every { thumbnail } returns itemThumbnail
+        }
 
         val result = controller.merge(base, item)
-        assertThat(result.thumbnail?.largeThumbnail).isEqualTo(mergedLargeThumbnail)
-        assertThat(result.thumbnail?.mediumThumbnail).isEqualTo(mergedMediumThumbnail)
-        assertThat(result.thumbnail?.smallThumbnail).isEqualTo(mergedSmallThumbnail)
-
+        assertThat(result).isEqualTo(base)
+        assertThat(baseThumbnail.smallThumbnail).isEqualTo(mergedSmallThumbnail)
+        assertThat(baseThumbnail.largeThumbnail).isEqualTo(mergedLargeThumbnail)
+        assertThat(baseThumbnail.mediumThumbnail).isEqualTo(mergedMediumThumbnail)
     }
 
     @Test
     fun `merged when base original is null`() {
-        val base = BookDetails(isbn)
-        val item = BookDetails(isbn)
         val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+
+        val base: BookDetails = mockk(relaxed = true)
+        val item: BookDetails = mockk(relaxed = true) {
+            every { original } returns itemOriginalProperty
+        }
 
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.NATIONAL_LIBRARY)] = itemOriginalValue0000
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.NATIONAL_LIBRARY)] = itemOriginalValue0001
@@ -87,15 +99,21 @@ class NaverBookDetailsControllerTest {
         item.original = itemOriginalProperty
 
         val result = controller.merge(base, item)
-        assertThat(result.original).isEqualTo(itemOriginalProperty)
+        assertThat(result).isEqualTo(base)
+        verify { result.original = itemOriginalProperty }
     }
 
     @Test
     fun `merged when base original is not null`() {
-        val base = BookDetails(isbn)
-        val item = BookDetails(isbn)
         val baseOriginalProperty = HashMap<OriginalPropertyKey, String>()
         val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+
+        val base: BookDetails = mockk(relaxed = true) {
+            every { original } returns baseOriginalProperty
+        }
+        val item: BookDetails = mockk(relaxed = true) {
+            every { original } returns itemOriginalProperty
+        }
 
         baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0000, MappingType.NAVER_BOOK)] = existsOriginalValue0000
         baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0001, MappingType.NAVER_BOOK)] = existsOriginalValue0001
@@ -108,11 +126,9 @@ class NaverBookDetailsControllerTest {
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.NATIONAL_LIBRARY,)] =
             itemOriginalValue0002
 
-        base.original = baseOriginalProperty
-        item.original = itemOriginalProperty
-
         val result = controller.merge(base, item)
-        assertThat(result.original).isEqualTo(baseOriginalProperty + itemOriginalProperty)
+        assertThat(result).isEqualTo(base)
+        verify { result.original = baseOriginalProperty + itemOriginalProperty }
     }
 
 }

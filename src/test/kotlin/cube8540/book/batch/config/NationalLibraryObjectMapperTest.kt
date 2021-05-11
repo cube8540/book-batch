@@ -35,20 +35,20 @@ class NationalLibraryObjectMapperTest {
         assertThat(result.totalCount).isEqualTo(3)
         assertThat(result.page).isEqualTo(1)
 
-        assertThat(result.books[0].isbn).isEqualTo("9791136242808")
-        assertThat(result.books[0].title).isEqualTo("학교생활! 1-12합본")
-        assertThat(result.books[0].publisher).isEqualTo("publishCode0001")
-        assertThat(result.books[0].publishDate).isEqualTo(LocalDate.of(2020, 8, 14))
+        assertThat(result.books[0].resolveIsbn()).isEqualTo("9791136242808")
+        assertThat(result.books[0].resolveTitle()).isEqualTo("학교생활! 1-12합본")
+        assertThat(result.books[0].resolvePublisher()).isEqualTo("publishCode0001")
+        assertThat(result.books[0].resolvePublishDate()).isEqualTo(LocalDate.of(2020, 8, 14))
 
-        assertThat(result.books[1].isbn).isEqualTo("9791136242792")
-        assertThat(result.books[1].title).isEqualTo("학교생활! 12")
-        assertThat(result.books[1].publisher).isEqualTo("publishCode0001")
-        assertThat(result.books[1].publishDate).isEqualTo(LocalDate.of(2020, 8, 14))
+        assertThat(result.books[1].resolveIsbn()).isEqualTo("9791136242792")
+        assertThat(result.books[1].resolveTitle()).isEqualTo("학교생활! 12")
+        assertThat(result.books[1].resolvePublisher()).isEqualTo("publishCode0001")
+        assertThat(result.books[1].resolvePublishDate()).isEqualTo(LocalDate.of(2020, 8, 14))
 
-        assertThat(result.books[2].isbn).isEqualTo("9791136226259")
-        assertThat(result.books[2].title).isEqualTo("학교생활! 12")
-        assertThat(result.books[2].publisher).isEqualTo("publishCode0002")
-        assertThat(result.books[2].publishDate).isEqualTo(LocalDate.of(2020, 4, 30))
+        assertThat(result.books[2].resolveIsbn()).isEqualTo("9791136226259")
+        assertThat(result.books[2].resolveTitle()).isEqualTo("학교생활! 12")
+        assertThat(result.books[2].resolvePublisher()).isEqualTo("publishCode0002")
+        assertThat(result.books[2].resolvePublishDate()).isEqualTo(LocalDate.of(2020, 4, 30))
     }
 
     @Test

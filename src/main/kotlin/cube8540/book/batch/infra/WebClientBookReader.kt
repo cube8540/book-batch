@@ -1,6 +1,6 @@
 package cube8540.book.batch.infra
 
-import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
 import cube8540.book.batch.external.exception.DefaultErrorCodeExternalExceptionCreator
@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriBuilder
 
 open class WebClientBookReader(private val uriBuilder: UriBuilder, private val webClient: WebClient)
-    : AbstractPagingItemReader<BookDetails>() {
+    : AbstractPagingItemReader<BookDetailsContext>() {
 
     lateinit var requestPageParameterName: String
     lateinit var requestPageSizeParameterName: String
@@ -26,7 +26,7 @@ open class WebClientBookReader(private val uriBuilder: UriBuilder, private val w
         }
 
         if (results == null) {
-            results = ArrayList<BookDetails>()
+            results = ArrayList<BookDetailsContext>()
         } else {
             results.clear()
         }
