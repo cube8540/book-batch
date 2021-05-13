@@ -161,3 +161,16 @@ create table if not exists publisher_keyword_mappings (
 
     foreign key (publisher_code) references publishers(publisher_code)
 );
+
+create table if not exists book_original_filters (
+    id varchar(32) not null primary key,
+    name varchar(32) not null,
+    mapping_type varchar(32) not null,
+    is_root boolean not null,
+    operator_type varchar(32),
+    property_name varchar(32),
+    regex varchar(128),
+    parent_id varchar(32),
+
+    foreign key (parent_id) references book_original_filters(id)
+);
