@@ -7,3 +7,7 @@ interface PublisherRawMapper {
 interface DivisionRawMapper {
     fun mapping(raws: List<String>): List<String>
 }
+
+interface BookDetailsFilterFunction {
+    fun filtering(bookDetails: BookDetails): Boolean
+}
