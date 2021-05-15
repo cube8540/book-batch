@@ -53,7 +53,7 @@ class DefaultBookDetailsFilterFunction(private val mappingType: MappingType, pri
     var cache: Operator<BookDetails>? = repository.findRootByMappingType(mappingType)
         private set
 
-    override fun filtering(bookDetails: BookDetails): Boolean = cache?.isValid(bookDetails) ?: true
+    override fun isValid(target: BookDetails?): Boolean = cache?.isValid(target) ?: true
 
     override fun reload() {
         this.cache = repository.findRootByMappingType(mappingType)

@@ -9,6 +9,20 @@ open class ContextToBookDetailsProcessor: ItemProcessor<BookDetailsContext, Book
     override fun process(item: BookDetailsContext): BookDetails = BookDetails(item)
 }
 
+open class BookDetailsIsbnNonNullProcessor: ItemProcessor<BookDetails, BookDetails> {
+    override fun process(item: BookDetails): BookDetails? = when (item.isbn.isEmpty()) {
+        false -> item
+        else -> null
+    }
+}
+
+open class BookDetailsPublisherNonNullProcessor: ItemProcessor<BookDetails, BookDetails> {
+    override fun process(item: BookDetails): BookDetails? = when (item.publisher != null) {
+        true -> item
+        else -> null
+    }
+}
+
 open class BookDetailsFilterProcessor(private val validator: Validatable<BookDetails>): ItemProcessor<BookDetails, BookDetails> {
     override fun process(item: BookDetails): BookDetails? =
         if (validator.isValid(item)) {

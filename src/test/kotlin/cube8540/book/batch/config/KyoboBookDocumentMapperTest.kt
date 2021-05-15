@@ -28,7 +28,7 @@ class KyoboBookDocumentMapperTest {
         every { mapping(listOf("47", "4722")) } returns listOf("division0000", "division0002")
     }
 
-    private val documentMapper = ResponseMapperConfiguration()
+    private val documentMapper = DefaultMapperConfiguration()
         .kyoboBookDocumentMapper(divisionRawMapper)
 
     @ParameterizedTest

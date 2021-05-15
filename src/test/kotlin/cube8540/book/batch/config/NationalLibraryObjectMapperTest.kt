@@ -21,7 +21,7 @@ class NationalLibraryObjectMapperTest {
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
-    private val objectMapper: ObjectMapper = ResponseMapperConfiguration()
+    private val objectMapper: ObjectMapper = DefaultMapperConfiguration()
         .nationalLibraryObjectMapper(publisherRawMapper)
 
     @Test

@@ -36,8 +36,10 @@ class BookOriginalFilter(idGenerator: BookDetailsFilterIdGenerator, mappingType:
     @OneToMany(mappedBy = "parent", cascade = [CascadeType.ALL])
     var children: MutableList<BookOriginalFilter>? = null
 
+    fun isOperator(): Boolean = operatorType != null
+
     override fun isValid(target: BookDetails): Boolean {
-        return if (root == true) {
+        return if (isOperator()) {
             if (operatorType == Operator.OperatorType.AND || operatorType == Operator.OperatorType.NAND) {
                 operatorType == Operator.OperatorType.AND == and(target)
             } else {
@@ -45,7 +47,7 @@ class BookOriginalFilter(idGenerator: BookDetailsFilterIdGenerator, mappingType:
             }
         } else {
             target.original?.get(OriginalPropertyKey(propertyRegex!!.propertyName, mappingType!!))
-                ?.let { propertyRegex!!.regex.matches(it) } ?: false
+                ?.let { propertyRegex!!.regex.find(it) != null } ?: false
         }
     }
 

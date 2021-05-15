@@ -35,19 +35,19 @@ class DefaultBookDetailsFilterFunctionTest {
         every { repository.findRootByMappingType(mappingType) } returns filter
 
         val filterFunction = DefaultBookDetailsFilterFunction(mappingType, repository)
-        val result = filterFunction.filtering(bookDetails)
+        val result = filterFunction.isValid(bookDetails)
         assertThat(result).isTrue
     }
 
     @Test
-    fun `filtering catch is null`() {
+    fun `filtering cache is null`() {
         val bookDetails: BookDetails = mockk(relaxed = true)
         val mappingType: MappingType = mockk(relaxed = true)
 
         every { repository.findRootByMappingType(mappingType) } returns null
 
         val filterFunction = DefaultBookDetailsFilterFunction(mappingType, repository)
-        val result = filterFunction.filtering(bookDetails)
+        val result = filterFunction.isValid(bookDetails)
         assertThat(result).isTrue
     }
 

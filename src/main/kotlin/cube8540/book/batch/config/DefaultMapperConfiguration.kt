@@ -10,10 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import cube8540.book.batch.domain.DivisionRawMapper
-import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.PublisherRawMapper
-import cube8540.book.batch.domain.repository.DivisionRepository
-import cube8540.book.batch.domain.repository.PublisherRepository
 import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDocumentMapper
@@ -21,8 +18,6 @@ import cube8540.book.batch.infra.naver.com.NaverBookAPIDeserializer
 import cube8540.book.batch.infra.naver.com.NaverBookAPIErrorDeserializer
 import cube8540.book.batch.infra.nl.go.NationalLibraryAPIDeserializer
 import cube8540.book.batch.infra.nl.go.NationalLibraryAPIErrorDeserializer
-import cube8540.book.batch.infra.DefaultDivisionRawMapper
-import cube8540.book.batch.infra.DefaultPublisherRawMapper
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,16 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Configuration
-class ResponseMapperConfiguration {
-
-    @Bean
-    fun naverPublisherRawMapper(repository: PublisherRepository) = DefaultPublisherRawMapper(MappingType.NAVER_BOOK, repository)
-
-    @Bean
-    fun nationalPublisherRawMapper(repository: PublisherRepository) = DefaultPublisherRawMapper(MappingType.NATIONAL_LIBRARY, repository)
-
-    @Bean
-    fun nationalDivisionRawMapper(repository: DivisionRepository) = DefaultDivisionRawMapper(MappingType.NATIONAL_LIBRARY, repository)
+class DefaultMapperConfiguration {
 
     @Bean
     @Primary
@@ -61,7 +47,7 @@ class ResponseMapperConfiguration {
 
     @Bean
     fun nationalLibraryObjectMapper(
-        @Qualifier("nationalPublisherRawMapper") publisherRawMapper: PublisherRawMapper
+        @Qualifier("nationalLibraryPublisherRawMapper") publisherRawMapper: PublisherRawMapper
     ): ObjectMapper = ObjectMapper()
         .registerModule(
             SimpleModule()
@@ -82,7 +68,7 @@ class ResponseMapperConfiguration {
 
     @Bean
     fun kyoboBookDocumentMapper(
-        @Qualifier("nationalDivisionRawMapper") divisionRawMapper: DivisionRawMapper
+        @Qualifier("kyoboDivisionRawMapper") divisionRawMapper: DivisionRawMapper
     ) = KyoboBookDocumentMapper(divisionRawMapper)
 
 }

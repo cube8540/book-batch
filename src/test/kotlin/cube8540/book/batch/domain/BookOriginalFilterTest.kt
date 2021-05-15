@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
 import java.util.stream.Stream
 
-class BookDetailsFilterTest {
+class BookOriginalFilterTest {
 
     private val id: String = UUID.randomUUID().toString().replace("-", "")
     private val idGenerator: BookDetailsFilterIdGenerator = mockk(relaxed = true) {
@@ -22,7 +22,7 @@ class BookDetailsFilterTest {
 
     @ParameterizedTest
     @MethodSource(value = ["operationResultProvider"])
-    fun `validation when filter is root`(operatorType: Operator.OperatorType, resultLeft: Boolean, resultRight: Boolean, expected: Boolean) {
+    fun `validation when filter is operator`(operatorType: Operator.OperatorType, resultLeft: Boolean, resultRight: Boolean, expected: Boolean) {
         val target: BookDetails = mockk(relaxed = true)
         val left: BookOriginalFilter = mockk(relaxed = true) {
             every { isValid(target) } returns resultLeft
@@ -31,7 +31,7 @@ class BookDetailsFilterTest {
             every { isValid(target) } returns resultRight
         }
 
-        configRoot(operatorType, listOf(left, right))
+        configOperator(operatorType, listOf(left, right))
 
         val result = filter.isValid(target)
         assertThat(result).isEqualTo(expected)
@@ -52,21 +52,21 @@ class BookDetailsFilterTest {
         original[OriginalPropertyKey(propertyName, MappingType.NAVER_BOOK)] = propertyValue
         every { propertyRegex.propertyName } returns propertyName
         every { propertyRegex.regex } returns regex
-        configNode(propertyRegex, MappingType.NAVER_BOOK)
+        configOperand(propertyRegex, MappingType.NAVER_BOOK)
         every { target.original } returns original
 
         val result = filter.isValid(target)
         assertThat(result).isTrue
     }
 
-    private fun configRoot(operatorType: Operator.OperatorType, children: List<BookOriginalFilter>) {
+    private fun configOperator(operatorType: Operator.OperatorType, children: List<BookOriginalFilter>) {
         filter.root = true
         filter.propertyRegex = null
         filter.operatorType = operatorType
         filter.children = children.toMutableList()
     }
 
-    private fun configNode(propertyRegex: PropertyRegex, mappingType: MappingType) {
+    private fun configOperand(propertyRegex: PropertyRegex, mappingType: MappingType) {
         filter.root = false
         filter.operatorType = null
         filter.children = null
