@@ -2,12 +2,14 @@ package cube8540.book.batch.infra.kyobo.kr
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
+import cube8540.book.batch.external.BookDetailsController
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
 import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.isbn
 import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessorTestEnvironment.responseBody
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -31,7 +33,13 @@ class KyoboWebClientBookProcessorTest {
         .build()
     private val bookDocumentMapper: BookDocumentMapper = mockk(relaxed = true)
 
+    private val controller: BookDetailsController = mockk(relaxed = true)
+
     private val processor = KyoboWebClientBookProcessor(webClient, bookDocumentMapper)
+
+    init {
+        processor.controller = controller
+    }
 
     @BeforeAll
     fun startup() {
@@ -60,15 +68,21 @@ class KyoboWebClientBookProcessorTest {
 
     @Test
     fun `book details processing`() {
+        val responseResolvedIsbn = "responseResolvedIsbn"
+        val responseResolvedBook: BookDetailsContext = mockk(relaxed = true) {
+            every { resolveIsbn() } returns responseResolvedIsbn
+        }
+
         val bookDetails: BookDetails = mockk(relaxed = true)
+        val mergedBook: BookDetails = mockk(relaxed = true)
+        val captor = slot<BookDetails>()
 
         val expectedPath = "${KyoboBookRequestNames.kyoboBookDetailsPath}?${KyoboBookRequestNames.isbn}=${isbn}"
         val mockResponse = MockResponse().setBody(responseBody)
 
-        val mappedBook: BookDetailsContext = mockk(relaxed = true)
-
         every { bookDetails.isbn } returns isbn
-        every { bookDocumentMapper.convertValue(document) } returns mappedBook
+        every { bookDocumentMapper.convertValue(document) } returns responseResolvedBook
+        every { controller.merge(bookDetails, capture(captor)) } returns mergedBook
         mockWebServer.dispatcher = object: Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse = when (request.path!! == expectedPath) {
                 true -> mockResponse
@@ -77,6 +91,7 @@ class KyoboWebClientBookProcessorTest {
         }
 
         val result = processor.process(bookDetails)
-        assertThat(result).isEqualTo(mappedBook)
+        assertThat(result).isEqualTo(mergedBook)
+        assertThat(captor.captured.isbn).isEqualTo(responseResolvedIsbn)
     }
 }

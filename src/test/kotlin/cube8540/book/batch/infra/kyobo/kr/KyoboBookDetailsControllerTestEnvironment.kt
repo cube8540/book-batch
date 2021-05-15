@@ -5,6 +5,8 @@ import java.net.URI
 object KyoboBookDetailsControllerTestEnvironment {
     internal const val isbn = "isbn0000"
 
+    internal const val mergedSeriesCode = "mergedSeriesCode"
+
     internal val mergedDivisions = setOf("division0000", "division0001", "division0002")
     internal val mergedAuthors = setOf("author0000", "author0001", "author0002")
 
