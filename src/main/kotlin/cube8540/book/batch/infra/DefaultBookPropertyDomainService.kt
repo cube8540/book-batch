@@ -2,8 +2,10 @@ package cube8540.book.batch.infra
 
 import cube8540.book.batch.Reloadable
 import cube8540.book.batch.domain.*
+import cube8540.book.batch.domain.repository.BookOriginalFilterRepository
 import cube8540.book.batch.domain.repository.DivisionCustomRepository
 import cube8540.book.batch.domain.repository.PublisherCustomRepository
+import io.github.cube8540.validator.core.Operator
 
 class DefaultPublisherRawMapper(private val mappingType: MappingType, private val repository: PublisherCustomRepository): PublisherRawMapper,
     Reloadable {
@@ -24,7 +26,8 @@ class DefaultPublisherRawMapper(private val mappingType: MappingType, private va
     }
 }
 
-class DefaultDivisionRawMapper(private val mappingType: MappingType, private val repository: DivisionCustomRepository): DivisionRawMapper, Reloadable {
+class DefaultDivisionRawMapper(private val mappingType: MappingType, private val repository: DivisionCustomRepository): DivisionRawMapper,
+    Reloadable {
 
     val catch: MutableList<Division> = ArrayList()
 
@@ -41,5 +44,18 @@ class DefaultDivisionRawMapper(private val mappingType: MappingType, private val
     override fun reload() {
         catch.clear()
         catch.addAll(repository.findByMappingType(mappingType))
+    }
+}
+
+class DefaultBookDetailsFilterFunction(private val mappingType: MappingType, private val repository: BookOriginalFilterRepository)
+    : BookDetailsFilterFunction, Reloadable {
+
+    var cache: Operator<BookDetails>? = repository.findRootsByMappingType(mappingType)
+        private set
+
+    override fun filtering(bookDetails: BookDetails): Boolean = cache?.isValid(bookDetails) ?: true
+
+    override fun reload() {
+        this.cache = repository.findRootsByMappingType(mappingType)
     }
 }

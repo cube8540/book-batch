@@ -46,7 +46,7 @@ dependencies {
 
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
-    implementation("io.github.cube8540:validator-core:1.2.0-RELEASE")
+    implementation("io.github.cube8540:validator-core:1.3.0-RELEASE")
 
     implementation("org.jsoup:jsoup:1.13.1")
 
