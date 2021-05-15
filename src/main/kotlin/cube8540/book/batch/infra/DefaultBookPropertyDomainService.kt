@@ -50,12 +50,12 @@ class DefaultDivisionRawMapper(private val mappingType: MappingType, private val
 class DefaultBookDetailsFilterFunction(private val mappingType: MappingType, private val repository: BookOriginalFilterRepository)
     : BookDetailsFilterFunction, Reloadable {
 
-    var cache: Operator<BookDetails>? = repository.findRootsByMappingType(mappingType)
+    var cache: Operator<BookDetails>? = repository.findRootByMappingType(mappingType)
         private set
 
     override fun filtering(bookDetails: BookDetails): Boolean = cache?.isValid(bookDetails) ?: true
 
     override fun reload() {
-        this.cache = repository.findRootsByMappingType(mappingType)
+        this.cache = repository.findRootByMappingType(mappingType)
     }
 }

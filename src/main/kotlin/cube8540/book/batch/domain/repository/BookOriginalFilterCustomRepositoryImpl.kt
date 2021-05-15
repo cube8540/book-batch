@@ -11,13 +11,12 @@ class BookOriginalFilterCustomRepositoryImpl(val queryFactory: JPAQueryFactory) 
 
     val bookOriginalFilter: QBookOriginalFilter = QBookOriginalFilter.bookOriginalFilter
 
-    override fun findRootsByMappingType(mappingType: MappingType): BookOriginalFilter? {
-        return queryFactory.selectFrom(bookOriginalFilter)
+    override fun findRootByMappingType(mappingType: MappingType): BookOriginalFilter? {
+        val filters = queryFactory.selectFrom(bookOriginalFilter)
+            .distinct()
             .leftJoin(bookOriginalFilter.children).fetchJoin()
-            .where(
-                bookOriginalFilter.mappingType.eq(mappingType),
-                bookOriginalFilter.root.isTrue
-            )
-            .fetchOne()
+            .where(bookOriginalFilter.mappingType.eq(mappingType))
+            .fetch()
+        return filters.find { it.root == true }
     }
 }

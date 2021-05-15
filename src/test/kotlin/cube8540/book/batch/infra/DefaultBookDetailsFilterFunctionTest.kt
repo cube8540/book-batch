@@ -18,7 +18,7 @@ class DefaultBookDetailsFilterFunctionTest {
         val mappingType: MappingType = mockk(relaxed = true)
         val filter: BookOriginalFilter = mockk(relaxed = true)
 
-        every { repository.findRootsByMappingType(mappingType) } returns filter
+        every { repository.findRootByMappingType(mappingType) } returns filter
 
         val filterFunction = DefaultBookDetailsFilterFunction(mappingType, repository)
         assertThat(filterFunction.cache).isEqualTo(filter)
@@ -32,7 +32,7 @@ class DefaultBookDetailsFilterFunctionTest {
             every { isValid(bookDetails) } returns true
         }
 
-        every { repository.findRootsByMappingType(mappingType) } returns filter
+        every { repository.findRootByMappingType(mappingType) } returns filter
 
         val filterFunction = DefaultBookDetailsFilterFunction(mappingType, repository)
         val result = filterFunction.filtering(bookDetails)
@@ -44,7 +44,7 @@ class DefaultBookDetailsFilterFunctionTest {
         val bookDetails: BookDetails = mockk(relaxed = true)
         val mappingType: MappingType = mockk(relaxed = true)
 
-        every { repository.findRootsByMappingType(mappingType) } returns null
+        every { repository.findRootByMappingType(mappingType) } returns null
 
         val filterFunction = DefaultBookDetailsFilterFunction(mappingType, repository)
         val result = filterFunction.filtering(bookDetails)
