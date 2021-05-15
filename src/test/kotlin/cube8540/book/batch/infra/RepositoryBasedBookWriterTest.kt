@@ -51,6 +51,7 @@ class RepositoryBasedBookWriterTest {
         every { controller.merge(existsBook1, item0002) } returns null
 
         writer.write(items)
+        verify { repository.detached(listOf(existsBook0, existsBook1)) }
         verifyPersist(listOf(item0000, item0003))
         verifyMerged(listOf(mergedBook0))
     }
@@ -86,6 +87,7 @@ class RepositoryBasedBookWriterTest {
         every { controller.merge(existsBook1, item0002) } returns mergedBook1
 
         writer.write(items)
+        verify { repository.detached(listOf(existsBook0, existsBook1)) }
         verifyPersist(listOf(item0000, item0003))
         verifyMerged(listOf(mergedBook0, mergedBook1))
     }

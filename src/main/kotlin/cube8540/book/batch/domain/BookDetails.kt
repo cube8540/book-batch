@@ -38,7 +38,8 @@ class BookDetails(context: BookDetailsContext) {
     @Embedded
     var thumbnail: Thumbnail? = context.resolveThumbnail()
 
-    @Column(name = "description", length = 248)
+    @Lob
+    @Column(name = "description", columnDefinition = "text")
     var description: String? = context.resolveDescription()
 
     @ElementCollection

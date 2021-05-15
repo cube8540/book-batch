@@ -30,6 +30,8 @@ interface BookDetailsPersistCustomRepository {
 
 interface BookDetailsCustomRepository {
     fun findById(isbn: List<String>): List<BookDetails>
+
+    fun detached(books: List<BookDetails>)
 }
 
 interface BookDetailsRepository: JpaRepository<BookDetails, String>, BookDetailsPersistCustomRepository, BookDetailsCustomRepository

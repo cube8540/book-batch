@@ -16,6 +16,7 @@ open class RepositoryBasedBookWriter(
 
         if (items.isNotEmpty()) {
             val existsBookDetails = bookDetailsRepository.findById(items.map { it.isbn })
+             bookDetailsRepository.detached(existsBookDetails)
             items.forEach { item ->
                 val exists = existsBookDetails.find { book -> item.isbn == book.isbn }
                 if (exists != null) {

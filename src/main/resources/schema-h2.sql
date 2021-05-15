@@ -88,7 +88,7 @@ create table if not exists book_details (
     lage_thumbnail_url varchar(128),
     medium_thumbnail_url varchar(128),
     small_thumbnail_url varchar(128),
-    description varchar(248),
+    description clob,
     price double,
     created_at timestamp not null
 );
