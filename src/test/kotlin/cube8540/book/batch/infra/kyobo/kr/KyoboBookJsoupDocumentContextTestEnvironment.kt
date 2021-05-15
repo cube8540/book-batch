@@ -15,6 +15,7 @@ object KyoboBookJsoupDocumentContextTestEnvironment {
     const val originalPrice = "5000"
 
     const val seriesBarcode = "seriesBarcode00001"
+    const val secondSeriesBarcode = "secondSeriesBarcode000001"
 
     const val categoryDepth0 = "01"
     const val categoryDepth1 = "0101"

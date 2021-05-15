@@ -7,6 +7,7 @@ import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
+ import kotlin.math.abs
 
 class KyoboBookJsoupDocumentContext(private val document: Document, private val divisionMapper: DivisionRawMapper): BookDetailsContext {
 
@@ -34,9 +35,17 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }
         .attr(content)
 
-    override fun resolveSeriesCode(): String? = inputTags
-        .first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }
-        .attr(value)
+    override fun resolveSeriesCode(): String? {
+        val seriesCode = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
+        val aBarcode = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }.attr(value)
+        return if (seriesCode != null && seriesCode.isNotEmpty()) {
+            seriesCode
+        } else if (aBarcode.isNotEmpty()) {
+            aBarcode
+        } else {
+            null
+        }
+    }
 
     override fun resolveDivisions(): Set<String> {
         val rawDivisions = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }.attr(value)
@@ -67,7 +76,7 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         )
     }
 
-    override fun resolveDescription(): String? = document.select(KyoboBookClassSelector.description).first().text()
+    override fun resolveDescription(): String? = document.select(KyoboBookClassSelector.description)?.first()?.text()
 
     override fun resolveKeywords(): Set<String>? = null
 
@@ -89,7 +98,10 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.originalPrice, mappingType)] = metaTags
             .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
             .attr(content)
-        original[OriginalPropertyKey(KyoboBookInputNameSelector.seriesBarcode, mappingType)] = resolveSeriesCode()
+        original[OriginalPropertyKey(KyoboBookInputNameSelector.seriesBarcode, mappingType)] =
+            inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
+        original[OriginalPropertyKey(KyoboBookInputNameSelector.aBarcode, mappingType)] =
+            inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }.attr(value)
         original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, mappingType)] = inputTags
             .first { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }.attr(value)
         return original

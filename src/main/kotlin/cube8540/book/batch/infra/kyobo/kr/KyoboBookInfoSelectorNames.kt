@@ -15,6 +15,7 @@ object KyoboBookMetaTagPropertySelector {
 
 object KyoboBookInputNameSelector {
     const val seriesBarcode = "sBarcode"
+    const val aBarcode = "aBarcode" // 정확한 풀네임을 모르겠다..
     const val categoryCode = "pt"
 }
 
