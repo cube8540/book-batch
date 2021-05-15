@@ -22,6 +22,7 @@ import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironm
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedLargeThumbnail
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedMediumThumbnail
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedPrice
+import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedSeriesCode
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedSmallThumbnail
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedTitle
 import io.mockk.every
@@ -43,6 +44,7 @@ class KyoboBookDetailsControllerTest {
             every { title } returns mergedTitle
             every { description } returns mergedDescription
             every { price } returns mergedPrice
+            every { seriesCode } returns mergedSeriesCode
         }
 
         val result = controller.merge(base, item)
@@ -53,6 +55,7 @@ class KyoboBookDetailsControllerTest {
             base.title = mergedTitle
             base.description = mergedDescription
             base.price = mergedPrice
+            base.seriesCode = mergedSeriesCode
         }
     }
 
