@@ -13,17 +13,21 @@ class PublisherCustomRepositoryImpl(val queryFactory: JPAQueryFactory ): Publish
 
     val publisher: QPublisher = QPublisher.publisher
 
-    override fun findByMappingType(mappingType: MappingType): List<Publisher> {
+    override fun findByMappingTypeWithRaw(mappingType: MappingType): List<Publisher> {
         val raw = QRawProperty("raw")
-        val keyword = QRawProperty("keyword")
 
         return queryFactory.selectFrom(publisher)
             .leftJoin(publisher.raws, raw).fetchJoin()
+            .where(raw.mappingType.eq(mappingType))
+            .fetch()
+    }
+
+    override fun findByMappingTypeWithKeyword(mappingType: MappingType): List<Publisher> {
+        val keyword = QRawProperty("keyword")
+
+        return queryFactory.selectFrom(publisher)
             .leftJoin(publisher.keywords, keyword).fetchJoin()
-            .where(
-                raw.mappingType.eq(mappingType),
-                keyword.mappingType.eq(mappingType)
-            )
+            .where(keyword.mappingType.eq(mappingType))
             .fetch()
     }
 }
