@@ -7,9 +7,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties(prefix = "api-authentication")
+@ConfigurationProperties(prefix = "api.authentication")
 class AuthenticationProperty(
     val nationalLibrary: NationalLibraryAPIKey,
     val naverBook: NaverBookAPIKey,
     val kyobo: KyoboAuthenticationInfo
+)
+
+@ConstructorBinding
+@ConfigurationProperties(prefix = "api.connection")
+class APIConnectionProperty(
+    val maxWaitSecond: Int? = 5,
+    val retryCount: Int? = 1,
+    val retryDelaySecond: Int? = 5
+)
+
+@ConstructorBinding
+@ConfigurationProperties(prefix = "job-task-executor")
+class JobTaskExecutorProperty(
+    val corePoolSize: Int? = 10,
+    val maxPoolSize: Int? = 10,
+    val throttleLimit: Int? = 10
 )
