@@ -11,14 +11,26 @@ import org.springframework.batch.item.database.AbstractPagingItemReader
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriBuilder
+import reactor.util.retry.Retry
+import java.time.Duration
 
-open class WebClientBookReader(private val uriBuilder: UriBuilder, private val webClient: WebClient)
-    : AbstractPagingItemReader<BookDetailsContext>() {
+open class WebClientBookReader(
+    private val uriBuilder: UriBuilder,
+    private val webClient: WebClient
+) : AbstractPagingItemReader<BookDetailsContext>() {
+
+    companion object {
+        const val defaultRetryCount = 1
+        const val defaultRetryDelaySecond = 5
+    }
 
     var pageDecision: PageDecision = DefaultPageDecision()
 
     lateinit var requestPageParameterName: String
     lateinit var requestPageSizeParameterName: String
+
+    var retryCount: Int = defaultRetryCount
+    var retryDelaySecond: Int = defaultRetryDelaySecond
 
     var exceptionCreator: ErrorCodeExternalExceptionCreator = DefaultErrorCodeExternalExceptionCreator()
 
@@ -57,5 +69,6 @@ open class WebClientBookReader(private val uriBuilder: UriBuilder, private val w
                 it.bodyToMono(BookAPIResponse::class.java)
             }
         }
+        .retryWhen(Retry.fixedDelay(retryCount.toLong(), Duration.ofSeconds(retryDelaySecond.toLong())))
         .block()
 }
