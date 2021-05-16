@@ -121,7 +121,7 @@ create table if not exists book_detail_originals (
     isbn varchar(32) not null,
     property varchar(32) not null,
     mapping_type varchar(32) not null,
-    value varchar(128),
+    value varchar(1024),
 
     foreign key (isbn) references book_details(isbn)
 );
