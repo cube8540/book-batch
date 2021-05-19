@@ -52,6 +52,7 @@ dependencies {
 
     testImplementation("com.h2database:h2:1.4.200")
     testImplementation("io.mockk:mockk:1.10.6")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
     testImplementation("org.assertj:assertj-core:3.11.1")
     testImplementation("org.springframework.batch:spring-batch-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

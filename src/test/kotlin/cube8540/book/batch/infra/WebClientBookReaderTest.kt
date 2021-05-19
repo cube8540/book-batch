@@ -68,7 +68,7 @@ class WebClientBookReaderTest {
     }
 
     @Test
-    fun `read value when results already not empty`() {
+    fun `api returns empty data when results already not empty`() {
         val randomPage = Random.nextInt()
 
         every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
