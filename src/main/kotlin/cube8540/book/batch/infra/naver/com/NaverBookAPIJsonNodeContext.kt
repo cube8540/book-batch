@@ -16,7 +16,15 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
         internal val mappingType = MappingType.NAVER_BOOK
     }
 
-    override fun resolveIsbn(): String = jsonNode.get(NaverBookAPIResponseNames.isbn).asText().split(" ")[1]
+    override fun resolveIsbn(): String {
+        val node = jsonNode.get(NaverBookAPIResponseNames.isbn) ?: return ""
+        val texts = node.asText().split(" ")
+        return if (texts.size >= 2) {
+            texts[1]
+        } else {
+            ""
+        }
+    }
 
     override fun resolveTitle(): String? = jsonNode.get(NaverBookAPIResponseNames.title)?.asText()
 
