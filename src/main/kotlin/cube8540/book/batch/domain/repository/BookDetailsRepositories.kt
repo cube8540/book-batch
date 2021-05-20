@@ -1,7 +1,10 @@
 package cube8540.book.batch.domain.repository
 
 import cube8540.book.batch.domain.BookDetails
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.repository.JpaRepository
+import java.time.LocalDate
 
 interface BookDetailsPersistCustomRepository {
 
@@ -30,6 +33,8 @@ interface BookDetailsPersistCustomRepository {
 
 interface BookDetailsCustomRepository {
     fun findById(isbn: List<String>): List<BookDetails>
+
+    fun findByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails>
 
     fun detached(books: List<BookDetails>)
 }
