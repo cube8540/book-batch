@@ -1,4 +1,4 @@
-package cube8540.book.batch.infra
+package cube8540.book.batch.job.reader
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails

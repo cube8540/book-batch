@@ -1,6 +1,7 @@
-package cube8540.book.batch.infra
+package cube8540.book.batch.job.processor
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
 import io.github.cube8540.validator.core.Validatable
 import io.mockk.every
 import io.mockk.mockk

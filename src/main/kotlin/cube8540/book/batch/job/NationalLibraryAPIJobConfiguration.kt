@@ -8,10 +8,15 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.infra.*
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIAuthenticationFilter
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsController
+import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
+import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
+import cube8540.book.batch.job.processor.BookDetailsPublisherNonNullProcessor
+import cube8540.book.batch.job.processor.ContextToBookDetailsProcessor
+import cube8540.book.batch.job.reader.WebClientBookReader
+import cube8540.book.batch.job.writer.RepositoryBasedBookWriter
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory

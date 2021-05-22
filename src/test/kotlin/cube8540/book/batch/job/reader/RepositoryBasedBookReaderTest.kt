@@ -1,8 +1,9 @@
-package cube8540.book.batch.infra
+package cube8540.book.batch.job.reader
 
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.job.reader.RepositoryBasedBookReader
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

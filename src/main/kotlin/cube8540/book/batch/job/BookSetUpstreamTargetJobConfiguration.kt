@@ -4,10 +4,10 @@ import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.infra.BookDetailsFilterProcessor
-import cube8540.book.batch.infra.BookSetUpstreamTargetProcessor
-import cube8540.book.batch.infra.RepositoryBasedBookReader
-import cube8540.book.batch.infra.RepositoryBasedUpstreamTargetWriter
+import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
+import cube8540.book.batch.job.processor.BookSetUpstreamTargetProcessor
+import cube8540.book.batch.job.reader.RepositoryBasedBookReader
+import cube8540.book.batch.job.writer.RepositoryBasedUpstreamTargetWriter
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory

@@ -6,8 +6,8 @@ import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.infra.RepositoryBasedBookReader
-import cube8540.book.batch.infra.RepositoryBasedBookWriter
+import cube8540.book.batch.job.reader.RepositoryBasedBookReader
+import cube8540.book.batch.job.writer.RepositoryBasedBookWriter
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsController
 import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
 import cube8540.book.batch.external.kyobo.kr.KyoboLoginFilter
