@@ -3,6 +3,7 @@ package cube8540.book.batch.job
 import com.nhaarman.mockitokotlin2.capture
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
+import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
@@ -68,12 +70,13 @@ class BookSetUpstreamTargetTest constructor(
 
     @Test
     fun `set book details upstream target`() {
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val jobParameters = createJobParameters()
         val bookDetails: BookDetails = mockk(relaxed = true)
 
         val queryResultContents = listOf(bookDetails)
-        val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize)
-        val secondPageRequest = PageRequest.of(1, BookSetUpstreamTargetJobConfiguration.defaultChunkSize)
+        val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
+        val secondPageRequest = PageRequest.of(1, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
 
         Mockito.`when`(bookDetailsRepository.findByPublishDateBetween(from, to, firstPageRequest))
             .thenReturn(PageImpl(queryResultContents, firstPageRequest, 1))
@@ -95,12 +98,13 @@ class BookSetUpstreamTargetTest constructor(
 
     @Test
     fun `set book details upstream target when filtering returns false`() {
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val jobParameters = createJobParameters()
         val bookDetails: BookDetails = mockk(relaxed = true)
 
         val queryResultContents = listOf(bookDetails)
-        val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize)
-        val secondPageRequest = PageRequest.of(1, BookSetUpstreamTargetJobConfiguration.defaultChunkSize)
+        val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
+        val secondPageRequest = PageRequest.of(1, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
 
         Mockito.`when`(bookDetailsRepository.findByPublishDateBetween(from, to, firstPageRequest))
             .thenReturn(PageImpl(queryResultContents, firstPageRequest, 1))

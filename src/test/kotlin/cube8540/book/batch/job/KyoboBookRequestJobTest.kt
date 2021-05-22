@@ -3,6 +3,7 @@ package cube8540.book.batch.job
 import com.nhaarman.mockitokotlin2.capture
 import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookRequestNames
@@ -33,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
@@ -71,14 +73,15 @@ class KyoboBookRequestJobTest constructor(
 
     @Test
     fun `request kyobo book details`() {
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val jobParameters = createJobParameters()
         val bookDetails: BookDetails = mockk(relaxed = true) {
             every { isbn } returns "9791133447831"
             every { thumbnail } returns null
         }
         val queryResultContents = listOf(bookDetails)
-        val firstPageRequest = PageRequest.of(0, KyoboBookRequestJobConfiguration.defaultChunkSize)
-        val secondPageRequest = PageRequest.of(1, KyoboBookRequestJobConfiguration.defaultChunkSize)
+        val firstPageRequest = PageRequest.of(0, KyoboBookRequestJobConfiguration.defaultChunkSize, sort)
+        val secondPageRequest = PageRequest.of(1, KyoboBookRequestJobConfiguration.defaultChunkSize, sort)
         val dispatcherOptions = listOf(
             LoginDispatcherOptions(KyoboBookRequestNames.loginUrl, authenticationProperty),
             BookDetailsDispatcherOptions(KyoboBookRequestNames.kyoboBookDetailsPath + "?${KyoboBookRequestNames.isbn}=9791133447831")
