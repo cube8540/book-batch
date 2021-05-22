@@ -1,4 +1,6 @@
 spring:
+  main:
+    web-application-type: none
   datasource:
     hikari:
       username: #your database username
