@@ -29,6 +29,22 @@ class NaverBookAPIJsonNodeContextTest {
     }
 
     @Test
+    fun `resolve isbn is null`() {
+        every { jsonNode.get(NaverBookAPIResponseNames.isbn) } returns null
+
+        val result = context.resolveIsbn()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `resolve isbn is not has empty space`() {
+        every { jsonNode.get(NaverBookAPIResponseNames.isbn) } returns TextNode(isbn0)
+
+        val result = context.resolveIsbn()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
     fun `resolve publisher`() {
         every { jsonNode.get(NaverBookAPIResponseNames.publisher) } returns TextNode(publisher)
         every { publisherRawMapper.mapping(publisher) } returns publisherCode
@@ -36,5 +52,4 @@ class NaverBookAPIJsonNodeContextTest {
         val result = context.resolvePublisher()
         assertThat(result).isEqualTo(publisherCode)
     }
-
 }

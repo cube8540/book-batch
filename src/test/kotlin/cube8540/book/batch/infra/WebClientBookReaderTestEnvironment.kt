@@ -14,21 +14,24 @@ import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
 import io.mockk.mockk
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.codec.json.Jackson2JsonDecoder
+import org.springframework.http.codec.json.Jackson2JsonEncoder
+import org.springframework.web.reactive.function.client.ExchangeStrategies
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.netty.http.client.HttpClient
+import java.time.Duration
 
 object WebClientBookReaderTestEnvironment {
 
+    private const val successfulResponse = "{\"success\": \"true\"}"
+    private const val emptyResponse = "{\"empty\": \"true\"}"
+    private const val error = "{\"error\": \"true\"}"
+
     internal const val endpoint = "/endpoint"
-    internal val bookDetailsMockTestKotlinObjectMapper = ObjectMapper()
-        .registerModule(KotlinModule())
-        .registerModule(
-            SimpleModule()
-                .addDeserializer(BookAPIResponse::class.java, MockTestDeserializer())
-                .addKeyDeserializer(OriginalPropertyKey::class.java, object: KeyDeserializer() {
-                    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): Any = "key"
-                })
-        )
 
     internal const val errorCode = "errorCode0001"
     internal const val errorMessage = "errorMessage0001"
@@ -42,27 +45,62 @@ object WebClientBookReaderTestEnvironment {
 
     internal val bookDetailsContext: BookDetailsContext = mockk(relaxed = true)
 
-    internal val mockResponse = MockResponse()
+    internal val mockSuccessfulResponse = MockResponse()
+        .setResponseCode(200)
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .setBody("{\"data\": 1}")
+        .setBody(successfulResponse)
 
     internal val mockEmptyResponse = MockResponse()
+        .setResponseCode(200)
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .setBody("{\"data\": 0}")
+        .setBody(emptyResponse)
 
     internal val mockErrorResponse = MockResponse()
-        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .setResponseCode(400)
-        .setBody(bookDetailsMockTestKotlinObjectMapper.writeValueAsString(BookAPIErrorResponse(errorCode, errorMessage)))
+        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .setBody(error)
+
+    internal fun createWebClient(mockWebServer: MockWebServer): WebClient {
+        val httpClient = HttpClient.create().responseTimeout(Duration.ofSeconds(1))
+        val kotlinObjectMapper = ObjectMapper()
+            .registerModule(KotlinModule())
+            .registerModule(
+                SimpleModule()
+                    .addKeyDeserializer(OriginalPropertyKey::class.java, object: KeyDeserializer() {
+                        override fun deserializeKey(key: String?, ctxt: DeserializationContext?): Any = "key"
+                    })
+                    .addDeserializer(BookAPIResponse::class.java, MockTestDeserializer())
+                    .addDeserializer(BookAPIErrorResponse::class.java, MockTestErrorDeserializer())
+            )
+        return WebClient.builder()
+            .baseUrl(mockWebServer.url("/").toString())
+            .clientConnector(ReactorClientHttpConnector(httpClient))
+            .exchangeStrategies(
+                ExchangeStrategies.builder().codecs {
+                    it.customCodecs().register(Jackson2JsonEncoder(kotlinObjectMapper))
+                    it.customCodecs().register(Jackson2JsonDecoder(kotlinObjectMapper))
+                }
+                .build()
+            )
+            .build()
+    }
 
     internal class MockTestDeserializer: StdDeserializer<BookAPIResponse>(BookAPIResponse::class.java) {
         override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): BookAPIResponse {
             val node = p0?.codec?.readTree<JsonNode>(p0)
-            return if (node?.get("data")?.asInt()?.equals(1) == true) {
-                BookAPIResponse(totalCount, pageNumber, listOf(bookDetailsContext))
-            } else {
-                BookAPIResponse(totalCount, pageNumber, emptyList())
+            return when {
+                node?.get("success")?.asBoolean() == true -> {
+                    BookAPIResponse(totalCount, pageNumber, listOf(bookDetailsContext))
+                }
+                else -> {
+                    BookAPIResponse(totalCount, pageNumber, emptyList())
+                }
             }
         }
+    }
+
+    internal class MockTestErrorDeserializer: StdDeserializer<BookAPIErrorResponse>(BookAPIErrorResponse::class.java) {
+        override fun deserialize(p0: JsonParser?, p1: DeserializationContext?): BookAPIErrorResponse =
+            BookAPIErrorResponse(errorCode, errorMessage)
     }
 }

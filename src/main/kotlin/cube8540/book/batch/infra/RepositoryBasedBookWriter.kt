@@ -3,12 +3,12 @@ package cube8540.book.batch.infra
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.external.BookDetailsController
-import org.springframework.batch.item.ItemWriter
+import org.springframework.batch.item.support.AbstractItemStreamItemWriter
 
 open class RepositoryBasedBookWriter(
     private val bookDetailsRepository: BookDetailsRepository,
     private val controller: BookDetailsController
-): ItemWriter<BookDetails> {
+): AbstractItemStreamItemWriter<BookDetails>() {
 
     override fun write(items: MutableList<out BookDetails>) {
         val persistList = ArrayList<BookDetails>()
@@ -16,7 +16,7 @@ open class RepositoryBasedBookWriter(
 
         if (items.isNotEmpty()) {
             val existsBookDetails = bookDetailsRepository.findById(items.map { it.isbn })
-             bookDetailsRepository.detached(existsBookDetails)
+            bookDetailsRepository.detached(existsBookDetails)
             items.forEach { item ->
                 val exists = existsBookDetails.find { book -> item.isbn == book.isbn }
                 if (exists != null) {

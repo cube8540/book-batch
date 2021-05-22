@@ -3,17 +3,19 @@ package cube8540.book.batch.domain.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
-import javax.persistence.EntityManager
+import java.time.LocalDate
 
 @Repository
-class BookDetailsCustomRepositoryImpl(private val entityManager: EntityManager): BookDetailsCustomRepository {
+class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepositorySupport(BookDetails::class.java) {
     val bookDetails: QBookDetails = QBookDetails.bookDetails
 
-    val queryFactory: JPAQueryFactory = JPAQueryFactory(entityManager)
-
     override fun findById(isbn: List<String>): List<BookDetails> {
-        return queryFactory.selectFrom(bookDetails)
+        return from(bookDetails)
             .leftJoin(bookDetails.divisions).fetchJoin()
             .leftJoin(bookDetails.authors).fetchJoin()
             .leftJoin(bookDetails.keywords).fetchJoin()
@@ -22,7 +24,28 @@ class BookDetailsCustomRepositoryImpl(private val entityManager: EntityManager):
             .fetch()
     }
 
+    override fun findByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails> {
+        val queryFactory = JPAQueryFactory(entityManager)
+        val queryExpression = queryFactory.select(bookDetails.isbn)
+            .from(bookDetails)
+            .where(bookDetails.publishDate.between(from, to))
+        querydsl!!.applyPagination(pageRequest, queryExpression)
+
+        val queryResults = queryExpression.fetchResults()
+
+        val bookDetailsExpression = from(bookDetails)
+            .distinct()
+            .leftJoin(bookDetails.divisions).fetchJoin()
+            .leftJoin(bookDetails.authors).fetchJoin()
+            .leftJoin(bookDetails.keywords).fetchJoin()
+            .leftJoin(bookDetails.original).fetchJoin()
+            .where(bookDetails.isbn.`in`(queryResults.results))
+        querydsl!!.applySorting(pageRequest.sort, bookDetailsExpression)
+
+        return PageImpl(bookDetailsExpression.fetch(), pageRequest, queryResults.total)
+    }
+
     override fun detached(books: List<BookDetails>) {
-        books.forEach { entityManager.detach(it) }
+        books.forEach { entityManager!!.detach(it) }
     }
 }
