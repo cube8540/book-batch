@@ -1,14 +1,17 @@
 package cube8540.book.batch.infra
 
 import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -29,10 +32,25 @@ class RepositoryBasedBookReaderTest {
     }
 
     @Test
+    fun `detached read value`() {
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
+        val firstBookDetails: BookDetails = mockk(relaxed = true)
+        val requestPage = PageRequest.of(reader.page, pageSize, sort)
+
+        val bookDetails: List<BookDetails> = listOf(firstBookDetails, mockk(relaxed = true), mockk(relaxed = true))
+        val pageResult = PageImpl(bookDetails, requestPage, totalCount.toLong())
+
+        every { repository.findByPublishDateBetween(from, to, requestPage) } returns pageResult
+
+        reader.read()
+        verify { repository.detached(bookDetails) }
+    }
+
+    @Test
     fun `read value`() {
         val firstBookDetails: BookDetails = mockk(relaxed = true)
-        val requestPage = PageRequest.of(reader.page, pageSize)
-
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
+        val requestPage = PageRequest.of(reader.page, pageSize, sort)
         val bookDetails: List<BookDetails> = listOf(firstBookDetails, mockk(relaxed = true), mockk(relaxed = true))
         val pageResult = PageImpl(bookDetails, requestPage, totalCount.toLong())
 
@@ -44,8 +62,9 @@ class RepositoryBasedBookReaderTest {
 
     @Test
     fun `database returns empty data when results already not empty`() {
-        val firstRequestPage = PageRequest.of(reader.page, pageSize)
-        val secondRequestPage = PageRequest.of(reader.page + 1, pageSize)
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
+        val firstRequestPage = PageRequest.of(reader.page, pageSize, sort)
+        val secondRequestPage = PageRequest.of(reader.page + 1, pageSize, sort)
 
         val bookDetails: List<BookDetails> = listOf(mockk(relaxed = true))
         val firstReaderPageResult = PageImpl(bookDetails, firstRequestPage, totalCount.toLong())

@@ -35,6 +35,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.netty.http.client.HttpClient
 import java.net.URI
+import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.format.DateTimeFormatter
 
@@ -114,6 +115,7 @@ class NationalLibraryAPIJobConfiguration {
             .queryParam(NationalLibraryAPIRequestNames.isbnKeyword, jobParameter.isbn)
             .queryParam(NationalLibraryAPIRequestNames.resultStyle, "json")
             .queryParam(NationalLibraryAPIRequestNames.ebookYN, "N")
+            .encode(StandardCharsets.UTF_8)
 
         val webClient = WebClient.builder()
             .exchangeStrategies(
