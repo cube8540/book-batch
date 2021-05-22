@@ -27,17 +27,15 @@ class NaverBookAPIDeserializerTest {
     fun `response deserialization when book is empty`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: XmlMapper = mockk(relaxed = true)
-        val channelNode: JsonNode = mockk(relaxed = true)
         val responseNode: JsonNode = mockk(relaxed = true)
 
         every { responseNode.get(NaverBookAPIResponseNames.totalCount) } returns IntNode(totalCount)
         every { responseNode.get(NaverBookAPIResponseNames.start) } returns IntNode(start)
         every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
         every { responseNode.get(NaverBookAPIResponseNames.item) } returns null
-        every { channelNode.get(NaverBookAPIResponseNames.channel) } returns responseNode
 
         every { jsonParser.codec } returns codec
-        every { codec.readTree<JsonNode>(jsonParser) } returns channelNode
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
         assertThat(response.page).isEqualTo(start.toLong())
@@ -49,7 +47,6 @@ class NaverBookAPIDeserializerTest {
     fun `response deserialization when book node is not array node`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: XmlMapper = mockk(relaxed = true)
-        val channelNode: JsonNode = mockk(relaxed = true)
         val responseNode: JsonNode = mockk(relaxed = true)
         val bookNode: JsonNode = mockk(relaxed = true)
 
@@ -58,10 +55,9 @@ class NaverBookAPIDeserializerTest {
         every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
         every { responseNode.get(NaverBookAPIResponseNames.item) } returns bookNode
 
-        every { channelNode.get(NaverBookAPIResponseNames.channel) } returns responseNode
 
         every { jsonParser.codec } returns codec
-        every { codec.readTree<JsonNode>(jsonParser) } returns channelNode
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
         assertThat(response.page).isEqualTo(start.toLong())
@@ -74,7 +70,6 @@ class NaverBookAPIDeserializerTest {
     fun `response deserialization when book node is array node`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: XmlMapper = mockk(relaxed = true)
-        val channelNode: JsonNode = mockk(relaxed = true)
         val responseNode: JsonNode = mockk(relaxed = true)
         val bookNode0: JsonNode = mockk(relaxed = true)
         val bookNode1: JsonNode = mockk(relaxed = true)
@@ -90,10 +85,8 @@ class NaverBookAPIDeserializerTest {
         every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
         every { responseNode.get(NaverBookAPIResponseNames.item) } returns bookArrayNode
 
-        every { channelNode.get(NaverBookAPIResponseNames.channel) } returns responseNode
-
         every { jsonParser.codec } returns codec
-        every { codec.readTree<JsonNode>(jsonParser) } returns channelNode
+        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
         assertThat(response.page).isEqualTo(start.toLong())

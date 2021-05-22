@@ -13,8 +13,7 @@ class NaverBookAPIDeserializer(private val publisherRawMapper: PublisherRawMappe
     : StdDeserializer<BookAPIResponse>(BookAPIResponse::class.java) {
 
     override fun deserialize(p0: JsonParser, p1: DeserializationContext?): BookAPIResponse {
-        val channel = p0.codec.readTree<JsonNode>(p0)
-        val responseBody = channel.get(NaverBookAPIResponseNames.channel)!!
+        val responseBody = p0.codec.readTree<JsonNode>(p0)
 
         val books: List<BookDetailsContext> = when (val bookNode = responseBody.get(NaverBookAPIResponseNames.item)) {
             null -> emptyList()

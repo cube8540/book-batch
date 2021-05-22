@@ -34,7 +34,7 @@ class DefaultPublisherRawMapperTest {
     private val publisherRawMapper: DefaultPublisherRawMapper
 
     init {
-        every { publisherRepository.findByMappingType(mappingType) } returns publishers
+        every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns publishers
         publisherRawMapper = DefaultPublisherRawMapper(mappingType, publisherRepository)
     }
 
@@ -83,7 +83,7 @@ class DefaultPublisherRawMapperTest {
 
         @Test
         fun `reload publisher`() {
-            every { publisherRepository.findByMappingType(mappingType) } returns reloadedPublishers
+            every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns reloadedPublishers
 
             publisherRawMapper.reload()
             assertThat(publisherRawMapper.cache).isEqualTo(reloadedPublishers)

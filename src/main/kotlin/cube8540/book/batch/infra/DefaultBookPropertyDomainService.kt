@@ -13,7 +13,7 @@ class DefaultPublisherRawMapper(private val mappingType: MappingType, private va
     val cache: MutableList<Publisher> = ArrayList()
 
     init {
-        cache.addAll(repository.findByMappingType(mappingType))
+        cache.addAll(repository.findByMappingTypeWithRaw(mappingType))
     }
 
     override fun mapping(raw: String): String? {
@@ -22,7 +22,7 @@ class DefaultPublisherRawMapper(private val mappingType: MappingType, private va
 
     override fun reload() {
         this.cache.clear()
-        this.cache.addAll(repository.findByMappingType(mappingType))
+        this.cache.addAll(repository.findByMappingTypeWithRaw(mappingType))
     }
 }
 

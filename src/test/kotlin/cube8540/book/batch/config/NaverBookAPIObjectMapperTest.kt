@@ -15,8 +15,8 @@ import java.time.LocalDate
 class NaverBookAPIObjectMapperTest {
 
     companion object {
-        const val exampleXmlFile = "naver-book-api-response-example.xml"
-        const val exampleErrorXmlFile = "naver-book-api-error-response-example.xml"
+        const val exampleXmlFile = "naver-book-api-response-example.json"
+        const val exampleErrorXmlFile = "naver-book-api-error-response-example.json"
     }
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)

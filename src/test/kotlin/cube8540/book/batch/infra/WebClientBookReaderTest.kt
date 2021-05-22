@@ -1,5 +1,6 @@
 package cube8540.book.batch.infra
 
+import cube8540.book.batch.external.PageDecision
 import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
 import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.bookDetailsContext
@@ -30,6 +31,7 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriBuilder
 import java.net.URI
+import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class WebClientBookReaderTest {
@@ -49,6 +51,8 @@ class WebClientBookReaderTest {
         )
         .build()
 
+    private val pageDecision: PageDecision = mockk(relaxed = true)
+
     private val webClientBookReader = WebClientBookReader(uriBuilder, webClient)
 
     init {
@@ -56,11 +60,15 @@ class WebClientBookReaderTest {
         webClientBookReader.requestPageSizeParameterName = pageSizeRequestName
         webClientBookReader.exceptionCreator = exceptionCreator
         webClientBookReader.pageSize = 1
+        webClientBookReader.pageDecision = pageDecision
     }
 
     @Test
     fun `read value`() {
-        every { uriBuilder.replaceQueryParam(pageRequestName, webClientBookReader.page + 1) } returns uriBuilder
+        val randomPage = Random.nextInt()
+
+        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
+        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
         every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
         every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
 
@@ -73,8 +81,7 @@ class WebClientBookReaderTest {
 
         val result = webClientBookReader.read()
         verifyOrder {
-            // read 메소드가 작동하면서 page에 1을 더하기 때문에 위에서는 페이지 값 그대로 비교한다.
-            uriBuilder.replaceQueryParam(pageRequestName, webClientBookReader.page)
+            uriBuilder.replaceQueryParam(pageRequestName, randomPage)
             uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize)
             uriBuilder.build()
         }
@@ -83,7 +90,10 @@ class WebClientBookReaderTest {
 
     @Test
     fun `read value when results already not empty`() {
-        every { uriBuilder.replaceQueryParam(pageRequestName, webClientBookReader.page + 1) } returns uriBuilder
+        val randomPage = Random.nextInt()
+
+        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
+        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
         every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
         every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
 
@@ -95,7 +105,9 @@ class WebClientBookReaderTest {
         }
         webClientBookReader.read()
 
-        every { uriBuilder.replaceQueryParam(pageRequestName, webClientBookReader.page + 1) } returns uriBuilder
+        val secondRandomPage = Random.nextInt()
+        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns secondRandomPage
+        every { uriBuilder.replaceQueryParam(pageRequestName, secondRandomPage) } returns uriBuilder
         every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
         every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
         mockWebServer.dispatcher = object: Dispatcher() {
@@ -111,7 +123,10 @@ class WebClientBookReaderTest {
 
     @Test
     fun `exception during to read`() {
-        every { uriBuilder.replaceQueryParam(pageRequestName, webClientBookReader.page + 1) } returns uriBuilder
+        val randomPage = Random.nextInt()
+
+        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
+        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
         every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
         every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
 

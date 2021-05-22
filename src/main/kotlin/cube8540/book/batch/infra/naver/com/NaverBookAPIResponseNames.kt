@@ -10,7 +10,7 @@ object NaverBookAPIResponseNames {
     const val totalCount = "total"
     const val start = "start"
     const val display = "display"
-    const val item = "item"
+    const val item = "items"
 
     const val isbn = "isbn"
     const val title = "title"

@@ -3,7 +3,7 @@ package cube8540.book.batch.infra.naver.com
 object NaverBookAPIRequestNames {
 
     const val endpointBase = "https://openapi.naver.com"
-    const val endpointPath = "/v1/search/book_adv.xml"
+    const val endpointPath = "/v1/search/book_adv.json"
 
     const val clientId = "X-Naver-Client-Id"
     const val clientSecret = "X-Naver-Client-Secret"

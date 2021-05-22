@@ -64,8 +64,6 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
             jsonNode.get(NaverBookAPIResponseNames.publisher)?.asText()
         map[OriginalPropertyKey(NaverBookAPIResponseNames.publishDate, mappingType)] =
             jsonNode.get(NaverBookAPIResponseNames.publishDate)?.asText()
-        map[OriginalPropertyKey(NaverBookAPIResponseNames.description, mappingType)] =
-            jsonNode.get(NaverBookAPIResponseNames.description)?.asText()
         return map
     }
 
