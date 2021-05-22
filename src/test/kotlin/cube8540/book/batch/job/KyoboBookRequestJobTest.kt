@@ -6,7 +6,7 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.infra.kyobo.kr.KyoboBookRequestNames
+import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
 import cube8540.book.batch.job.KyoboBookRequestJobTestEnvironment.BookDetailsDispatcherOptions
 import cube8540.book.batch.job.KyoboBookRequestJobTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.KyoboBookRequestJobTestEnvironment.LoginDispatcherOptions

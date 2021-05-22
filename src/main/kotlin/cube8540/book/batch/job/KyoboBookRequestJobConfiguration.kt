@@ -8,10 +8,10 @@ import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.infra.RepositoryBasedBookReader
 import cube8540.book.batch.infra.RepositoryBasedBookWriter
-import cube8540.book.batch.infra.kyobo.kr.KyoboBookDetailsController
-import cube8540.book.batch.infra.kyobo.kr.KyoboBookRequestNames
-import cube8540.book.batch.infra.kyobo.kr.KyoboLoginFilter
-import cube8540.book.batch.infra.kyobo.kr.KyoboWebClientBookProcessor
+import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsController
+import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
+import cube8540.book.batch.external.kyobo.kr.KyoboLoginFilter
+import cube8540.book.batch.external.kyobo.kr.KyoboWebClientBookProcessor
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory

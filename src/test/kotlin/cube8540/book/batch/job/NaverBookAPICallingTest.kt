@@ -1,15 +1,12 @@
 package cube8540.book.batch.job
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.capture
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
 import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.infra.naver.com.NaverBookAPIRequestNames
+import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.emptyResponse

@@ -8,10 +8,10 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.infra.*
-import cube8540.book.batch.infra.naver.com.NaverBookAPIAuthenticationFilter
-import cube8540.book.batch.infra.naver.com.NaverBookAPIPageDecision
-import cube8540.book.batch.infra.naver.com.NaverBookAPIRequestNames
-import cube8540.book.batch.infra.naver.com.NaverBookDetailsController
+import cube8540.book.batch.external.naver.com.NaverBookAPIAuthenticationFilter
+import cube8540.book.batch.external.naver.com.NaverBookAPIPageDecision
+import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
+import cube8540.book.batch.external.naver.com.NaverBookDetailsController
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory

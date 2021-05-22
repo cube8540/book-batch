@@ -9,9 +9,9 @@ import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.infra.*
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIAuthenticationFilter
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIRequestNames
-import cube8540.book.batch.infra.nl.go.NationalLibraryBookDetailsController
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIAuthenticationFilter
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
+import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsController
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory

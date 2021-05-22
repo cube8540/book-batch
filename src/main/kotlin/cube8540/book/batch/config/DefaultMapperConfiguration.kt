@@ -13,11 +13,11 @@ import cube8540.book.batch.domain.DivisionRawMapper
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
-import cube8540.book.batch.infra.kyobo.kr.KyoboBookDocumentMapper
-import cube8540.book.batch.infra.naver.com.NaverBookAPIDeserializer
-import cube8540.book.batch.infra.naver.com.NaverBookAPIErrorDeserializer
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIDeserializer
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIErrorDeserializer
+import cube8540.book.batch.external.kyobo.kr.KyoboBookDocumentMapper
+import cube8540.book.batch.external.naver.com.NaverBookAPIDeserializer
+import cube8540.book.batch.external.naver.com.NaverBookAPIErrorDeserializer
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializer
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIErrorDeserializer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

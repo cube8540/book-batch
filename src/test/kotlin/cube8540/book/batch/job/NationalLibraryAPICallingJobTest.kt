@@ -8,7 +8,7 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIRequestNames
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.emptyResponse
