@@ -108,7 +108,7 @@ create table if not exists book_details (
     lage_thumbnail_url varchar(128),
     medium_thumbnail_url varchar(128),
     small_thumbnail_url varchar(128),
-    description varchar(248),
+    description text,
     price double,
     created_at timestamp not null
 ) engine = InnoDB;
@@ -141,7 +141,7 @@ create table if not exists book_detail_originals (
     isbn varchar(32) not null,
     property varchar(32) not null,
     mapping_type varchar(32) not null,
-    value varchar(128),
+    value varchar(1024),
 
     foreign key (isbn) references book_details(isbn)
 ) engine = InnoDB;

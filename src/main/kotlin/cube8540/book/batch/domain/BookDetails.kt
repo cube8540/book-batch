@@ -38,7 +38,8 @@ class BookDetails(context: BookDetailsContext) {
     @Embedded
     var thumbnail: Thumbnail? = context.resolveThumbnail()
 
-    @Column(name = "description", length = 248)
+    @Lob
+    @Column(name = "description", columnDefinition = "text")
     var description: String? = context.resolveDescription()
 
     @ElementCollection
@@ -56,7 +57,7 @@ class BookDetails(context: BookDetailsContext) {
     @ElementCollection
     @CollectionTable(name = "book_detail_originals", joinColumns = [JoinColumn(name = "isbn", nullable = false)])
     @MapKeyClass(OriginalPropertyKey::class)
-    @Column(name = "value", length = 128)
+    @Column(name = "value", length = 1024)
     var original: Map<OriginalPropertyKey, String?>? = context.resolveOriginal()
 
     @Column(name = "upstream_target", nullable = false)
