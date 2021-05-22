@@ -5,7 +5,6 @@ import cube8540.book.batch.getQueryParams
 import cube8540.book.batch.infra.kyobo.kr.KyoboBookRequestNames
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
-import org.jsoup.Jsoup
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.http.HttpHeaders
@@ -14,8 +13,6 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader
-import java.net.URI
-import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random

@@ -14,7 +14,7 @@ class CompositeBookDetailsControllerTest {
         val base: BookDetails = mockk(relaxed = true)
         val item: BookDetails = mockk(relaxed = true)
 
-        val controller = CompositeBookDetailsController(emptyList())
+        val controller = CompositeBookDetailsController()
 
         val result = controller.merge(base, item)
         assertThat(result).isEqualTo(base)
@@ -38,7 +38,7 @@ class CompositeBookDetailsControllerTest {
             every { merge(any(), item) } returns thirdMergedResult
         }
 
-        val controller = CompositeBookDetailsController(listOf(firstMergedController, secondMergedController, thirdMergedController))
+        val controller = CompositeBookDetailsController(firstMergedController, secondMergedController, thirdMergedController)
         val result = controller.merge(base, item)
         assertThat(result).isNull()
     }
@@ -61,7 +61,7 @@ class CompositeBookDetailsControllerTest {
             every { merge(secondMergedResult, item) } returns thirdMergedResult
         }
 
-        val controller = CompositeBookDetailsController(listOf(firstMergedController, secondMergedController, thirdMergedController))
+        val controller = CompositeBookDetailsController(firstMergedController, secondMergedController, thirdMergedController)
         val result = controller.merge(base, item)
         assertThat(result).isEqualTo(thirdMergedResult)
     }

@@ -1,24 +1,14 @@
 package cube8540.book.batch.job
 
 import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.domain.BookOriginalFilter
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.PropertyRegex
-import cube8540.book.batch.infra.DefaultBookDetailsFilterIdGenerator
 import cube8540.book.batch.infra.naver.com.NaverBookAPIRequestNames
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIRequestNames
-import cube8540.book.batch.infra.nl.go.NationalLibraryAPIResponseNames
-import io.github.cube8540.validator.core.Operator
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.web.util.UriComponentsBuilder
 import java.io.File
-import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -61,28 +51,6 @@ object NaverBookAPICallingTestEnvironment {
             .addString("publisher", publisherCode)
             .addLong("seed", Random.nextLong())
             .toJobParameters()
-
-    internal fun returnFalseOperatorForTest(): BookOriginalFilter {
-        val operator = BookOriginalFilter(DefaultBookDetailsFilterIdGenerator(), MappingType.NAVER_BOOK)
-        val operand0 = BookOriginalFilter(DefaultBookDetailsFilterIdGenerator(), MappingType.NAVER_BOOK)
-        val operand1 = BookOriginalFilter(DefaultBookDetailsFilterIdGenerator(), MappingType.NAVER_BOOK)
-
-        operator.root = true
-        operator.name = "root"
-        operator.operatorType = Operator.OperatorType.AND
-
-        operand0.parent = operator
-        operand0.propertyRegex = PropertyRegex(NationalLibraryAPIResponseNames.isbn, Regex("^A$"))
-        operand0.name = "test"
-
-        operand1.parent = operator
-        operand1.propertyRegex = PropertyRegex(NationalLibraryAPIResponseNames.isbn, Regex("^A$"))
-        operand1.name = "test"
-
-        operator.children = listOf(operand0, operand1).toMutableList()
-
-        return operator
-    }
 
     internal fun getJsonString(filePath: String): String {
         val jsonFile = File(javaClass.classLoader.getResource(filePath)!!.file)

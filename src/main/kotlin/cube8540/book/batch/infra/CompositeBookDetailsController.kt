@@ -3,7 +3,7 @@ package cube8540.book.batch.infra
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.external.BookDetailsController
 
-class CompositeBookDetailsController(private val delegators: List<BookDetailsController>): BookDetailsController {
+class CompositeBookDetailsController(private vararg val delegators: BookDetailsController): BookDetailsController {
 
     override fun merge(base: BookDetails, item: BookDetails): BookDetails? = when (delegators.isEmpty()) {
         true -> base

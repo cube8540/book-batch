@@ -1,4 +1,4 @@
-package cube8540.book.batch
+package cube8540.book.batch.domain
 
 interface Reloadable {
     fun reload()

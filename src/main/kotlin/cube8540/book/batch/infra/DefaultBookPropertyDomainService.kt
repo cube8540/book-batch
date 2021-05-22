@@ -1,6 +1,5 @@
 package cube8540.book.batch.infra
 
-import cube8540.book.batch.Reloadable
 import cube8540.book.batch.domain.*
 import cube8540.book.batch.domain.repository.BookOriginalFilterRepository
 import cube8540.book.batch.domain.repository.DivisionCustomRepository
