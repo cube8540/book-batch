@@ -1,10 +1,9 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.capture
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsFilterFunction
-import cube8540.book.batch.domain.QBookDetails
+import cube8540.book.batch.domain.*
 import cube8540.book.batch.domain.repository.BookDetailsRepository
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -72,7 +71,12 @@ class BookSetUpstreamTargetTest constructor(
     fun `set book details upstream target`() {
         val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val jobParameters = createJobParameters()
-        val bookDetails: BookDetails = mockk(relaxed = true)
+        val bookDetails: BookDetails = mockk(relaxed = true) {
+            every { original } returns mutableMapOf(
+                OriginalPropertyKey("property", MappingType.NATIONAL_LIBRARY) to "value",
+                OriginalPropertyKey("property", MappingType.KYOBO) to "value"
+            )
+        }
 
         val queryResultContents = listOf(bookDetails)
         val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
@@ -100,7 +104,12 @@ class BookSetUpstreamTargetTest constructor(
     fun `set book details upstream target when filtering returns false`() {
         val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val jobParameters = createJobParameters()
-        val bookDetails: BookDetails = mockk(relaxed = true)
+        val bookDetails: BookDetails = mockk(relaxed = true) {
+            every { original } returns mutableMapOf(
+                OriginalPropertyKey("property", MappingType.NATIONAL_LIBRARY) to "value",
+                OriginalPropertyKey("property", MappingType.KYOBO) to "value"
+            )
+        }
 
         val queryResultContents = listOf(bookDetails)
         val firstPageRequest = PageRequest.of(0, BookSetUpstreamTargetJobConfiguration.defaultChunkSize, sort)
