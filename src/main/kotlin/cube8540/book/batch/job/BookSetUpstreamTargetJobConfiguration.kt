@@ -3,8 +3,10 @@ package cube8540.book.batch.job
 import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
+import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
+import cube8540.book.batch.job.processor.BookDetailsOriginalDataApproveProcessor
 import cube8540.book.batch.job.processor.BookSetUpstreamTargetProcessor
 import cube8540.book.batch.job.reader.RepositoryBasedBookReader
 import cube8540.book.batch.job.writer.RepositoryBasedUpstreamTargetWriter
@@ -94,8 +96,10 @@ class BookSetUpstreamTargetJobConfiguration {
     fun bookDetailsProcessor(): CompositeItemProcessor<BookDetails, BookDetails> =
         CompositeItemProcessorBuilder<BookDetails, BookDetails>()
             .delegates(
-                BookDetailsFilterProcessor(nationalLibraryBookDetailsFilterFunction),
-                BookDetailsFilterProcessor(kyoboBookDetailsFilterFunction),
+                BookDetailsOriginalDataApproveProcessor(
+                    MappingType.NATIONAL_LIBRARY to nationalLibraryBookDetailsFilterFunction,
+                    MappingType.KYOBO to kyoboBookDetailsFilterFunction
+                ),
                 BookSetUpstreamTargetProcessor()
             )
             .build()
