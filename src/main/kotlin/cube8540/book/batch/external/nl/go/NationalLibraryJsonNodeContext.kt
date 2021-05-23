@@ -51,6 +51,15 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
 
     override fun resolveSeriesCode(): String? = null
 
+    override fun resolveSeriesIsbn(): String? {
+        val isbn = jsonNode.get(NationalLibraryAPIResponseNames.setIsbn)?.asText()
+        return if (isbn != null && isbn.isNotEmpty()) {
+            isbn
+        } else {
+            null
+        }
+    }
+
     override fun resolveDivisions(): Set<String>? = null
 
     override fun resolvePublisher(): String? = publisherRawMapper
