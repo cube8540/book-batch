@@ -30,6 +30,10 @@ class DefaultBookDomainServiceConfiguration {
         DefaultBookDetailsFilterFunction(MappingType.NATIONAL_LIBRARY, repository)
 
     @Bean
+    fun naverBookAPIFilterFunction(repository: BookOriginalFilterRepository) =
+        DefaultBookDetailsFilterFunction(MappingType.NAVER_BOOK, repository)
+
+    @Bean
     fun kyoboBookFilterFunction(repository: BookOriginalFilterRepository) =
         DefaultBookDetailsFilterFunction(MappingType.KYOBO, repository)
 }
