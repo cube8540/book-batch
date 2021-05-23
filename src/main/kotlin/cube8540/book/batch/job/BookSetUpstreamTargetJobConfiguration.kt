@@ -59,6 +59,9 @@ class BookSetUpstreamTargetJobConfiguration {
     @set:[Autowired Qualifier("nationalLibraryFilterFunction")]
     lateinit var nationalLibraryBookDetailsFilterFunction: BookDetailsFilterFunction
 
+    @set:[Autowired Qualifier("naverBookAPIFilterFunction")]
+    lateinit var naverBookAPIFilterFunction: BookDetailsFilterFunction
+
     @set:[Autowired Qualifier("kyoboBookFilterFunction")]
     lateinit var kyoboBookDetailsFilterFunction: BookDetailsFilterFunction
 
@@ -98,6 +101,7 @@ class BookSetUpstreamTargetJobConfiguration {
             .delegates(
                 BookDetailsOriginalDataApproveProcessor(
                     MappingType.NATIONAL_LIBRARY to nationalLibraryBookDetailsFilterFunction,
+                    MappingType.NAVER_BOOK to naverBookAPIFilterFunction,
                     MappingType.KYOBO to kyoboBookDetailsFilterFunction
                 ),
                 BookSetUpstreamTargetProcessor()
