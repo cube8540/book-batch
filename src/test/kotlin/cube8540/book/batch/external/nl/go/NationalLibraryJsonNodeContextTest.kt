@@ -136,4 +136,28 @@ class NationalLibraryJsonNodeContextTest {
         val result = context.resolvePublishDate()
         assertThat(result).isEqualTo(realPublishDate)
     }
+
+    @Test
+    fun `extract series isbn when set isbn is null`() {
+        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns null
+
+        val result = context.resolveSeriesIsbn()
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `extract series isbn when set isbn is empty`() {
+        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode("")
+
+        val result = context.resolveSeriesIsbn()
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `extract series isbn`() {
+        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+
+        val result = context.resolveSeriesIsbn()
+        assertThat(result).isEqualTo(isbn0)
+    }
 }

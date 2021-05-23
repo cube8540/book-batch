@@ -30,6 +30,8 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
 
     override fun resolveSeriesCode(): String? = null
 
+    override fun resolveSeriesIsbn(): String? = null
+
     override fun resolveDivisions(): Set<String>? = null
 
     override fun resolvePublisher(): String? = publisherRawMapper

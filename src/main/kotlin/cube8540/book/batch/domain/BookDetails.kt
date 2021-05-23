@@ -19,6 +19,9 @@ class BookDetails(context: BookDetailsContext) {
     @Column(name = "series_code", length = 32)
     var seriesCode: String? = context.resolveSeriesCode()
 
+    @Column(name = "series_isbn", length = 32)
+    var seriesIsbn: String? = context.resolveSeriesIsbn()
+
     @ElementCollection
     @CollectionTable(name = "book_detail_divisions", joinColumns = [JoinColumn(name = "isbn", nullable = false)])
     @Column(name = "division_code", length = 32)
