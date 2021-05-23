@@ -10,6 +10,8 @@ interface BookDetailsContext {
 
     fun resolveSeriesCode(): String?
 
+    fun resolveSeriesIsbn(): String?
+
     fun resolveDivisions(): Set<String>?
 
     fun resolvePublisher(): String?

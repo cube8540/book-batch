@@ -46,6 +46,8 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         }
     }
 
+    override fun resolveSeriesIsbn(): String? = null
+
     override fun resolveDivisions(): Set<String> {
         val rawDivisions = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }.attr(value)
         return divisionMapper.mapping(convertCategoryCodeToRawDivisions(rawDivisions)).toSet()
