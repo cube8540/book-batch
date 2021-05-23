@@ -49,6 +49,7 @@
             update book_details
             set title = #{item.title},
                 series_code = #{item.seriesCode},
+                series_isbn = #{item.seriesIsbn},
                 publisher_code = #{item.publisher},
                 publish_date = #{item.publishDate},
                 <if test="item.thumbnail != null">
