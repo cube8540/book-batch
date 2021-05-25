@@ -1,8 +1,7 @@
-package cube8540.book.batch.scheduler.impl
+package cube8540.book.batch.scheduler.application
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.job.JobParameterNames
-import cube8540.book.batch.scheduler.JobSchedulerService
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher

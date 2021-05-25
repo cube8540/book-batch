@@ -1,6 +1,7 @@
 package cube8540.book.batch.scheduler
 
 import cube8540.book.batch.BatchApplication
+import cube8540.book.batch.scheduler.application.JobSchedulerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package cube8540.book.batch.scheduler.impl
+package cube8540.book.batch.scheduler.application
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.domain.MappingType

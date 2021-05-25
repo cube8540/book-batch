@@ -6,8 +6,9 @@ import cube8540.book.batch.job.BookSetUpstreamTargetJobConfiguration
 import cube8540.book.batch.job.KyoboBookRequestJobConfiguration
 import cube8540.book.batch.job.NationalLibraryAPIJobConfiguration
 import cube8540.book.batch.job.NaverBookAPIJobConfiguration
-import cube8540.book.batch.scheduler.impl.LocalDateJobSchedulerService
-import cube8540.book.batch.scheduler.impl.LocalDateWithPublisherSchedulerService
+import cube8540.book.batch.scheduler.application.JobSchedulerService
+import cube8540.book.batch.scheduler.application.LocalDateJobSchedulerService
+import cube8540.book.batch.scheduler.application.LocalDateWithPublisherSchedulerService
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.beans.factory.annotation.Qualifier
