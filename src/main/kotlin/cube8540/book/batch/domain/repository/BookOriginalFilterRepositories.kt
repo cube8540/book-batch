@@ -4,7 +4,7 @@ import cube8540.book.batch.domain.BookOriginalFilter
 import cube8540.book.batch.domain.MappingType
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface BookOriginalFilterCustomRepository {
+interface BookOriginalFilterCustomRepository: CustomRepository<BookOriginalFilter> {
     fun findRootByMappingType(mappingType: MappingType): BookOriginalFilter?
 }
 

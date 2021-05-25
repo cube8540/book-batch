@@ -45,7 +45,11 @@ class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepo
         return PageImpl(bookDetailsExpression.fetch(), pageRequest, queryResults.total)
     }
 
-    override fun detached(books: List<BookDetails>) {
-        books.forEach { entityManager!!.detach(it) }
+    override fun detached(entity: BookDetails) {
+        entityManager!!.detach(entity)
+    }
+
+    override fun detached(entities: Collection<BookDetails>) {
+        entities.forEach { entityManager!!.detach(it) }
     }
 }

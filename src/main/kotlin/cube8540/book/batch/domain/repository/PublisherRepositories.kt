@@ -4,7 +4,7 @@ import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.Publisher
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface PublisherCustomRepository {
+interface PublisherCustomRepository: CustomRepository<Publisher> {
     fun findByMappingTypeWithRaw(mappingType: MappingType): List<Publisher>
 
     fun findByMappingTypeWithKeyword(mappingType: MappingType): List<Publisher>

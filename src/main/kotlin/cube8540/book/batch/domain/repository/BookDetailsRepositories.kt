@@ -31,12 +31,10 @@ interface BookDetailsPersistCustomRepository {
     fun updateForUpstreamTarget(bookDetails: Collection<BookDetails>)
 }
 
-interface BookDetailsCustomRepository {
+interface BookDetailsCustomRepository: CustomRepository<BookDetails> {
     fun findById(isbn: List<String>): List<BookDetails>
 
     fun findByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails>
-
-    fun detached(books: List<BookDetails>)
 }
 
 interface BookDetailsRepository: JpaRepository<BookDetails, String>, BookDetailsPersistCustomRepository, BookDetailsCustomRepository
