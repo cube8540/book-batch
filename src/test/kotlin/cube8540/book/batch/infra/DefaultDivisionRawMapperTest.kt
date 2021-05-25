@@ -18,6 +18,7 @@ import cube8540.book.batch.infra.DefaultDivisionRawMapperTestEnvironment.raw22
 import cube8540.book.batch.infra.DefaultDivisionRawMapperTestEnvironment.reloadedDivisions
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -28,13 +29,15 @@ import java.util.stream.Stream
 
 class DefaultDivisionRawMapperTest {
 
-    private val divisionRepository: DivisionCustomRepository = mockk()
+    private val divisionRepository: DivisionCustomRepository = mockk(relaxed = true)
 
     private val divisionRawMapper: DefaultDivisionRawMapper
 
     init {
         every { divisionRepository.findByMappingType(mappingType) } returns divisions
+
         divisionRawMapper = DefaultDivisionRawMapper(mappingType, divisionRepository)
+        divisionRawMapper.afterPropertiesSet()
     }
 
     @Nested
@@ -42,7 +45,8 @@ class DefaultDivisionRawMapperTest {
 
         @Test
         fun `initialization cache`() {
-            assertThat(divisionRawMapper.catch).isEqualTo(divisions)
+            assertThat(divisionRawMapper.cache).isEqualTo(divisions)
+            verify { divisionRepository.detached(divisionRawMapper.cache) }
         }
     }
 
@@ -78,7 +82,9 @@ class DefaultDivisionRawMapperTest {
             every { divisionRepository.findByMappingType(mappingType) } returns reloadedDivisions
 
             divisionRawMapper.reload()
-            assertThat(divisionRawMapper.catch).isEqualTo(reloadedDivisions)
+
+            assertThat(divisionRawMapper.cache).isEqualTo(reloadedDivisions)
+            verify { divisionRepository.detached(reloadedDivisions) }
         }
     }
 }

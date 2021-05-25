@@ -4,15 +4,16 @@ import cube8540.book.batch.domain.*
 import cube8540.book.batch.domain.repository.BookOriginalFilterRepository
 import cube8540.book.batch.domain.repository.DivisionCustomRepository
 import cube8540.book.batch.domain.repository.PublisherCustomRepository
-import io.github.cube8540.validator.core.Operator
+import org.springframework.beans.factory.InitializingBean
 
-class DefaultPublisherRawMapper(private val mappingType: MappingType, private val repository: PublisherCustomRepository): PublisherRawMapper,
-    Reloadable {
+class DefaultPublisherRawMapper(private val mappingType: MappingType, private val repository: PublisherCustomRepository)
+    : PublisherRawMapper, InitializingBean, Reloadable {
 
     val cache: MutableList<Publisher> = ArrayList()
 
-    init {
+    override fun afterPropertiesSet() {
         cache.addAll(repository.findByMappingTypeWithRaw(mappingType))
+        repository.detached(cache)
     }
 
     override fun mapping(raw: String): String? {
@@ -22,39 +23,50 @@ class DefaultPublisherRawMapper(private val mappingType: MappingType, private va
     override fun reload() {
         this.cache.clear()
         this.cache.addAll(repository.findByMappingTypeWithRaw(mappingType))
+
+        repository.detached(cache)
     }
 }
 
-class DefaultDivisionRawMapper(private val mappingType: MappingType, private val repository: DivisionCustomRepository): DivisionRawMapper,
-    Reloadable {
+class DefaultDivisionRawMapper(private val mappingType: MappingType, private val repository: DivisionCustomRepository)
+    : DivisionRawMapper, InitializingBean, Reloadable {
 
-    val catch: MutableList<Division> = ArrayList()
+    val cache: MutableList<Division> = ArrayList()
 
-    init {
-        this.catch.addAll(repository.findByMappingType(mappingType))
+    override fun afterPropertiesSet() {
+        this.cache.addAll(repository.findByMappingType(mappingType))
+        repository.detached(this.cache)
     }
 
     override fun mapping(raws: List<String>): List<String> {
-        return catch
+        return cache
             .filter { division -> raws.any { raw -> division.raws.contains(RawProperty(raw, mappingType)) } }
             .map { it.code }
     }
 
     override fun reload() {
-        catch.clear()
-        catch.addAll(repository.findByMappingType(mappingType))
+        cache.clear()
+        cache.addAll(repository.findByMappingType(mappingType))
+
+        repository.detached(this.cache)
     }
 }
 
 class DefaultBookDetailsFilterFunction(private val mappingType: MappingType, private val repository: BookOriginalFilterRepository)
-    : BookDetailsFilterFunction, Reloadable {
+    : BookDetailsFilterFunction, InitializingBean, Reloadable {
 
-    var cache: Operator<BookDetails>? = repository.findRootByMappingType(mappingType)
+    var cache: BookOriginalFilter? = null
         private set
 
-    override fun isValid(target: BookDetails?): Boolean = cache?.isValid(target) ?: true
+    override fun afterPropertiesSet() {
+        this.cache = repository.findRootByMappingType(mappingType)
+        cache?.let { repository.detached(it) }
+    }
+
+    override fun isValid(target: BookDetails?): Boolean = target?.let { t -> cache?.isValid(t) ?: true } ?: true
 
     override fun reload() {
         this.cache = repository.findRootByMappingType(mappingType)
+        cache?.let { repository.detached(it) }
     }
 }

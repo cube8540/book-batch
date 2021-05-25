@@ -19,6 +19,7 @@ import cube8540.book.batch.infra.DefaultPublisherRawMapperTestEnvironment.raw22
 import cube8540.book.batch.infra.DefaultPublisherRawMapperTestEnvironment.reloadedPublishers
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -29,13 +30,15 @@ import java.util.stream.Stream
 
 class DefaultPublisherRawMapperTest {
 
-    private val publisherRepository: PublisherCustomRepository = mockk()
+    private val publisherRepository: PublisherCustomRepository = mockk(relaxed = true)
 
     private val publisherRawMapper: DefaultPublisherRawMapper
 
     init {
         every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns publishers
+
         publisherRawMapper = DefaultPublisherRawMapper(mappingType, publisherRepository)
+        publisherRawMapper.afterPropertiesSet()
     }
 
     @Nested
@@ -44,6 +47,7 @@ class DefaultPublisherRawMapperTest {
         @Test
         fun `initialization cache`() {
             assertThat(publisherRawMapper.cache).isEqualTo(publishers)
+            verify { publisherRepository.detached(publisherRawMapper.cache) }
         }
     }
 
@@ -86,7 +90,9 @@ class DefaultPublisherRawMapperTest {
             every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns reloadedPublishers
 
             publisherRawMapper.reload()
+
             assertThat(publisherRawMapper.cache).isEqualTo(reloadedPublishers)
+            verify { publisherRepository.detached(reloadedPublishers) }
         }
     }
 }
