@@ -1,4 +1,4 @@
-package cube8540.book.batch.scheduler
+package cube8540.book.batch.scheduler.application
 
 import java.time.LocalDate
 

@@ -1,14 +1,18 @@
-package cube8540.book.batch.scheduler.impl
+package cube8540.book.batch.scheduler.application
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.job.JobParameterNames
+import cube8540.book.batch.scheduler.domain.JobSchedulerFinishedEvent
 import cube8540.book.batch.toDefaultInstance
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobExecution
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,16 +28,25 @@ class LocalDateJobSchedulerServiceTest {
     private val job: Job = mockk(relaxed = true)
     private val jobLauncher: JobLauncher = mockk(relaxed = true)
 
+    private val eventPublisher: ApplicationEventPublisher = mockk(relaxed = true)
+
     private val service = LocalDateJobSchedulerService(job, jobLauncher)
 
     init {
         LocalDateJobSchedulerService.clock = Clock.fixed(now.toDefaultInstance(), BatchApplication.DEFAULT_TIME_ZONE.toZoneId())
+        service.eventPublisher = eventPublisher
     }
 
     @Test
     fun `job launched`() {
+        val execution: JobExecution = mockk(relaxed = true)
+        val jobParameter = createExceptedJobParameter(from, to)
+
+        every { jobLauncher.run(job, jobParameter) } returns execution
+
         service.launchBookDetailsRequest(from, to)
-        verify { jobLauncher.run(job,  createExceptedJobParameter(from, to)) }
+        verify { jobLauncher.run(job,  jobParameter) }
+        verify { eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution)) }
     }
 
     private fun createExceptedJobParameter(from: LocalDate, to: LocalDate) = JobParametersBuilder()
