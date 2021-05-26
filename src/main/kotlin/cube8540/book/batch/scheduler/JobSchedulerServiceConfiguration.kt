@@ -14,6 +14,7 @@ import org.springframework.batch.core.Job
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -38,21 +39,31 @@ class JobSchedulerServiceConfiguration {
     @set:Autowired
     lateinit var publisherRepository: PublisherRepository
 
+    @set:Autowired
+    lateinit var eventPublisher: ApplicationEventPublisher
+
     @Bean
     fun jobSchedulerService(): JobSchedulerService {
         val nationalLibraryAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NATIONAL_LIBRARY, publisherRepository)
         val naverBookAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NAVER_BOOK, publisherRepository)
+        val kyoboBookRequestJobSchedulerService = LocalDateJobSchedulerService(kyoboBookRequestJob, jobLauncher)
+        val setUpstreamJobSchedulerService = LocalDateJobSchedulerService(setUpstreamTargetJob, jobLauncher)
 
         nationalLibraryAPIJobSchedulerService.job = nationalLibraryAPIJob
         nationalLibraryAPIJobSchedulerService.jobLauncher = jobLauncher
+        nationalLibraryAPIJobSchedulerService.eventPublisher = eventPublisher
 
         naverBookAPIJobSchedulerService.job = naverBookAPIJob
         naverBookAPIJobSchedulerService.jobLauncher = jobLauncher
+        naverBookAPIJobSchedulerService.eventPublisher = eventPublisher
+
+        kyoboBookRequestJobSchedulerService.eventPublisher = eventPublisher
+        setUpstreamJobSchedulerService.eventPublisher = eventPublisher
 
         return CompositeJobSchedulerService()
             .addDelegate(nationalLibraryAPIJobSchedulerService)
             .addDelegate(naverBookAPIJobSchedulerService)
-            .addDelegate(LocalDateJobSchedulerService(kyoboBookRequestJob, jobLauncher))
-            .addDelegate(LocalDateJobSchedulerService(setUpstreamTargetJob, jobLauncher))
+            .addDelegate(kyoboBookRequestJobSchedulerService)
+            .addDelegate(setUpstreamJobSchedulerService)
     }
 }

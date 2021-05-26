@@ -4,9 +4,11 @@ import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.repository.PublisherRepository
 import cube8540.book.batch.job.JobParameterNames
+import cube8540.book.batch.scheduler.domain.JobSchedulerFinishedEvent
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,6 +27,8 @@ class LocalDateWithPublisherSchedulerService(
 
     lateinit var jobLauncher: JobLauncher
 
+    var eventPublisher: ApplicationEventPublisher? = null
+
     override fun launchBookDetailsRequest(from: LocalDate, to: LocalDate) {
         val keywords = publisherRepository
             .findByMappingTypeWithKeyword(mappingType).flatMap { it.keywords }.map { it.raw }
@@ -36,7 +40,9 @@ class LocalDateWithPublisherSchedulerService(
                 .addString(JobParameterNames.publisher, it)
                 .addString(JobParameterNames.startup, LocalDateTime.now(clock).format(DateTimeFormatter.ISO_DATE_TIME))
                 .toJobParameters()
-            jobLauncher.run(job, jobParameter)
+
+            val execution = jobLauncher.run(job, jobParameter)
+            eventPublisher?.publishEvent(JobSchedulerFinishedEvent(execution))
         }
     }
 }
