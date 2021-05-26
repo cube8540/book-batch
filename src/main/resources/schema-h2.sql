@@ -81,17 +81,20 @@ CREATE SEQUENCE IF NOT EXISTS BATCH_JOB_SEQ;
 
 create table if not exists book_details (
     isbn varchar(13) not null primary key,
-    title varchar(128) not null,
+    title varchar(256) not null,
     series_code varchar(32),
+    series_isbn varchar(32),
     publisher_code varchar(32) not null,
     publish_date date not null,
     lage_thumbnail_url varchar(128),
     medium_thumbnail_url varchar(128),
     small_thumbnail_url varchar(128),
-    description clob,
+    description text,
     price double,
-    created_at timestamp not null
+    created_at timestamp not null,
+    upstream_target boolean not null default false
 );
+alter table book_details alter column title varchar(256) not null;
 alter table book_details add column if not exists upstream_target boolean not null default false;
 alter table book_details add column if not exists series_isbn varchar(32);
 create index if not exists book_publish_date_index on book_details (publish_date);
@@ -131,7 +134,8 @@ create table if not exists book_detail_originals (
 
 create table if not exists divisions (
     division_code varchar(32) not null primary key,
-    depth integer not null
+    depth integer not null,
+    name varchar(32)
 );
 alter table divisions add column if not exists name varchar(32);
 
@@ -144,13 +148,14 @@ create table if not exists division_raw_mappings (
 );
 
 create table if not exists publishers (
-    publisher_code varchar(32) not null primary key
+    publisher_code varchar(32) not null primary key,
+    name varchar(32)
 );
 alter table publishers add column if not exists name varchar(32);
 
 create table if not exists publisher_raw_mappings (
     publisher_code varchar(32) not null,
-    raw varchar(32) not null,
+    raw varchar(64) not null,
     mapping_type varchar(32) not null,
 
     foreign key (publisher_code) references publishers(publisher_code)

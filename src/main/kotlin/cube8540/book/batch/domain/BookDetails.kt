@@ -13,7 +13,7 @@ class BookDetails(context: BookDetailsContext) {
     @Column(name = "isbn", length = 13)
     var isbn: String = context.resolveIsbn()
 
-    @Column(name = "title", length = 128, nullable = false)
+    @Column(name = "title", length = 256, nullable = false)
     var title: String? = context.resolveTitle()
 
     @Column(name = "series_code", length = 32)
