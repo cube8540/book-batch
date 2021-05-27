@@ -182,3 +182,21 @@ create table if not exists book_original_filters (
 
     foreign key (parent_id) references book_original_filters(id)
 );
+
+create table if not exists job_scheduler_reservations (
+    id bigint not null primary key auto_increment,
+    name varchar2(32),
+    `from` date not null,
+    `to` date not null,
+    created_at datetime not null,
+    status varchar(32) not null
+);
+
+create table if not exists job_scheduler_results (
+    reservation_id bigint not null,
+    job_instance_id bigint not null,
+
+    primary key (reservation_id, job_instance_id),
+    constraint job_scheduler_result_reservation_id foreign key (reservation_id) references job_scheduler_reservations (id),
+    constraint job_scheduler_result_instance_id foreign key (job_instance_id) references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
+);
