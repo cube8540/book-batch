@@ -37,7 +37,3 @@ api:
     kyobo:
       username: # your https://www.kyobobook.co.kr login username
       password: # your https://www.kyobobook.co.kr login password
-job-task-executor:
-  core-pool-size: 10
-  max-pool-size: 10
-  throttle-limit: 10

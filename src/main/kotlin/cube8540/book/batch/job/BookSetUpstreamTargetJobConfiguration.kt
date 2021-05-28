@@ -1,11 +1,9 @@
 package cube8540.book.batch.job
 
-import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.MappingType
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
 import cube8540.book.batch.job.processor.BookDetailsOriginalDataApproveProcessor
 import cube8540.book.batch.job.processor.BookSetUpstreamTargetProcessor
 import cube8540.book.batch.job.reader.RepositoryBasedBookReader
@@ -24,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.TaskExecutor
 
 @Configuration
 class BookSetUpstreamTargetJobConfiguration {
@@ -45,16 +42,10 @@ class BookSetUpstreamTargetJobConfiguration {
     lateinit var stepBuilderFactory: StepBuilderFactory
 
     @set:Autowired
-    lateinit var jobTaskExecutorProperty: JobTaskExecutorProperty
-
-    @set:Autowired
     lateinit var bookDetailsRepository: BookDetailsRepository
 
     @set:Autowired
     lateinit var jobParameter: BookAPIRequestJobParameter
-
-    @set:[Autowired Qualifier("jobTaskExecutor")]
-    lateinit var jobTaskExecutor: TaskExecutor
 
     @set:[Autowired Qualifier("nationalLibraryFilterFunction")]
     lateinit var nationalLibraryBookDetailsFilterFunction: BookDetailsFilterFunction
@@ -79,8 +70,6 @@ class BookSetUpstreamTargetJobConfiguration {
         .reader(bookDetailsReader())
         .processor(bookDetailsProcessor())
         .writer(bookDetailsWriter())
-        .taskExecutor(jobTaskExecutor)
-        .throttleLimit(jobTaskExecutorProperty.throttleLimit!!)
         .build()
 
     @StepScope

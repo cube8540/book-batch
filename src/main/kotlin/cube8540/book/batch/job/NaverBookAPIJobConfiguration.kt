@@ -3,7 +3,6 @@ package cube8540.book.batch.job
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.config.APIConnectionProperty
 import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.repository.BookDetailsRepository
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.TaskExecutor
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
@@ -70,9 +68,6 @@ class NaverBookAPIJobConfiguration {
     lateinit var connectionProperty: APIConnectionProperty
 
     @set:Autowired
-    lateinit var jobExecutorProperty: JobTaskExecutorProperty
-
-    @set:Autowired
     lateinit var jobParameter: BookAPIRequestJobParameter
 
     @set:[Autowired Qualifier("naverBookAPIObjectMapper")]
@@ -80,9 +75,6 @@ class NaverBookAPIJobConfiguration {
 
     @set:Autowired
     lateinit var bookDetailsRepository: BookDetailsRepository
-
-    @set:[Autowired Qualifier("jobTaskExecutor")]
-    lateinit var jobTaskExecutor: TaskExecutor
 
     var chunkSize = defaultChunkSize
 
@@ -98,8 +90,6 @@ class NaverBookAPIJobConfiguration {
         .reader(bookContextReader())
         .processor(bookDetailsProcessor())
         .writer(bookDetailsWriter())
-        .taskExecutor(jobTaskExecutor)
-        .throttleLimit(jobExecutorProperty.throttleLimit!!)
         .build()
 
     @StepScope

@@ -2,7 +2,6 @@ package cube8540.book.batch
 
 import cube8540.book.batch.config.APIConnectionProperty
 import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.config.JobTaskExecutorProperty
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.integration.config.annotation.EnableBatchIntegration
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -22,7 +21,6 @@ import java.util.*
 @EnableConfigurationProperties(value = [
     AuthenticationProperty::class,
     APIConnectionProperty::class,
-    JobTaskExecutorProperty::class
 ])
 class BatchApplication {
     companion object {

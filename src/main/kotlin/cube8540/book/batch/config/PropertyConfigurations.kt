@@ -21,11 +21,3 @@ class APIConnectionProperty(
     val retryCount: Int? = 1,
     val retryDelaySecond: Int? = 5
 )
-
-@ConstructorBinding
-@ConfigurationProperties(prefix = "job-task-executor")
-class JobTaskExecutorProperty(
-    val corePoolSize: Int? = 10,
-    val maxPoolSize: Int? = 10,
-    val throttleLimit: Int? = 10
-)

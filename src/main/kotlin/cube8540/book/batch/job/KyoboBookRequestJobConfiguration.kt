@@ -2,16 +2,15 @@ package cube8540.book.batch.job
 
 import cube8540.book.batch.config.APIConnectionProperty
 import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.config.JobTaskExecutorProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.job.reader.RepositoryBasedBookReader
-import cube8540.book.batch.job.writer.RepositoryBasedBookWriter
 import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsController
 import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
 import cube8540.book.batch.external.kyobo.kr.KyoboLoginFilter
 import cube8540.book.batch.external.kyobo.kr.KyoboWebClientBookProcessor
+import cube8540.book.batch.job.reader.RepositoryBasedBookReader
+import cube8540.book.batch.job.writer.RepositoryBasedBookWriter
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.task.TaskExecutor
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
@@ -57,9 +55,6 @@ class KyoboBookRequestJobConfiguration {
     lateinit var authenticationProperty: AuthenticationProperty
 
     @set:Autowired
-    lateinit var jobTaskExecutorProperty: JobTaskExecutorProperty
-
-    @set:Autowired
     lateinit var connectionProperty: APIConnectionProperty
 
     @set:[Autowired Qualifier("kyoboBookDocumentMapper")]
@@ -70,9 +65,6 @@ class KyoboBookRequestJobConfiguration {
 
     @set:Autowired
     lateinit var jobParameter: BookAPIRequestJobParameter
-
-    @set:[Autowired Qualifier("jobTaskExecutor")]
-    lateinit var jobTaskExecutor: TaskExecutor
 
     var chunkSize = defaultChunkSize
 
@@ -88,8 +80,6 @@ class KyoboBookRequestJobConfiguration {
         .reader(bookDetailsReader())
         .processor(bookDetailsProcessor())
         .writer(bookDetailsWriter())
-        .taskExecutor(jobTaskExecutor)
-        .throttleLimit(jobTaskExecutorProperty.throttleLimit!!)
         .build()
 
     @StepScope
