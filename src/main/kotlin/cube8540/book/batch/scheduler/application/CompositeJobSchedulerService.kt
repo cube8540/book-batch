@@ -1,14 +1,13 @@
 package cube8540.book.batch.scheduler.application
 
-import java.time.LocalDate
 import java.util.*
 
 class CompositeJobSchedulerService: JobSchedulerService {
 
     private val delegates = LinkedList<JobSchedulerService>()
 
-    override fun launchBookDetailsRequest(from: LocalDate, to: LocalDate) {
-        this.delegates.forEach { it.launchBookDetailsRequest(from, to) }
+    override fun launchBookDetailsRequest(jobParameter: JobSchedulerLaunchParameter) {
+        this.delegates.forEach { it.launchBookDetailsRequest(jobParameter) }
     }
 
     fun addDelegate(service: JobSchedulerService): CompositeJobSchedulerService {

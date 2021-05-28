@@ -8,7 +8,6 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.context.ApplicationEventPublisher
 import java.time.Clock
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -20,14 +19,14 @@ class LocalDateJobSchedulerService(private val job: Job, private val jobLauncher
 
     var eventPublisher: ApplicationEventPublisher? = null
 
-    override fun launchBookDetailsRequest(from: LocalDate, to: LocalDate) {
-        val jobParameter = JobParametersBuilder()
-            .addString(JobParameterNames.from, from.format(DateTimeFormatter.BASIC_ISO_DATE))
-            .addString(JobParameterNames.to, to.format(DateTimeFormatter.BASIC_ISO_DATE))
+    override fun launchBookDetailsRequest(jobParameter: JobSchedulerLaunchParameter) {
+        val parameter = JobParametersBuilder()
+            .addString(JobParameterNames.from, jobParameter.from.format(DateTimeFormatter.BASIC_ISO_DATE))
+            .addString(JobParameterNames.to, jobParameter.to.format(DateTimeFormatter.BASIC_ISO_DATE))
             .addString(JobParameterNames.startup, LocalDateTime.now(clock).format(DateTimeFormatter.ISO_DATE_TIME))
             .toJobParameters()
 
-        val execution = jobLauncher.run(job, jobParameter)
-        eventPublisher?.publishEvent(JobSchedulerFinishedEvent(execution))
+        val execution = jobLauncher.run(job, parameter)
+        eventPublisher?.publishEvent(JobSchedulerFinishedEvent(execution, jobParameter))
     }
 }

@@ -40,13 +40,14 @@ class LocalDateJobSchedulerServiceTest {
     @Test
     fun `job launched`() {
         val execution: JobExecution = mockk(relaxed = true)
+        val launchParameter = JobSchedulerLaunchParameter(from, to)
         val jobParameter = createExceptedJobParameter(from, to)
 
         every { jobLauncher.run(job, jobParameter) } returns execution
 
-        service.launchBookDetailsRequest(from, to)
+        service.launchBookDetailsRequest(launchParameter)
         verify { jobLauncher.run(job,  jobParameter) }
-        verify { eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution)) }
+        verify { eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution, launchParameter)) }
     }
 
     private fun createExceptedJobParameter(from: LocalDate, to: LocalDate) = JobParametersBuilder()
