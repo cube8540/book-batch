@@ -90,7 +90,7 @@ class BookSetUpstreamTargetTest constructor(
         Mockito.`when`(kyoboFilterFunction.isValid(bookDetails)).thenReturn(true)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).updateForUpstreamTarget(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository).saveAll(capture(persistCaptor))
 
         val upstreamTarget = persistCaptor.value.toList()
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
@@ -124,7 +124,7 @@ class BookSetUpstreamTargetTest constructor(
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
-        Mockito.verify(bookDetailsRepository).updateForUpstreamTarget(emptyList())
+        Mockito.verify(bookDetailsRepository).saveAll(emptyList())
     }
 
     private fun createJobParameters(): JobParameters =

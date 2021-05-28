@@ -85,7 +85,7 @@ class NaverBookDetailsControllerTest {
 
     @Test
     fun `merged when base original is null`() {
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
 
         val base: BookDetails = mockk(relaxed = true)
         val item: BookDetails = mockk(relaxed = true) {
@@ -105,8 +105,8 @@ class NaverBookDetailsControllerTest {
 
     @Test
     fun `merged when base original is not null`() {
-        val baseOriginalProperty = HashMap<OriginalPropertyKey, String>()
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+        val baseOriginalProperty = HashMap<OriginalPropertyKey, String?>()
+        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
 
         val base: BookDetails = mockk(relaxed = true) {
             every { original } returns baseOriginalProperty
@@ -128,7 +128,7 @@ class NaverBookDetailsControllerTest {
 
         val result = controller.merge(base, item)
         assertThat(result).isEqualTo(base)
-        verify { result.original = baseOriginalProperty + itemOriginalProperty }
+        verify { result.original = (baseOriginalProperty + itemOriginalProperty).toMutableMap() }
     }
 
 }

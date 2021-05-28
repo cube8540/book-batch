@@ -8,6 +8,6 @@ open class RepositoryBasedUpstreamTargetWriter(
     private val bookDetailsRepository: BookDetailsRepository
 ): AbstractItemStreamItemWriter<BookDetails>() {
     override fun write(items: MutableList<out BookDetails>) {
-        bookDetailsRepository.updateForUpstreamTarget(items)
+        bookDetailsRepository.saveAll(items)
     }
 }

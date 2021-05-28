@@ -1,6 +1,9 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.capture
+import com.nhaarman.mockitokotlin2.firstValue
+import com.nhaarman.mockitokotlin2.secondValue
+import com.nhaarman.mockitokotlin2.times
 import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails
@@ -96,9 +99,9 @@ class KyoboBookRequestJobTest constructor(
             .thenReturn(queryResultContents)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).mergeBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val mergedBook = persistCaptor.value.toList()
+        val mergedBook = persistCaptor.secondValue.toList()
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(mergedBook.size).isEqualTo(queryResultContents.size)
         assertThat(mergedBook[0]).isEqualTo(bookDetails)
@@ -109,7 +112,7 @@ class KyoboBookRequestJobTest constructor(
                 mediumThumbnail = URI.create("http://image.kyobobook.co.kr/images/book/large/831/l9791133447831.jpg"),
                 smallThumbnail = null
             )
-            bookDetails.authors = setOf("Norimitsu Kaihou (원작)")
+            bookDetails.authors = setOf("Norimitsu Kaihou (원작)").toMutableSet()
             bookDetails.seriesCode = "5800068780426"
             bookDetails.price = 5000.toDouble()
         }

@@ -1,6 +1,8 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.capture
+import com.nhaarman.mockitokotlin2.firstValue
+import com.nhaarman.mockitokotlin2.times
 import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.PublisherRawMapper
@@ -91,11 +93,11 @@ class NaverBookAPICallingTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
-        assertThat(persistCaptor.value.size).isEqualTo(1)
+        assertThat(persistCaptor.firstValue.size).isEqualTo(1)
         assertThat(insertedBook.isbn).isEqualTo("9791136202093")
     }
 
@@ -111,11 +113,11 @@ class NaverBookAPICallingTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
-        assertThat(persistCaptor.value.size).isEqualTo(1)
+        assertThat(persistCaptor.firstValue.size).isEqualTo(1)
         assertThat(insertedBook.isbn).isEqualTo("9791136202093")
     }
 
@@ -131,9 +133,9 @@ class NaverBookAPICallingTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBooks = persistCaptor.value.toList()
+        val insertedBooks = persistCaptor.firstValue.toList()
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBooks.size).isEqualTo(3)
         assertThat(insertedBooks[0].isbn).isEqualTo("9791136226259")
@@ -158,7 +160,7 @@ class NaverBookAPICallingTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameter)
-        Mockito.verify(bookDetailsRepository).mergeBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
         val mergedBook = persistCaptor.value.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
@@ -187,9 +189,9 @@ class NaverBookAPICallingTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameter)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBook.isbn).isEqualTo("9791164120123")
     }

@@ -51,9 +51,8 @@ class RepositoryBasedBookWriterTest {
         every { controller.merge(existsBook1, item0002) } returns null
 
         writer.write(items)
-        verify { repository.detached(listOf(existsBook0, existsBook1)) }
-        verifyPersist(listOf(item0000, item0003))
-        verifyMerged(listOf(mergedBook0))
+        verify { repository.saveAll(listOf(item0000, item0003)) }
+        verify { repository.saveAll(listOf(mergedBook0)) }
     }
 
     @Test
@@ -87,33 +86,8 @@ class RepositoryBasedBookWriterTest {
         every { controller.merge(existsBook1, item0002) } returns mergedBook1
 
         writer.write(items)
-        verify { repository.detached(listOf(existsBook0, existsBook1)) }
-        verifyPersist(listOf(item0000, item0003))
-        verifyMerged(listOf(mergedBook0, mergedBook1))
-    }
-
-    private fun verifyPersist(collection: Collection<BookDetails>) {
-        verify { repository.persistBookDetails(collection) }
-        verify { repository.persistDivisions(collection) }
-        verify { repository.persistAuthors(collection) }
-        verify { repository.persistKeywords(collection) }
-        verify { repository.persistOriginals(collection) }
-    }
-
-    private fun verifyMerged(collection: Collection<BookDetails>) {
-        verifyOrder {
-            repository.mergeBookDetails(collection)
-
-            repository.deleteDivisions(collection)
-            repository.deleteAuthors(collection)
-            repository.deleteKeywords(collection)
-            repository.deleteOriginals(collection)
-
-            repository.persistDivisions(collection)
-            repository.persistAuthors(collection)
-            repository.persistKeywords(collection)
-            repository.persistOriginals(collection)
-        }
+        verify { repository.saveAll(listOf(item0000, item0003)) }
+        verify { repository.saveAll(listOf(mergedBook0, mergedBook1)) }
     }
 
     @AfterEach

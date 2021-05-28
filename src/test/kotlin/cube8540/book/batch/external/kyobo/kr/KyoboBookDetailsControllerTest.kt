@@ -94,7 +94,7 @@ class KyoboBookDetailsControllerTest {
     fun `merged when base original is null`() {
         val base: BookDetails = mockk(relaxed = true)
         val item: BookDetails = mockk(relaxed = true)
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
 
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.KYOBO)] = itemOriginalValue0000
         itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.KYOBO)] = itemOriginalValue0001
@@ -110,8 +110,8 @@ class KyoboBookDetailsControllerTest {
 
     @Test
     fun `merged when base original is not null`() {
-        val baseOriginalProperty = HashMap<OriginalPropertyKey, String>()
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String>()
+        val baseOriginalProperty = HashMap<OriginalPropertyKey, String?>()
+        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
 
         val base: BookDetails = mockk(relaxed = true) {
             every { original } returns baseOriginalProperty
@@ -130,6 +130,6 @@ class KyoboBookDetailsControllerTest {
 
         val result = controller.merge(base, item)
         assertThat(result).isEqualTo(base)
-        verify { base.original = baseOriginalProperty + itemOriginalProperty }
+        verify { base.original = (baseOriginalProperty + itemOriginalProperty).toMutableMap() }
     }
 }
