@@ -11,7 +11,6 @@ import cube8540.book.batch.toDefaultInstance
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyOrder
 import org.junit.jupiter.api.Test
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobExecution
@@ -66,6 +65,7 @@ class LocalDateWithPublisherSchedulerServiceTest {
     @Test
     fun `job launched`() {
         val publisherQueryResults = listOf(publisher0, publisher1)
+        val launchParameter = JobSchedulerLaunchParameter(from, to)
         val jobParameter0 = createExceptedJobParameter(from, to, "keyword0")
         val execution0: JobExecution = mockk(relaxed = true)
         val jobParameter1 = createExceptedJobParameter(from, to, "keyword1")
@@ -87,25 +87,25 @@ class LocalDateWithPublisherSchedulerServiceTest {
         every { jobLauncher.run(job, jobParameter4) } returns execution4
         every { jobLauncher.run(job, jobParameter5) } returns execution5
 
-        service.launchBookDetailsRequest(from, to)
+        service.launchBookDetailsRequest(launchParameter)
         verify {
             jobLauncher.run(job, jobParameter0)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution0))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution0, launchParameter))
 
             jobLauncher.run(job, jobParameter1)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution1))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution1, launchParameter))
 
             jobLauncher.run(job, jobParameter2)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution2))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution2, launchParameter))
 
             jobLauncher.run(job, jobParameter3)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution3))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution3, launchParameter))
 
             jobLauncher.run(job, jobParameter4)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution4))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution4, launchParameter))
 
             jobLauncher.run(job, jobParameter5)
-            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution5))
+            eventPublisher.publishEvent(JobSchedulerFinishedEvent(execution5, launchParameter))
         }
     }
 

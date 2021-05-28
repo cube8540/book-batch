@@ -1,6 +1,7 @@
 package cube8540.book.batch.scheduler
 
 import cube8540.book.batch.BatchApplication
+import cube8540.book.batch.scheduler.application.JobSchedulerLaunchParameter
 import cube8540.book.batch.scheduler.application.JobSchedulerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
@@ -25,6 +26,7 @@ class JobSchedulerConfiguration {
         val from = LocalDate.now(clock).minusMonths(3)
         val to = LocalDate.now(clock).plusMonths(3)
 
-        jobSchedulerService.launchBookDetailsRequest(from, to)
+        val launchParameter = JobSchedulerLaunchParameter(from, to)
+        jobSchedulerService.launchBookDetailsRequest(launchParameter)
     }
 }

@@ -15,6 +15,7 @@ class CompositeJobSchedulerServiceTest {
 
     @Test
     fun `run all delegates`() {
+        val launchParameter = JobSchedulerLaunchParameter(from, to)
         val delegator0: JobSchedulerService = mockk(relaxed = true)
         val delegator1: JobSchedulerService = mockk(relaxed = true)
         val delegator2: JobSchedulerService = mockk(relaxed = true)
@@ -23,11 +24,11 @@ class CompositeJobSchedulerServiceTest {
             .addDelegate(delegator1)
             .addDelegate(delegator2)
 
-        service.launchBookDetailsRequest(from, to)
+        service.launchBookDetailsRequest(launchParameter)
         verifyOrder {
-            delegator0.launchBookDetailsRequest(from, to)
-            delegator1.launchBookDetailsRequest(from, to)
-            delegator2.launchBookDetailsRequest(from, to)
+            delegator0.launchBookDetailsRequest(launchParameter)
+            delegator1.launchBookDetailsRequest(launchParameter)
+            delegator2.launchBookDetailsRequest(launchParameter)
         }
     }
 
