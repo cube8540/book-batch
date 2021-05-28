@@ -3,11 +3,12 @@ package cube8540.book.batch.job.reader
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.QBookDetails
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.job.reader.RepositoryBasedBookReader
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.data.domain.PageImpl
@@ -33,7 +34,7 @@ class RepositoryBasedBookReaderTest {
     }
 
     @Test
-    fun `detached read value`() {
+    fun `detached read value when detached set true`() {
         val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val firstBookDetails: BookDetails = mockk(relaxed = true)
         val requestPage = PageRequest.of(reader.page, pageSize, sort)
@@ -42,9 +43,26 @@ class RepositoryBasedBookReaderTest {
         val pageResult = PageImpl(bookDetails, requestPage, totalCount.toLong())
 
         every { repository.findByPublishDateBetween(from, to, requestPage) } returns pageResult
+        reader.detached = true
 
         reader.read()
         verify { repository.detached(bookDetails) }
+    }
+
+    @Test
+    fun `detached read value when detached set false`() {
+        val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
+        val firstBookDetails: BookDetails = mockk(relaxed = true)
+        val requestPage = PageRequest.of(reader.page, pageSize, sort)
+
+        val bookDetails: List<BookDetails> = listOf(firstBookDetails, mockk(relaxed = true), mockk(relaxed = true))
+        val pageResult = PageImpl(bookDetails, requestPage, totalCount.toLong())
+
+        every { repository.findByPublishDateBetween(from, to, requestPage) } returns pageResult
+        reader.detached = false
+
+        reader.read()
+        verify(exactly = 0) { repository.detached(bookDetails) }
     }
 
     @Test
@@ -76,6 +94,11 @@ class RepositoryBasedBookReaderTest {
 
         val result = reader.read()
         assertThat(result).isNull()
+    }
+
+    @AfterEach
+    fun cleanup() {
+        clearAllMocks()
     }
 
 }

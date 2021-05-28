@@ -77,6 +77,7 @@ class BookSetUpstreamTargetJobConfiguration {
     fun bookDetailsReader(): SynchronizedItemStreamReader<BookDetails> {
         val reader = RepositoryBasedBookReader(bookDetailsRepository, jobParameter.from!!, jobParameter.to!!)
         reader.pageSize = chunkSize
+        reader.detached = false
 
         val synchronizedItemStreamReader = SynchronizedItemStreamReader<BookDetails>()
         synchronizedItemStreamReader.setDelegate(reader)

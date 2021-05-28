@@ -45,7 +45,7 @@ class BookOriginalFilterTest {
             every { matches(propertyValue) } returns true
         }
 
-        val original = HashMap<OriginalPropertyKey, String>()
+        val original = HashMap<OriginalPropertyKey, String?>()
         val target: BookDetails = mockk(relaxed = true)
         val propertyRegex: PropertyRegex = mockk(relaxed = true)
 

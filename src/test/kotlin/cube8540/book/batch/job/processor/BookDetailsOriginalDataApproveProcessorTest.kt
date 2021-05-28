@@ -17,7 +17,7 @@ class BookDetailsOriginalDataApproveProcessorTest {
     @Test
     fun `filter when original data is not mapped`() {
         val bookDetails: BookDetails = mockk(relaxed = true)
-        val original = HashMap<OriginalPropertyKey, String>()
+        val original = HashMap<OriginalPropertyKey, String?>()
 
         original[OriginalPropertyKey("property", MappingType.NATIONAL_LIBRARY)] = "nationalLibraryProperty"
         every { bookDetails.original } returns original
@@ -30,7 +30,7 @@ class BookDetailsOriginalDataApproveProcessorTest {
     fun `filter when original data is mapped and filter result is true`() {
         val mappingType = MappingType.NATIONAL_LIBRARY
         val bookDetails: BookDetails = mockk(relaxed = true)
-        val original = HashMap<OriginalPropertyKey, String>()
+        val original = HashMap<OriginalPropertyKey, String?>()
 
         val filterFunction: BookDetailsFilterFunction = mockk(relaxed = true) {
             every { isValid(bookDetails) } returns true
@@ -49,7 +49,7 @@ class BookDetailsOriginalDataApproveProcessorTest {
     fun `filter when original data is mapped and filter result is false`() {
         val mappingType = MappingType.NATIONAL_LIBRARY
         val bookDetails: BookDetails = mockk(relaxed = true)
-        val original = HashMap<OriginalPropertyKey, String>()
+        val original = HashMap<OriginalPropertyKey, String?>()
 
         val filterFunction: BookDetailsFilterFunction = mockk(relaxed = true) {
             every { isValid(bookDetails) } returns false
@@ -67,7 +67,7 @@ class BookDetailsOriginalDataApproveProcessorTest {
     @Test
     fun `filter when any filter result is false`() {
         val bookDetails: BookDetails = mockk(relaxed = true)
-        val original = HashMap<OriginalPropertyKey, String>()
+        val original = HashMap<OriginalPropertyKey, String?>()
 
         val filterFunction0: BookDetailsFilterFunction = mockk(relaxed = true) {
             every { isValid(bookDetails) } returns true

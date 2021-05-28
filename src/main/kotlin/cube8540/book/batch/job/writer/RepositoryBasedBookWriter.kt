@@ -16,7 +16,6 @@ open class RepositoryBasedBookWriter(
 
         if (items.isNotEmpty()) {
             val existsBookDetails = bookDetailsRepository.findById(items.map { it.isbn })
-            bookDetailsRepository.detached(existsBookDetails)
             items.forEach { item ->
                 val exists = existsBookDetails.find { book -> item.isbn == book.isbn }
                 if (exists != null) {
@@ -25,34 +24,8 @@ open class RepositoryBasedBookWriter(
                     persistList.add(item)
                 }
             }
-
-            persist(persistList)
-            merge(mergeList)
+            bookDetailsRepository.saveAll(persistList)
+            bookDetailsRepository.saveAll(mergeList)
         }
-    }
-
-    private fun persist(items: Collection<BookDetails>) {
-        bookDetailsRepository.persistBookDetails(items)
-        persistProperties(items)
-    }
-
-    private fun merge(items: Collection<BookDetails>) {
-        bookDetailsRepository.mergeBookDetails(items)
-        removeProperties(items)
-        persistProperties(items)
-    }
-
-    private fun persistProperties(items: Collection<BookDetails>) {
-        bookDetailsRepository.persistDivisions(items)
-        bookDetailsRepository.persistAuthors(items)
-        bookDetailsRepository.persistKeywords(items)
-        bookDetailsRepository.persistOriginals(items)
-    }
-
-    private fun removeProperties(items: Collection<BookDetails>) {
-        bookDetailsRepository.deleteDivisions(items)
-        bookDetailsRepository.deleteAuthors(items)
-        bookDetailsRepository.deleteKeywords(items)
-        bookDetailsRepository.deleteOriginals(items)
     }
 }

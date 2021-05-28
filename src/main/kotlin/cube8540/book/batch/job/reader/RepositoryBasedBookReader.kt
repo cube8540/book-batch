@@ -15,6 +15,8 @@ open class RepositoryBasedBookReader(
     private val to: LocalDate
 ): AbstractPagingItemReader<BookDetails>() {
 
+    var detached: Boolean = true
+
     override fun doReadPage() {
         if (results == null) {
             results = ArrayList()
@@ -24,7 +26,10 @@ open class RepositoryBasedBookReader(
 
         val sort = Sort.by(Sort.Order.desc(QBookDetails.bookDetails.publishDate.metadata.name))
         val bookDetailsPage = bookDetailsRepository.findByPublishDateBetween(from, to, PageRequest.of(page, pageSize, sort))
-        bookDetailsRepository.detached(bookDetailsPage.content)
+
+        if (detached) {
+            bookDetailsRepository.detached(bookDetailsPage.content)
+        }
         results.addAll(bookDetailsPage.content)
     }
 

@@ -1,8 +1,6 @@
 package cube8540.book.batch.job
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.capture
-import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.*
 import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
@@ -98,9 +96,9 @@ class NationalLibraryAPICallingJobTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBook.isbn).isEqualTo("2676865437795")
     }
@@ -118,9 +116,9 @@ class NationalLibraryAPICallingJobTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBook.isbn).isEqualTo("2676865437795")
     }
@@ -139,7 +137,7 @@ class NationalLibraryAPICallingJobTest constructor(
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
-        Mockito.verify(bookDetailsRepository, never()).persistBookDetails(any())
+        Mockito.verify(bookDetailsRepository, never()).saveAll(Mockito.anyList())
     }
 
     @Test
@@ -155,9 +153,9 @@ class NationalLibraryAPICallingJobTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBooks = persistCaptor.value.toList()
+        val insertedBooks = persistCaptor.firstValue.toList()
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBooks[0].isbn).isEqualTo("1013791591417")
         assertThat(insertedBooks[1].isbn).isEqualTo("2676865437795")
@@ -183,7 +181,7 @@ class NationalLibraryAPICallingJobTest constructor(
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
-        Mockito.verify(bookDetailsRepository).mergeBookDetails(emptyList())
+        Mockito.verify(bookDetailsRepository).saveAll(emptyList())
     }
 
     @Test
@@ -204,9 +202,9 @@ class NationalLibraryAPICallingJobTest constructor(
         configSuccessfulHttpResponse(dispatcherOptions)
 
         val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
-        Mockito.verify(bookDetailsRepository).persistBookDetails(capture(persistCaptor))
+        Mockito.verify(bookDetailsRepository, times(2)).saveAll(capture(persistCaptor))
 
-        val insertedBook = persistCaptor.value.toList()[0]
+        val insertedBook = persistCaptor.firstValue.toList()[0]
         assertThat(jobExecution.status).isEqualTo(BatchStatus.COMPLETED)
         assertThat(insertedBook.isbn).isEqualTo("2676865437795")
     }

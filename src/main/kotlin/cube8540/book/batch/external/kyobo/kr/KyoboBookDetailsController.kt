@@ -23,7 +23,7 @@ class KyoboBookDetailsController: BookDetailsController {
         base.price = item.price
 
         if (base.original != null && item.original != null) {
-            base.original = base.original!! + item.original!!
+            base.original = (base.original!! + item.original!!).toMutableMap()
         } else if (item.original != null) {
             base.original = item.original
         }
