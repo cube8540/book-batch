@@ -1,5 +1,6 @@
 package cube8540.book.batch.job
 
+import cube8540.book.batch.external.BookAPIRequest
 import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -37,4 +38,6 @@ class BookAPIRequestJobParameter {
     fun setStartup(value: String?) {
         this.startup = value?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_DATE_TIME) }
     }
+
+    fun toRequest(page: Int, pageSize: Int): BookAPIRequest = BookAPIRequest(page = page, size = pageSize, from = from, to = to, isbn = isbn, publisher = publisher)
 }

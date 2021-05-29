@@ -6,8 +6,7 @@ import cube8540.book.batch.config.AuthenticationProperty
 import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.external.naver.com.NaverBookAPIAuthenticationFilter
-import cube8540.book.batch.external.naver.com.NaverBookAPIPageDecision
+import cube8540.book.batch.external.naver.com.NaverBookAPIExchanger
 import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
 import cube8540.book.batch.external.naver.com.NaverBookDetailsController
 import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
@@ -22,8 +21,6 @@ import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.support.CompositeItemProcessor
-import org.springframework.batch.item.support.SynchronizedItemStreamReader
-import org.springframework.batch.item.support.SynchronizedItemStreamWriter
 import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -34,12 +31,8 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriComponentsBuilder
 import reactor.netty.http.client.HttpClient
-import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 
 @Configuration
 class NaverBookAPIJobConfiguration {
@@ -52,7 +45,7 @@ class NaverBookAPIJobConfiguration {
         const val jobWriterName = jobName + "JobWriter"
         const val defaultChunkSize = 100
 
-        internal var endpoint = URI.create(NaverBookAPIRequestNames.endpointBase + NaverBookAPIRequestNames.endpointPath)
+        internal var endpointBase = NaverBookAPIRequestNames.endpointBase
     }
 
     @set:Autowired
@@ -94,41 +87,31 @@ class NaverBookAPIJobConfiguration {
 
     @StepScope
     @Bean(jobReaderName)
-    fun bookContextReader(): SynchronizedItemStreamReader<BookDetailsContext> {
-        val httpClient = HttpClient.create()
-            .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))
-
-        val uriBuilder = UriComponentsBuilder.newInstance()
-            .uri(endpoint)
-            .queryParam(NaverBookAPIRequestNames.fromKeyword, jobParameter.from?.format(DateTimeFormatter.BASIC_ISO_DATE))
-            .queryParam(NaverBookAPIRequestNames.toKeyword, jobParameter.to?.format(DateTimeFormatter.BASIC_ISO_DATE))
-            .queryParam(NaverBookAPIRequestNames.publisherKeyword, jobParameter.publisher)
-            .queryParam(NaverBookAPIRequestNames.isbnKeyword, jobParameter.isbn)
-            .encode(StandardCharsets.UTF_8)
-
+    fun bookContextReader(): WebClientBookReader {
         val webClient = WebClient.builder()
+            .baseUrl(endpointBase)
             .exchangeStrategies(
                 ExchangeStrategies.builder().codecs {
                     it.customCodecs().register(Jackson2JsonEncoder(objectMapper))
                     it.customCodecs().register(Jackson2JsonDecoder(objectMapper))
                 }.build()
             )
-            .clientConnector(ReactorClientHttpConnector(httpClient))
-            .filter(NaverBookAPIAuthenticationFilter(authenticationProperty.naverBook.clientId, authenticationProperty.naverBook.clientSecret))
+            .clientConnector(
+                ReactorClientHttpConnector(
+                    HttpClient.create()
+                        .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))
+                ))
             .build()
 
-        val reader = WebClientBookReader(uriBuilder, webClient)
-        reader.pageDecision = NaverBookAPIPageDecision()
-        reader.requestPageParameterName = NaverBookAPIRequestNames.start
-        reader.requestPageSizeParameterName = NaverBookAPIRequestNames.display
+        val exchanger = NaverBookAPIExchanger(webClient, authenticationProperty.naverBook)
+        exchanger.retryCount = connectionProperty.retryCount!!
+        exchanger.retryDelaySecond = connectionProperty.retryDelaySecond!!
+
+        val reader = WebClientBookReader(exchanger, jobParameter)
         reader.isSaveState = false
         reader.pageSize = chunkSize
-        reader.retryDelaySecond = connectionProperty.retryDelaySecond!!
-        reader.retryCount = connectionProperty.retryCount!!
 
-        val synchronizedItemStreamReader = SynchronizedItemStreamReader<BookDetailsContext>()
-        synchronizedItemStreamReader.setDelegate(reader)
-        return synchronizedItemStreamReader
+        return reader
     }
 
     @StepScope
@@ -144,11 +127,5 @@ class NaverBookAPIJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter(): SynchronizedItemStreamWriter<BookDetails> {
-        val writer = RepositoryBasedBookWriter(bookDetailsRepository, NaverBookDetailsController())
-
-        val synchronizedItemStreamWriter = SynchronizedItemStreamWriter<BookDetails>()
-        synchronizedItemStreamWriter.setDelegate(writer)
-        return synchronizedItemStreamWriter
-    }
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, NaverBookDetailsController())
 }

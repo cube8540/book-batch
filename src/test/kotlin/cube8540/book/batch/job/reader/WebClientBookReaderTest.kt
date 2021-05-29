@@ -1,157 +1,69 @@
 package cube8540.book.batch.job.reader
 
-import cube8540.book.batch.external.PageDecision
-import cube8540.book.batch.external.exception.ErrorCodeExternalExceptionCreator
-import cube8540.book.batch.external.exception.InternalBadRequestException
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.bookDetailsContext
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.createWebClient
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.endpoint
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.errorCode
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.errorMessage
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockEmptyResponse
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockErrorResponse
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.mockSuccessfulResponse
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.pageRequestName
-import cube8540.book.batch.infra.WebClientBookReaderTestEnvironment.pageSizeRequestName
+import cube8540.book.batch.domain.BookDetailsContext
+import cube8540.book.batch.external.BookAPIRequest
+import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.external.ExternalBookAPIExchanger
+import cube8540.book.batch.job.BookAPIRequestJobParameter
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verifyOrder
-import okhttp3.mockwebserver.*
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.catchThrowable
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriBuilder
-import java.net.URI
-import kotlin.random.Random
+import java.time.LocalDate
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class WebClientBookReaderTest {
 
-    private val mockWebServer = MockWebServer()
+    private val publisher = "publisher00001"
+    private val isbn = "isbn-00-000"
+    private val from = LocalDate.of(2021, 5, 1)
+    private val to = LocalDate.of(2021, 5, 31)
 
-    private val uriBuilder: UriBuilder = mockk(relaxed = true)
-    private val exceptionCreator: ErrorCodeExternalExceptionCreator = mockk(relaxed = true)
+    private val exchanger: ExternalBookAPIExchanger = mockk(relaxed = true)
+    private val request = BookAPIRequestJobParameter()
 
-    private val webClient: WebClient = createWebClient(mockWebServer)
-    private val pageDecision: PageDecision = mockk(relaxed = true)
-
-    private val webClientBookReader = WebClientBookReader(uriBuilder, webClient)
+    private val reader = WebClientBookReader(exchanger, request)
 
     init {
-        webClientBookReader.requestPageParameterName = pageRequestName
-        webClientBookReader.requestPageSizeParameterName = pageSizeRequestName
-        webClientBookReader.exceptionCreator = exceptionCreator
-        webClientBookReader.pageSize = 1
-        webClientBookReader.pageDecision = pageDecision
+        request.isbn = isbn
+        request.publisher = publisher
+        request.from = from
+        request.to = to
     }
 
     @Test
-    fun `read value`() {
-        val randomPage = Random.nextInt()
+    fun `read value api result is null`() {
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
 
-        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
-        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
-        every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
-        every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
-        configSuccessfulHttpResponse(mockSuccessfulResponse, endpoint)
+        every { exchanger.exchange(request) } returns null
 
-        val result = webClientBookReader.read()
-        verifyOrder {
-            uriBuilder.replaceQueryParam(pageRequestName, randomPage)
-            uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize)
-            uriBuilder.build()
-        }
-        assertThat(result).isEqualTo(bookDetailsContext)
-    }
-
-    @Test
-    fun `api returns empty data when results already not empty`() {
-        val randomPage = Random.nextInt()
-
-        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
-        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
-        every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
-        every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
-        configSuccessfulHttpResponse(mockSuccessfulResponse, endpoint)
-        webClientBookReader.read()
-
-        val secondRandomPage = Random.nextInt()
-        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns secondRandomPage
-        every { uriBuilder.replaceQueryParam(pageRequestName, secondRandomPage) } returns uriBuilder
-        every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
-        every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
-        configSuccessfulHttpResponse(mockEmptyResponse, endpoint)
-
-        val result = webClientBookReader.read()
+        val result = reader.read()
         assertThat(result).isNull()
     }
 
     @Test
-    fun `exception during to read`() {
-        val randomPage = Random.nextInt()
+    fun `read value api result books is empty`() {
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
+        val bookAPIResponse: BookAPIResponse = mockk(relaxed = true)
 
-        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
-        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
-        every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
-        every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
+        every { bookAPIResponse.books } returns emptyList()
+        every { exchanger.exchange(request) } returns bookAPIResponse
 
-        configFailsHttpResponse(mockErrorResponse, endpoint)
-        every { exceptionCreator.create(errorCode, errorMessage) } returns InternalBadRequestException(errorMessage)
-
-        val thrown = catchThrowable { webClientBookReader.read() }
-        assertThat(thrown).isInstanceOf(InternalBadRequestException::class.java)
-        assertThat((thrown as InternalBadRequestException).message).isEqualTo(errorMessage)
+        val result = reader.read()
+        assertThat(result).isNull()
     }
 
     @Test
-    fun `retry timeout`() {
-        val randomRetryCount = Random.nextInt(2, 5)
-        val randomPage = Random.nextInt()
+    fun `read value`() {
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
+        val bookAPIResponse: BookAPIResponse = mockk(relaxed = true)
+        val books: List<BookDetailsContext> = listOf(mockk(), mockk(), mockk())
 
-        webClientBookReader.retryCount = randomRetryCount
-        webClientBookReader.retryDelaySecond = 1
+        every { bookAPIResponse.books } returns books
+        every { exchanger.exchange(request) } returns bookAPIResponse
 
-        IntRange(0, randomRetryCount - 1).forEach { _ -> mockWebServer.enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE)) }
-        mockWebServer.enqueue(mockSuccessfulResponse)
-
-        every { pageDecision.calculation(webClientBookReader.page + 1, webClientBookReader.pageSize) } returns randomPage
-        every { uriBuilder.replaceQueryParam(pageRequestName, randomPage) } returns uriBuilder
-        every { uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize) } returns uriBuilder
-        every { uriBuilder.build() } returns URI.create(mockWebServer.url(endpoint).toString())
-
-        val result = webClientBookReader.read()
-        verifyOrder {
-            uriBuilder.replaceQueryParam(pageRequestName, randomPage)
-            uriBuilder.replaceQueryParam(pageSizeRequestName, webClientBookReader.pageSize)
-            uriBuilder.build()
-        }
-        assertThat(result).isEqualTo(bookDetailsContext)
-    }
-
-    @AfterEach
-    fun cleanup() {
-        mockWebServer.shutdown()
-        mockWebServer.close()
-    }
-
-    private fun configSuccessfulHttpResponse(response: MockResponse, path: String) {
-        mockWebServer.dispatcher = object: Dispatcher() {
-            override fun dispatch(request: RecordedRequest): MockResponse = when (request.path == path) {
-                true -> response
-                else -> MockResponse().setResponseCode(404)
-            }
-        }
-    }
-
-    private fun configFailsHttpResponse(response: MockResponse, path: String) {
-        mockWebServer.dispatcher = object: Dispatcher() {
-            override fun dispatch(request: RecordedRequest): MockResponse = when (request.path == path) {
-                true -> response
-                else -> MockResponse().setResponseCode(200)
-            }
-        }
+        val result = reader.read()
+        assertThat(result).isEqualTo(books.first())
     }
 }

@@ -1,5 +1,8 @@
 package cube8540.book.batch.job
 
+import cube8540.book.batch.config.AuthenticationProperty
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
+import cube8540.book.batch.getQueryParams
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.springframework.batch.core.JobParameters
@@ -7,6 +10,7 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import java.io.File
+import java.net.URI
 import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -62,8 +66,21 @@ object NationalLibraryAPICallingJobTestEnvironment {
 
     internal class DispatcherOptions(
         val response: MockResponse,
-        val path: String
+        private val jobParameter: JobParameters,
+        private val page: Int,
+        private val authenticationProperty: AuthenticationProperty
     ) {
-        fun isValid(request: RecordedRequest): Boolean = request.path == path
+        fun isValid(request: RecordedRequest): Boolean {
+            val requested = URI.create(request.path!!).getQueryParams()
+            return request.requestUrl!!.toUri().path == NationalLibraryAPIRequestNames.endpointPath &&
+                    requested[NationalLibraryAPIRequestNames.secretKey]?.first() == authenticationProperty.nationalLibrary.key &&
+                    requested[NationalLibraryAPIRequestNames.pageSize]?.first() == NationalLibraryAPIJobConfiguration.defaultChunkSize.toString() &&
+                    requested[NationalLibraryAPIRequestNames.pageNumber]?.first() == page.toString() &&
+                    requested[NationalLibraryAPIRequestNames.ebookYN]?.first() == "N" &&
+                    requested[NationalLibraryAPIRequestNames.resultStyle]?.first() == "json" &&
+                    requested[NationalLibraryAPIRequestNames.fromKeyword]?.first() == jobParameter.getString("from") &&
+                    requested[NationalLibraryAPIRequestNames.toKeyword]?.first() == jobParameter.getString("to") &&
+                    requested[NationalLibraryAPIRequestNames.publisherKeyword]?.first() == jobParameter.getString("publisher")
+        }
     }
 }
