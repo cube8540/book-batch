@@ -7,7 +7,7 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsContext
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.external.nl.go.NationalLibraryAPIAuthenticationFilter
+import cube8540.book.batch.external.nl.go.NationalLibraryAPIExchanger
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsController
 import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
@@ -23,8 +23,6 @@ import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.support.CompositeItemProcessor
-import org.springframework.batch.item.support.SynchronizedItemStreamReader
-import org.springframework.batch.item.support.SynchronizedItemStreamWriter
 import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -35,12 +33,8 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.util.UriComponentsBuilder
 import reactor.netty.http.client.HttpClient
-import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.time.Duration
-import java.time.format.DateTimeFormatter
 
 @Configuration
 class NationalLibraryAPIJobConfiguration {
@@ -53,7 +47,7 @@ class NationalLibraryAPIJobConfiguration {
         const val jobWriterName = jobName + "JobWriter"
         const val defaultChunkSize = 500
 
-        internal var endpoint = URI.create(NationalLibraryAPIRequestNames.endpointBase + NationalLibraryAPIRequestNames.endpointPath)
+        internal var endpointBase = NationalLibraryAPIRequestNames.endpointBase
     }
 
     @set:Autowired
@@ -98,21 +92,9 @@ class NationalLibraryAPIJobConfiguration {
 
     @StepScope
     @Bean(jobReaderName)
-    fun bookContextReader(): SynchronizedItemStreamReader<BookDetailsContext> {
-        val httpClient = HttpClient.create()
-            .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))
-
-        val uriBuilder = UriComponentsBuilder.newInstance()
-            .uri(endpoint)
-            .queryParam(NationalLibraryAPIRequestNames.fromKeyword, jobParameter.from?.format(DateTimeFormatter.BASIC_ISO_DATE))
-            .queryParam(NationalLibraryAPIRequestNames.toKeyword, jobParameter.to?.format(DateTimeFormatter.BASIC_ISO_DATE))
-            .queryParam(NationalLibraryAPIRequestNames.publisherKeyword, jobParameter.publisher)
-            .queryParam(NationalLibraryAPIRequestNames.isbnKeyword, jobParameter.isbn)
-            .queryParam(NationalLibraryAPIRequestNames.resultStyle, "json")
-            .queryParam(NationalLibraryAPIRequestNames.ebookYN, "N")
-            .encode(StandardCharsets.UTF_8)
-
+    fun bookContextReader(): WebClientBookReader {
         val webClient = WebClient.builder()
+            .baseUrl(endpointBase)
             .exchangeStrategies(
                 ExchangeStrategies.builder().codecs {
                     val decoder = Jackson2JsonDecoder(objectMapper)
@@ -122,21 +104,22 @@ class NationalLibraryAPIJobConfiguration {
                     it.customCodecs().register(Jackson2JsonEncoder(objectMapper))
                 }.build()
             )
-            .clientConnector(ReactorClientHttpConnector(httpClient))
-            .filter(NationalLibraryAPIAuthenticationFilter(authenticationProperty.nationalLibrary.key))
+            .clientConnector(
+                ReactorClientHttpConnector(
+                    HttpClient.create()
+                        .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))
+                ))
             .build()
 
-        val reader = WebClientBookReader(uriBuilder, webClient)
-        reader.requestPageParameterName = NationalLibraryAPIRequestNames.pageNumber
-        reader.requestPageSizeParameterName = NationalLibraryAPIRequestNames.pageSize
+        val exchanger = NationalLibraryAPIExchanger(webClient, authenticationProperty.nationalLibrary)
+        exchanger.retryCount = connectionProperty.retryCount!!
+        exchanger.retryDelaySecond = connectionProperty.retryDelaySecond!!
+
+        val reader = WebClientBookReader(exchanger, jobParameter)
         reader.isSaveState = false
         reader.pageSize = chunkSize
-        reader.retryDelaySecond = connectionProperty.retryDelaySecond!!
-        reader.retryCount = connectionProperty.retryCount!!
 
-        val synchronizedItemStreamReader = SynchronizedItemStreamReader<BookDetailsContext>()
-        synchronizedItemStreamReader.setDelegate(reader)
-        return synchronizedItemStreamReader
+        return reader
     }
 
     @StepScope
@@ -153,12 +136,6 @@ class NationalLibraryAPIJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter(): SynchronizedItemStreamWriter<BookDetails> {
-        val writer = RepositoryBasedBookWriter(bookDetailsRepository, NationalLibraryBookDetailsController())
-
-        val synchronizedItemStreamWriter = SynchronizedItemStreamWriter<BookDetails>()
-        synchronizedItemStreamWriter.setDelegate(writer)
-        return synchronizedItemStreamWriter
-    }
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, NationalLibraryBookDetailsController())
 
 }

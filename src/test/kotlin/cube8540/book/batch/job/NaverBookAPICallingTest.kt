@@ -8,7 +8,6 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.domain.Thumbnail
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.emptyResponse
@@ -31,7 +30,6 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.beans.factory.annotation.Qualifier
@@ -40,9 +38,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 
 @SpringBootTest
@@ -72,12 +68,11 @@ class NaverBookAPICallingTest constructor(
     private val jobLauncherTestUtils = JobLauncherTestUtils()
 
     private val mockWebServer: MockWebServer = MockWebServer()
-    private val endpoint: String = mockWebServer.url("/").toString()
 
     init {
         jobLauncherTestUtils.job = job
         jobLauncherTestUtils.jobLauncher = jobLauncher
-        NaverBookAPIJobConfiguration.endpoint = URI.create(endpoint)
+        NaverBookAPIJobConfiguration.endpointBase = mockWebServer.url("/").toString()
     }
 
     @Test
@@ -85,8 +80,8 @@ class NaverBookAPICallingTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(hasNotMappedPublisherResponse, createExpectedUri(jobParameters, 1), authenticationProperty),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1), authenticationProperty)
+            DispatcherOptions(hasNotMappedPublisherResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("<b>대원씨아이</b>")).thenReturn(publisherCode)
         Mockito.`when`(publisherRawMapper.mapping("<b>NOT MAPPED PUBLISHER</b>")).thenReturn(null)
@@ -106,8 +101,8 @@ class NaverBookAPICallingTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(hasIsbnNullResponse, createExpectedUri(jobParameters, 1), authenticationProperty),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1), authenticationProperty)
+            DispatcherOptions(hasIsbnNullResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("<b>대원씨아이</b>")).thenReturn(publisherCode)
         configSuccessfulHttpResponse(dispatcherOptions)
@@ -126,8 +121,8 @@ class NaverBookAPICallingTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(successfulResponse, createExpectedUri(jobParameters, 1), authenticationProperty),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1), authenticationProperty)
+            DispatcherOptions(successfulResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, NaverBookAPIJobConfiguration.defaultChunkSize + 1, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("<b>대원씨아이</b>")).thenReturn(publisherCode)
         configSuccessfulHttpResponse(dispatcherOptions)
@@ -152,8 +147,8 @@ class NaverBookAPICallingTest constructor(
         }
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(mergedResponse, createExpectedUri(jobParameter, 1), authenticationProperty),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameter, NaverBookAPIJobConfiguration.defaultChunkSize + 1), authenticationProperty)
+            DispatcherOptions(mergedResponse, jobParameter, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameter, NaverBookAPIJobConfiguration.defaultChunkSize + 1, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("<b>대원씨아이</b>")).thenReturn(publisherCode)
         Mockito.`when`(bookDetailsRepository.findById(listOf("9791136202093", "9791164120123"))).thenReturn(listOf(storedBookDetails))
@@ -181,8 +176,8 @@ class NaverBookAPICallingTest constructor(
         }
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(mergedResponse, createExpectedUri(jobParameter, 1), authenticationProperty),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameter, NaverBookAPIJobConfiguration.defaultChunkSize + 1), authenticationProperty)
+            DispatcherOptions(mergedResponse, jobParameter, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameter, NaverBookAPIJobConfiguration.defaultChunkSize + 1, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("<b>대원씨아이</b>")).thenReturn(publisherCode)
         Mockito.`when`(bookDetailsRepository.findById(listOf("9791136202093", "9791164120123"))).thenReturn(listOf(storedBookDetails))
@@ -202,18 +197,5 @@ class NaverBookAPICallingTest constructor(
                 options.find { it.isValid(request) }?.response
                     ?: MockResponse().setResponseCode(404)
         }
-    }
-
-    private fun createExpectedUri(jobParameter: JobParameters, page: Int): String {
-        val uriBuilder = UriComponentsBuilder.newInstance()
-            .uri(URI.create("/"))
-            .queryParam(NaverBookAPIRequestNames.fromKeyword, jobParameter.getString("from"))
-            .queryParam(NaverBookAPIRequestNames.toKeyword, jobParameter.getString("to"))
-            .queryParam(NaverBookAPIRequestNames.publisherKeyword, jobParameter.getString("publisher"))
-            .queryParam(NaverBookAPIRequestNames.isbnKeyword, jobParameter.getString("isbn"))
-            .queryParam(NaverBookAPIRequestNames.start, page)
-            .queryParam(NaverBookAPIRequestNames.display, NaverBookAPIJobConfiguration.defaultChunkSize)
-            .encode(StandardCharsets.UTF_8)
-        return uriBuilder.toUriString()
     }
 }

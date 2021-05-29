@@ -6,7 +6,6 @@ import cube8540.book.batch.domain.BookDetails
 import cube8540.book.batch.domain.BookDetailsFilterFunction
 import cube8540.book.batch.domain.PublisherRawMapper
 import cube8540.book.batch.domain.repository.BookDetailsRepository
-import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.emptyResponse
@@ -30,7 +29,6 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.Job
-import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.test.JobLauncherTestUtils
 import org.springframework.beans.factory.annotation.Qualifier
@@ -39,9 +37,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
-import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
-import java.nio.charset.StandardCharsets
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -74,12 +69,11 @@ class NationalLibraryAPICallingJobTest constructor(
     private val jobLauncherTestUtils = JobLauncherTestUtils()
 
     private val mockWebServer: MockWebServer = MockWebServer()
-    private val endpoint: String = mockWebServer.url("/").toString()
 
     init {
         jobLauncherTestUtils.job = job
         jobLauncherTestUtils.jobLauncher = jobLauncher
-        NationalLibraryAPIJobConfiguration.endpoint = URI.create(endpoint)
+        NationalLibraryAPIJobConfiguration.endpointBase = mockWebServer.url("/").toString()
     }
 
     @Test
@@ -87,8 +81,8 @@ class NationalLibraryAPICallingJobTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(hasNotMappedPublisherResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(hasNotMappedPublisherResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(publisherRawMapper.mapping("NOT MATCHED PUBLISHER")).thenReturn(null)
@@ -108,8 +102,8 @@ class NationalLibraryAPICallingJobTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(hasIsbnNullResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(hasIsbnNullResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(operatorMapper.isValid(any())).thenReturn(true)
@@ -128,8 +122,8 @@ class NationalLibraryAPICallingJobTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(successfulResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(successfulResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(operatorMapper.isValid(any())).thenReturn(false)
@@ -145,8 +139,8 @@ class NationalLibraryAPICallingJobTest constructor(
         val jobParameters = createJobParameters()
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(successfulResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(successfulResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(operatorMapper.isValid(any())).thenReturn(true)
@@ -170,8 +164,8 @@ class NationalLibraryAPICallingJobTest constructor(
         }
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(successfulResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(successfulResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(operatorMapper.isValid(any())).thenReturn(true)
@@ -192,8 +186,8 @@ class NationalLibraryAPICallingJobTest constructor(
         }
 
         val dispatcherOptions = listOf(
-            DispatcherOptions(mergedResponse, createExpectedUri(jobParameters, 1)),
-            DispatcherOptions(emptyResponse, createExpectedUri(jobParameters, 2))
+            DispatcherOptions(mergedResponse, jobParameters, 1, authenticationProperty),
+            DispatcherOptions(emptyResponse, jobParameters, 2, authenticationProperty)
         )
         Mockito.`when`(publisherRawMapper.mapping("대원씨아이(주)")).thenReturn(publisherCode)
         Mockito.`when`(operatorMapper.isValid(any())).thenReturn(true)
@@ -223,19 +217,4 @@ class NationalLibraryAPICallingJobTest constructor(
         }
     }
 
-    private fun createExpectedUri(jobParameter: JobParameters, page: Int): String {
-        val uriBuilder = UriComponentsBuilder.newInstance()
-            .uri(URI.create("/"))
-            .queryParam(NationalLibraryAPIRequestNames.fromKeyword, jobParameter.getString("from"))
-            .queryParam(NationalLibraryAPIRequestNames.toKeyword, jobParameter.getString("to"))
-            .queryParam(NationalLibraryAPIRequestNames.publisherKeyword, jobParameter.getString("publisher"))
-            .queryParam(NationalLibraryAPIRequestNames.isbnKeyword, jobParameter.getString("isbn"))
-            .queryParam(NationalLibraryAPIRequestNames.resultStyle, "json")
-            .queryParam(NationalLibraryAPIRequestNames.ebookYN, "N")
-            .queryParam(NationalLibraryAPIRequestNames.pageNumber, page)
-            .queryParam(NationalLibraryAPIRequestNames.pageSize, NationalLibraryAPIJobConfiguration.defaultChunkSize)
-            .queryParam(NationalLibraryAPIRequestNames.secretKey, authenticationProperty.nationalLibrary.key)
-            .encode(StandardCharsets.UTF_8)
-        return uriBuilder.toUriString()
-    }
 }

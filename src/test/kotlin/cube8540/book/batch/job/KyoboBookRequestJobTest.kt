@@ -1,7 +1,6 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.capture
-import com.nhaarman.mockitokotlin2.firstValue
 import com.nhaarman.mockitokotlin2.secondValue
 import com.nhaarman.mockitokotlin2.times
 import cube8540.book.batch.config.AuthenticationProperty
@@ -24,7 +23,6 @@ import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
@@ -38,16 +36,13 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
 import java.net.URI
 
 @SpringBootTest
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class KyoboBookRequestJobTest constructor(
     @Qualifier("kyoboBookRequest")
     private val job: Job,

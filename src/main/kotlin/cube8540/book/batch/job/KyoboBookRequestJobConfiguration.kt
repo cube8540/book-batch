@@ -18,8 +18,6 @@ import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.support.CompositeItemProcessor
-import org.springframework.batch.item.support.SynchronizedItemStreamReader
-import org.springframework.batch.item.support.SynchronizedItemStreamWriter
 import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -84,13 +82,11 @@ class KyoboBookRequestJobConfiguration {
 
     @StepScope
     @Bean(jobReaderName)
-    fun bookDetailsReader(): SynchronizedItemStreamReader<BookDetails> {
+    fun bookDetailsReader(): RepositoryBasedBookReader {
         val reader = RepositoryBasedBookReader(bookDetailsRepository, jobParameter.from!!, jobParameter.to!!)
         reader.pageSize = chunkSize
 
-        val synchronizedItemStreamReader = SynchronizedItemStreamReader<BookDetails>()
-        synchronizedItemStreamReader.setDelegate(reader)
-        return synchronizedItemStreamReader
+        return reader
     }
 
     @StepScope
@@ -116,13 +112,7 @@ class KyoboBookRequestJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter(): SynchronizedItemStreamWriter<BookDetails> {
-        val writer = RepositoryBasedBookWriter(bookDetailsRepository, KyoboBookDetailsController())
-
-        val synchronizedItemStreamWriter = SynchronizedItemStreamWriter<BookDetails>()
-        synchronizedItemStreamWriter.setDelegate(writer)
-        return synchronizedItemStreamWriter
-    }
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, KyoboBookDetailsController())
 
     private fun defaultHttpClient() = HttpClient.create()
         .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))

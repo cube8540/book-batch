@@ -1,7 +1,9 @@
 package cube8540.book.batch.job
 
 import cube8540.book.batch.config.AuthenticationProperty
+import cube8540.book.batch.external.BookAPIRequest
 import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
+import cube8540.book.batch.getQueryParams
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.springframework.batch.core.JobParameters
@@ -9,6 +11,7 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import java.io.File
+import java.net.URI
 import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -64,17 +67,20 @@ object NaverBookAPICallingTestEnvironment {
 
     internal class DispatcherOptions(
         val response: MockResponse,
-        val path: String,
+        private val jobParameter: JobParameters,
+        private val page: Int,
         private val authenticationProperty: AuthenticationProperty
     ) {
         fun isValid(request: RecordedRequest): Boolean {
-            val clientId = request.headers[NaverBookAPIRequestNames.clientId]
-            val clientSecret = request.headers[NaverBookAPIRequestNames.clientSecret]
-            return if (clientId == authenticationProperty.naverBook.clientId && clientSecret == authenticationProperty.naverBook.clientSecret) {
-                path == request.path
-            } else {
-                false
-            }
+            val requested = URI.create(request.path!!).getQueryParams()
+            return request.requestUrl!!.toUri().path == NaverBookAPIRequestNames.endpointPath &&
+                    request.headers[NaverBookAPIRequestNames.clientId] == authenticationProperty.naverBook.clientId &&
+                    request.headers[NaverBookAPIRequestNames.clientSecret] == authenticationProperty.naverBook.clientSecret &&
+                    requested[NaverBookAPIRequestNames.fromKeyword]?.first() == jobParameter.getString("from") &&
+                    requested[NaverBookAPIRequestNames.toKeyword]?.first() == jobParameter.getString("to") &&
+                    requested[NaverBookAPIRequestNames.display]?.first() == NaverBookAPIJobConfiguration.defaultChunkSize.toString() &&
+                    requested[NaverBookAPIRequestNames.start]?.first() == page.toString() &&
+                    requested[NaverBookAPIRequestNames.publisherKeyword]?.first() == jobParameter.getString("publisher")
         }
     }
 }
