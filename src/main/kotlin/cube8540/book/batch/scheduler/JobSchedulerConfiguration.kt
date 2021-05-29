@@ -26,7 +26,7 @@ class JobSchedulerConfiguration {
     @set:Autowired
     lateinit var jobSchedulerReservationService: JobSchedulerReservationService
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 43200000)
+    @Scheduled(cron = "0 0 0,12 * * *", zone = "Asia/Seoul")
     fun launchJob() {
         val from = LocalDate.now(clock).minusMonths(3)
         val to = LocalDate.now(clock).plusMonths(3)
