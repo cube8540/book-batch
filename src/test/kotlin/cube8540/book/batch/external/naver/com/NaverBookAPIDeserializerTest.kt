@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
 import io.mockk.every
 import io.mockk.mockk

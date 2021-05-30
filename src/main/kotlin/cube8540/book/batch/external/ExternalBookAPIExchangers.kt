@@ -1,6 +1,6 @@
 package cube8540.book.batch.external
 
-import cube8540.book.batch.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.BookDetailsContext
 import java.time.LocalDate
 
 interface ExternalBookAPIExchanger {

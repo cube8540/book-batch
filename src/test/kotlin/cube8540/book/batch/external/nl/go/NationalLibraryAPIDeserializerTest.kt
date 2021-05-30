@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
 import cube8540.book.batch.external.exception.InternalBadRequestException
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.pageNumber

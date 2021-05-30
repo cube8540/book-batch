@@ -1,9 +1,9 @@
 package cube8540.book.batch.external.naver.com
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.OriginalPropertyKey
-import cube8540.book.batch.domain.Thumbnail
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.MappingType
+import cube8540.book.batch.book.domain.OriginalPropertyKey
+import cube8540.book.batch.book.domain.Thumbnail
 import cube8540.book.batch.external.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0000
 import cube8540.book.batch.external.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0001
 import cube8540.book.batch.external.naver.com.NaverBookDetailsControllerTestEnvironment.existsOriginalProperty0002

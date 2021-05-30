@@ -1,10 +1,10 @@
 package cube8540.book.batch.scheduler.application
 
 import cube8540.book.batch.BatchApplication
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.Publisher
-import cube8540.book.batch.domain.RawProperty
-import cube8540.book.batch.domain.repository.PublisherRepository
+import cube8540.book.batch.book.domain.MappingType
+import cube8540.book.batch.book.domain.Publisher
+import cube8540.book.batch.book.domain.RawProperty
+import cube8540.book.batch.book.repository.PublisherRepository
 import cube8540.book.batch.job.JobParameterNames
 import cube8540.book.batch.scheduler.domain.JobSchedulerFinishedEvent
 import cube8540.book.batch.toDefaultInstance

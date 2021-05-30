@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.domain.DivisionRawMapper
+import cube8540.book.batch.book.domain.DivisionRawMapper
 import cube8540.book.batch.external.kyobo.kr.KyoboBookJsoupDocumentContextTestEnvironment.author
 import cube8540.book.batch.external.kyobo.kr.KyoboBookJsoupDocumentContextTestEnvironment.categoryDepth0
 import cube8540.book.batch.external.kyobo.kr.KyoboBookJsoupDocumentContextTestEnvironment.categoryDepth1

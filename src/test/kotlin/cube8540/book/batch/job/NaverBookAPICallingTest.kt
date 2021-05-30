@@ -3,11 +3,11 @@ package cube8540.book.batch.job
 import com.nhaarman.mockitokotlin2.capture
 import com.nhaarman.mockitokotlin2.firstValue
 import com.nhaarman.mockitokotlin2.times
-import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.PublisherRawMapper
-import cube8540.book.batch.domain.Thumbnail
-import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.Thumbnail
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NaverBookAPICallingTestEnvironment.emptyResponse

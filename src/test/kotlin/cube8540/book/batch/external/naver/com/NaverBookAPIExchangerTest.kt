@@ -2,7 +2,7 @@ package cube8540.book.batch.external.naver.com
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIRequest
 import cube8540.book.batch.external.BookAPIResponse
@@ -15,7 +15,6 @@ import io.mockk.mockk
 import okhttp3.mockwebserver.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType

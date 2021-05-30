@@ -1,11 +1,11 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.*
-import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsFilterFunction
-import cube8540.book.batch.domain.PublisherRawMapper
-import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsFilterFunction
+import cube8540.book.batch.book.domain.PublisherRawMapper
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.DispatcherOptions
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.createJobParameters
 import cube8540.book.batch.job.NationalLibraryAPICallingJobTestEnvironment.emptyResponse

@@ -1,6 +1,7 @@
 package cube8540.book.batch.config
 
-import cube8540.book.batch.domain.DivisionRawMapper
+import cube8540.book.batch.book.domain.DivisionRawMapper
+import cube8540.book.batch.external.DefaultMapperConfiguration
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

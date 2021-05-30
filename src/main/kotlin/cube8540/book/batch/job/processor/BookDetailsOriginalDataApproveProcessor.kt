@@ -1,8 +1,8 @@
 package cube8540.book.batch.job.processor
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsFilterFunction
-import cube8540.book.batch.domain.MappingType
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsFilterFunction
+import cube8540.book.batch.book.domain.MappingType
 import org.springframework.batch.item.ItemProcessor
 
 class BookDetailsOriginalDataApproveProcessor(): ItemProcessor<BookDetails, BookDetails> {

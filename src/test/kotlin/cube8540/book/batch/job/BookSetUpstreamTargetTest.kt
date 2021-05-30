@@ -1,8 +1,11 @@
 package cube8540.book.batch.job
 
 import com.nhaarman.mockitokotlin2.capture
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsFilterFunction
+import cube8540.book.batch.book.domain.OriginalPropertyKey
 import cube8540.book.batch.domain.*
-import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -73,8 +76,8 @@ class BookSetUpstreamTargetTest constructor(
         val jobParameters = createJobParameters()
         val bookDetails: BookDetails = mockk(relaxed = true) {
             every { original } returns mutableMapOf(
-                OriginalPropertyKey("property", MappingType.NATIONAL_LIBRARY) to "value",
-                OriginalPropertyKey("property", MappingType.KYOBO) to "value"
+                OriginalPropertyKey("property", cube8540.book.batch.book.domain.MappingType.NATIONAL_LIBRARY) to "value",
+                OriginalPropertyKey("property", cube8540.book.batch.book.domain.MappingType.KYOBO) to "value"
             )
         }
 
@@ -106,8 +109,8 @@ class BookSetUpstreamTargetTest constructor(
         val jobParameters = createJobParameters()
         val bookDetails: BookDetails = mockk(relaxed = true) {
             every { original } returns mutableMapOf(
-                OriginalPropertyKey("property", MappingType.NATIONAL_LIBRARY) to "value",
-                OriginalPropertyKey("property", MappingType.KYOBO) to "value"
+                OriginalPropertyKey("property", cube8540.book.batch.book.domain.MappingType.NATIONAL_LIBRARY) to "value",
+                OriginalPropertyKey("property", cube8540.book.batch.book.domain.MappingType.KYOBO) to "value"
             )
         }
 

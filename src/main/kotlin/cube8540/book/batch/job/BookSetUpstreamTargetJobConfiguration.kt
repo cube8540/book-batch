@@ -1,9 +1,9 @@
 package cube8540.book.batch.job
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsFilterFunction
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsFilterFunction
+import cube8540.book.batch.book.domain.MappingType
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.job.processor.BookDetailsOriginalDataApproveProcessor
 import cube8540.book.batch.job.processor.BookSetUpstreamTargetProcessor
 import cube8540.book.batch.job.reader.RepositoryBasedBookReader

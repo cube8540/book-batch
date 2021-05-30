@@ -3,7 +3,7 @@ package cube8540.book.batch.external.nl.go
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.TextNode
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.expectedTitle
 import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.isbn0
 import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.isbn1

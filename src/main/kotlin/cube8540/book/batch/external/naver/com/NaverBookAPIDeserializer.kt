@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
-import cube8540.book.batch.domain.BookDetailsContext
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
 
 class NaverBookAPIDeserializer(private val publisherRawMapper: PublisherRawMapper)

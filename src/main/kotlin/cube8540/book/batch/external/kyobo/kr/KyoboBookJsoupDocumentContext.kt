@@ -1,14 +1,15 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.BatchApplication
-import cube8540.book.batch.domain.*
+import cube8540.book.batch.book.domain.*
 import org.jsoup.nodes.Document
 import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class KyoboBookJsoupDocumentContext(private val document: Document, private val divisionMapper: DivisionRawMapper): BookDetailsContext {
+class KyoboBookJsoupDocumentContext(private val document: Document, private val divisionMapper: DivisionRawMapper):
+    BookDetailsContext {
 
     companion object {
         internal var clock = Clock.system(BatchApplication.DEFAULT_TIME_ZONE.toZoneId())

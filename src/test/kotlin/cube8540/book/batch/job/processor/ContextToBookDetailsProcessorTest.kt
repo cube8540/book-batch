@@ -1,6 +1,6 @@
 package cube8540.book.batch.job.processor
 
-import cube8540.book.batch.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.BookDetailsContext
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

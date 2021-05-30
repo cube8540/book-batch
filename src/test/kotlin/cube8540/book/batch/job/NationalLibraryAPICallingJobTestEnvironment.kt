@@ -1,6 +1,6 @@
 package cube8540.book.batch.job
 
-import cube8540.book.batch.config.AuthenticationProperty
+import cube8540.book.batch.AuthenticationProperty
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.getQueryParams
 import okhttp3.mockwebserver.MockResponse

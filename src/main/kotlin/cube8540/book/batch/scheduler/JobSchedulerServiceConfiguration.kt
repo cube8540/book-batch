@@ -1,7 +1,7 @@
 package cube8540.book.batch.scheduler
 
-import cube8540.book.batch.domain.MappingType
-import cube8540.book.batch.domain.repository.PublisherRepository
+import cube8540.book.batch.book.domain.MappingType
+import cube8540.book.batch.book.repository.PublisherRepository
 import cube8540.book.batch.job.BookSetUpstreamTargetJobConfiguration
 import cube8540.book.batch.job.KyoboBookRequestJobConfiguration
 import cube8540.book.batch.job.NationalLibraryAPIJobConfiguration

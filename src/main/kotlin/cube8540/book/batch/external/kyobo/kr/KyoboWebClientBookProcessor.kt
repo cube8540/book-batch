@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.external.BookDetailsController
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException

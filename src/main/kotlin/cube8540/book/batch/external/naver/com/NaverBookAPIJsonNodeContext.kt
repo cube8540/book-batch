@@ -2,14 +2,15 @@ package cube8540.book.batch.external.naver.com
 
 import com.fasterxml.jackson.databind.JsonNode
 import cube8540.book.batch.BatchApplication
-import cube8540.book.batch.domain.*
+import cube8540.book.batch.book.domain.*
 import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val publisherRawMapper: PublisherRawMapper): BookDetailsContext {
+class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val publisherRawMapper: PublisherRawMapper):
+    BookDetailsContext {
 
     companion object {
         internal var clock = Clock.system(BatchApplication.DEFAULT_TIME_ZONE.toZoneId())

@@ -1,7 +1,5 @@
 package cube8540.book.batch
 
-import cube8540.book.batch.config.APIConnectionProperty
-import cube8540.book.batch.config.AuthenticationProperty
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing
 import org.springframework.batch.integration.config.annotation.EnableBatchIntegration
 import org.springframework.boot.autoconfigure.SpringBootApplication

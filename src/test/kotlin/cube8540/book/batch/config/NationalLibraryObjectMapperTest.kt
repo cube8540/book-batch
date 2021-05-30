@@ -1,9 +1,10 @@
 package cube8540.book.batch.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import cube8540.book.batch.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIErrorResponse
 import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.external.DefaultMapperConfiguration
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

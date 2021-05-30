@@ -1,12 +1,12 @@
 package cube8540.book.batch.job
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import cube8540.book.batch.config.APIConnectionProperty
-import cube8540.book.batch.config.AuthenticationProperty
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsContext
-import cube8540.book.batch.domain.BookDetailsFilterFunction
-import cube8540.book.batch.domain.repository.BookDetailsRepository
+import cube8540.book.batch.APIConnectionProperty
+import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.BookDetailsFilterFunction
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIExchanger
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
 import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsController

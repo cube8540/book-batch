@@ -1,6 +1,6 @@
 package cube8540.book.batch.job
 
-import cube8540.book.batch.config.AuthenticationProperty
+import cube8540.book.batch.AuthenticationProperty
 import cube8540.book.batch.getQueryParams
 import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
 import okhttp3.mockwebserver.MockResponse

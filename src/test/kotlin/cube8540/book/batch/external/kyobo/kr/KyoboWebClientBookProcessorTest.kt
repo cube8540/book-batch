@@ -1,7 +1,7 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetailsContext
 import cube8540.book.batch.external.BookDetailsController
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
@@ -16,7 +16,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockedStatic
 import org.mockito.Mockito

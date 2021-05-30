@@ -1,7 +1,7 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.domain.BookDetails
-import cube8540.book.batch.domain.Thumbnail
+import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.Thumbnail
 import cube8540.book.batch.external.BookDetailsController
 
 class KyoboBookDetailsController: BookDetailsController {

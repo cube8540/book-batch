@@ -1,6 +1,6 @@
 package cube8540.book.batch.job.processor
 
-import cube8540.book.batch.domain.BookDetails
+import cube8540.book.batch.book.domain.BookDetails
 import org.springframework.batch.item.ItemProcessor
 
 open class BookDetailsIsbnNonNullProcessor: ItemProcessor<BookDetails, BookDetails> {
