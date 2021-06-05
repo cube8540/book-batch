@@ -1,25 +1,11 @@
 package cube8540.book.batch.book.infra
 
+import cube8540.book.batch.book.domain.createPublisher
+import cube8540.book.batch.book.domain.createRaw
+import cube8540.book.batch.book.domain.defaultMappingType
 import cube8540.book.batch.book.repository.PublisherCustomRepository
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.mappingType
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.notFoundRaw
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.publisherCode0
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.publisherCode1
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.publisherCode2
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.publishers
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw00
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw01
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw02
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw10
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw11
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw12
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw20
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw21
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.raw22
-import cube8540.book.batch.book.infra.DefaultPublisherRawMapperTestEnvironment.reloadedPublishers
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -32,22 +18,18 @@ class DefaultPublisherRawMapperTest {
 
     private val publisherRepository: PublisherCustomRepository = mockk(relaxed = true)
 
-    private val publisherRawMapper: DefaultPublisherRawMapper
-
-    init {
-        every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns publishers
-
-        publisherRawMapper = DefaultPublisherRawMapper(mappingType, publisherRepository)
-        publisherRawMapper.afterPropertiesSet()
-    }
-
     @Nested
     inner class InitializationTest {
 
         @Test
         fun `initialization cache`() {
-            assertThat(publisherRawMapper.cache).isEqualTo(publishers)
-            verify { publisherRepository.detached(publisherRawMapper.cache) }
+            val mapper = DefaultPublisherRawMapper(defaultMappingType, publisherRepository)
+            val publishers = listOf(createPublisher(code = "publisher01"), createPublisher(code = "publisher02"), createPublisher(code = "publisher03"))
+
+            every { publisherRepository.findByMappingTypeWithRaw(defaultMappingType) } returns publishers
+            mapper.afterPropertiesSet()
+
+            assertThat(mapper.cache).isEqualTo(publishers)
         }
     }
 
@@ -57,42 +39,46 @@ class DefaultPublisherRawMapperTest {
         @ParameterizedTest
         @MethodSource(value = ["mappedRawAndPublisherCodeProvider"])
         fun `find publisher code by given raw text`(givenRaw: String, resultPublisherCode: String) {
-            val result = publisherRawMapper.mapping(givenRaw)
+            val mapper = DefaultPublisherRawMapper(defaultMappingType, publisherRepository)
+            val publishers = listOf(
+                createPublisher(code = "publisher00000", raws = setOf(createRaw("raw00000"), createRaw("raw00001"), createRaw("raw00002"))),
+                createPublisher(code = "publisher00001", raws = setOf(createRaw("raw10000"), createRaw("raw10001"), createRaw("raw10002"))),
+                createPublisher(code = "publisher00002", raws = setOf(createRaw("raw20000"), createRaw("raw20001"), createRaw("raw20002")))
+            )
 
+            every { publisherRepository.findByMappingTypeWithRaw(defaultMappingType) } returns publishers
+            mapper.afterPropertiesSet()
+
+            val result = mapper.mapping(givenRaw)
             assertThat(result).isEqualTo(resultPublisherCode)
         }
 
         @Test
         fun `if not find publisher code returns null`() {
-            val result = publisherRawMapper.mapping(notFoundRaw)
+            val mapper = DefaultPublisherRawMapper(defaultMappingType, publisherRepository)
+            val publishers = listOf(
+                createPublisher(code = "publisher00000", raws = setOf(createRaw("raw00000"), createRaw("raw00001"), createRaw("raw00002"))),
+                createPublisher(code = "publisher00001", raws = setOf(createRaw("raw10000"), createRaw("raw10001"), createRaw("raw10002"))),
+                createPublisher(code = "publisher00002", raws = setOf(createRaw("raw20000"), createRaw("raw20001"), createRaw("raw20002")))
+            )
 
+            every { publisherRepository.findByMappingTypeWithRaw(defaultMappingType) } returns publishers
+            mapper.afterPropertiesSet()
+
+            val result = mapper.mapping("NOT FOUND")
             assertThat(result).isNull()
         }
 
         private fun mappedRawAndPublisherCodeProvider() = Stream.of(
-            Arguments.of(raw00, publisherCode0),
-            Arguments.of(raw01, publisherCode0),
-            Arguments.of(raw02, publisherCode0),
-            Arguments.of(raw10, publisherCode1),
-            Arguments.of(raw11, publisherCode1),
-            Arguments.of(raw12, publisherCode1),
-            Arguments.of(raw20, publisherCode2),
-            Arguments.of(raw21, publisherCode2),
-            Arguments.of(raw22, publisherCode2),
+            Arguments.of("raw00000", "publisher00000"),
+            Arguments.of("raw00001", "publisher00000"),
+            Arguments.of("raw00002", "publisher00000"),
+            Arguments.of("raw10000", "publisher00001"),
+            Arguments.of("raw10001", "publisher00001"),
+            Arguments.of("raw10002", "publisher00001"),
+            Arguments.of("raw20000", "publisher00002"),
+            Arguments.of("raw20001", "publisher00002"),
+            Arguments.of("raw20002", "publisher00002"),
         )
-    }
-
-    @Nested
-    inner class ReloadTest {
-
-        @Test
-        fun `reload publisher`() {
-            every { publisherRepository.findByMappingTypeWithRaw(mappingType) } returns reloadedPublishers
-
-            publisherRawMapper.reload()
-
-            assertThat(publisherRawMapper.cache).isEqualTo(reloadedPublishers)
-            verify { publisherRepository.detached(reloadedPublishers) }
-        }
     }
 }

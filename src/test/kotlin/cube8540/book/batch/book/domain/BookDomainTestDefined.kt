@@ -17,23 +17,28 @@ const val defaultSeriesIsbn = "seriesIsbn00000"
 const val defaultPublisher = "publisher000001"
 val defaultPublishDate = LocalDate.of(2021, 6, 5)
 
-val defaultLargeThumbnail: URI = URI.create("http://large-thumbnail")
-val defaultMediumThumbnail: URI = URI.create("http://mediumThubmnail")
-val defaultSmallThumbnail: URI = URI.create("http://small-thumbnail")
+val defaultMappingType: MappingType = MappingType.values()[Random.nextInt(MappingType.values().size)]
+
+val defaultLargeThumbnail: URI = URI.create("https://large-thumbnail")
+val defaultMediumThumbnail: URI = URI.create("https://mediumThubmnail")
+val defaultSmallThumbnail: URI = URI.create("https://small-thumbnail")
 val defaultDivisions = emptySet<String>()
 val defaultAuthors = emptySet<String>()
 val defaultKeywords = emptySet<String>()
-val defaultDescription = "description000000"
-val defaultPrice = 5000.0
+val defaultRaws = emptySet<RawProperty>()
+const val defaultDescription = "description000000"
+const val defaultPrice = 5000.0
 
 val defaultBookOriginalFilterId = UUID.randomUUID().toString().replace("-", "")
 val defaultBookOriginalFilterIdGenerator: BookDetailsFilterIdGenerator = mockk(relaxed = true) {
     every { generate() } returns defaultBookOriginalFilterId
 }
 
-val defaultBookOriginalMappingType: MappingType = MappingType.values()[Random.nextInt(MappingType.values().size)]
-
 val defaultOriginal = emptyMap<OriginalPropertyKey, String>()
+
+const val defaultPublisherCode = "publisherCode00001"
+const val defaultDivisionCode = "divisionCode00001"
+const val defaultDivisionDepth = 0
 
 fun createBookContext(
     isbn: String = defaultIsbn,
@@ -107,7 +112,7 @@ fun createBookFilterOperator(
     idGenerator: BookDetailsFilterIdGenerator = defaultBookOriginalFilterIdGenerator,
     operatorType: Operator.OperatorType,
     children: List<BookOriginalFilter>,
-    mappingType: MappingType = defaultBookOriginalMappingType
+    mappingType: MappingType = defaultMappingType
 ): BookOriginalFilter {
     val filter = BookOriginalFilter(idGenerator, mappingType)
     filter.root = true
@@ -120,7 +125,7 @@ fun createBookFilterOperator(
 fun createBookFilterOperand(
     idGenerator: BookDetailsFilterIdGenerator = defaultBookOriginalFilterIdGenerator,
     propertyRegex: PropertyRegex,
-    mappingType: MappingType = defaultBookOriginalMappingType
+    mappingType: MappingType = defaultMappingType
 ): BookOriginalFilter {
     val filter = BookOriginalFilter(idGenerator, mappingType)
     filter.root = false
@@ -130,3 +135,17 @@ fun createBookFilterOperand(
     filter.propertyRegex = propertyRegex
     return filter
 }
+
+fun createDivision(
+    code: String = defaultDivisionCode,
+    raws: Set<RawProperty> = defaultRaws,
+    depth: Int = defaultDivisionDepth
+): Division = Division(code = code, raws = raws, depth = depth)
+
+fun createPublisher(
+    code: String = defaultPublisherCode,
+    raws: Set<RawProperty> = defaultRaws,
+    keywords: Set<RawProperty> = defaultRaws
+): Publisher = Publisher(code = code, raws = raws, keywords = keywords)
+
+fun createRaw(raw: String = "", mappingType: MappingType = defaultMappingType): RawProperty = RawProperty(raw, mappingType)

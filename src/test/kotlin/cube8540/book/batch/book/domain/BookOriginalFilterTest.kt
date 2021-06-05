@@ -32,7 +32,7 @@ class BookOriginalFilterTest {
     @Test
     fun `validation when filter is node`() {
         val original = HashMap<OriginalPropertyKey, String>()
-        original[OriginalPropertyKey("property", defaultBookOriginalMappingType)] = "value"
+        original[OriginalPropertyKey("property", defaultMappingType)] = "value"
 
         val target: BookDetails = createBookDetails(original = original)
         val propertyRegex = PropertyRegex("property", mockk(relaxed = true) {
