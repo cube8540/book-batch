@@ -1,9 +1,12 @@
 package cube8540.book.batch.book.domain
 
+import io.github.cube8540.validator.core.Operator
 import io.mockk.every
 import io.mockk.mockk
 import java.net.URI
 import java.time.LocalDate
+import java.util.*
+import kotlin.random.Random
 
 const val defaultIsbn = "9791133447831"
 const val defaultTitle = "title00000"
@@ -22,6 +25,13 @@ val defaultAuthors = emptySet<String>()
 val defaultKeywords = emptySet<String>()
 val defaultDescription = "description000000"
 val defaultPrice = 5000.0
+
+val defaultBookOriginalFilterId = UUID.randomUUID().toString().replace("-", "")
+val defaultBookOriginalFilterIdGenerator: BookDetailsFilterIdGenerator = mockk(relaxed = true) {
+    every { generate() } returns defaultBookOriginalFilterId
+}
+
+val defaultBookOriginalMappingType: MappingType = MappingType.values()[Random.nextInt(MappingType.values().size)]
 
 val defaultOriginal = emptyMap<OriginalPropertyKey, String>()
 
@@ -91,4 +101,32 @@ fun createBookDetails(
         book.markingPersistedEntity()
     }
     return book
+}
+
+fun createBookFilterOperator(
+    idGenerator: BookDetailsFilterIdGenerator = defaultBookOriginalFilterIdGenerator,
+    operatorType: Operator.OperatorType,
+    children: List<BookOriginalFilter>,
+    mappingType: MappingType = defaultBookOriginalMappingType
+): BookOriginalFilter {
+    val filter = BookOriginalFilter(idGenerator, mappingType)
+    filter.root = true
+    filter.propertyRegex = null
+    filter.operatorType = operatorType
+    filter.children = children.toMutableList()
+    return filter
+}
+
+fun createBookFilterOperand(
+    idGenerator: BookDetailsFilterIdGenerator = defaultBookOriginalFilterIdGenerator,
+    propertyRegex: PropertyRegex,
+    mappingType: MappingType = defaultBookOriginalMappingType
+): BookOriginalFilter {
+    val filter = BookOriginalFilter(idGenerator, mappingType)
+    filter.root = false
+    filter.operatorType = null
+    filter.children = null
+    filter.mappingType = mappingType
+    filter.propertyRegex = propertyRegex
+    return filter
 }
