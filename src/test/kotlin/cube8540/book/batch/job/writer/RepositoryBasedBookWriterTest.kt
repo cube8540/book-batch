@@ -2,7 +2,7 @@ package cube8540.book.batch.job.writer
 
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.repository.BookDetailsRepository
-import cube8540.book.batch.external.BookDetailsController
+import cube8540.book.batch.book.domain.BookDetailsController
 import io.mockk.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

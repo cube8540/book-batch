@@ -1,7 +1,7 @@
 package cube8540.book.batch.book.domain
 
-import cube8540.book.batch.domain.converter.RegexConverter
-import cube8540.book.batch.domain.converter.ThumbnailConverter
+import cube8540.book.batch.book.converter.RegexConverter
+import cube8540.book.batch.book.converter.ThumbnailConverter
 import java.io.Serializable
 import java.net.URI
 import javax.persistence.*

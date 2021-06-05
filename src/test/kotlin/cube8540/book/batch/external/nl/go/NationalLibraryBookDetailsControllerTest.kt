@@ -1,88 +1,61 @@
 package cube8540.book.batch.external.nl.go
 
-import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.domain.OriginalPropertyKey
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalProperty0000
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalProperty0001
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalProperty0002
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalValue0000
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalValue0001
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.existsOriginalValue0002
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalProperty0000
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalProperty0001
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalProperty0002
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalValue0000
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalValue0001
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.itemOriginalValue0002
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsControllerTestEnvironment.seriesIsbn
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.assertj.core.api.Assertions
+import cube8540.book.batch.book.domain.createBookDetails
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class NationalLibraryBookDetailsControllerTest {
 
     private val controller = NationalLibraryBookDetailsController()
 
-    @Test
-    fun `merge base and item`() {
-        val base: BookDetails = mockk(relaxed = true)
-        val item: BookDetails = mockk(relaxed = true)
+    @Nested
+    inner class MergeDefaultProperty {
 
-        every { item.seriesIsbn } returns seriesIsbn
+        @Test
+        fun `merged base and item`() {
+            val original = createBookDetails(isbn = "isbn0000")
+            val mergedData = createBookDetails(seriesIsbn = "mergedSeriesIsbn00001")
 
-        val result = controller.merge(base, item)
-        Assertions.assertThat(result).isEqualTo(base)
-        verify {
-            base.seriesIsbn = seriesIsbn
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+                .isEqualToComparingOnlyGivenFields(mergedData, "seriesIsbn")
         }
     }
 
-    @Test
-    fun `merged when base original is null`() {
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
+    @Nested
+    inner class MergeOriginalProperty {
 
-        val base: BookDetails = mockk(relaxed = true)
-        val item: BookDetails = mockk(relaxed = true) {
-            every { original } returns itemOriginalProperty
+        @Test
+        fun `merge when original property is null`() {
+            val mergedOriginalMap = HashMap<OriginalPropertyKey, String>()
+
+            mergedOriginalMap[OriginalPropertyKey("mergedProperty", MappingType.NATIONAL_LIBRARY)] = "mergedValue"
+
+            val original = createBookDetails(original = null)
+            val mergedData = createBookDetails(original = mergedOriginalMap)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.original).isEqualTo(mergedOriginalMap)
         }
 
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.NATIONAL_LIBRARY)] = itemOriginalValue0000
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.NATIONAL_LIBRARY)] = itemOriginalValue0001
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.NATIONAL_LIBRARY)] = itemOriginalValue0002
+        @Test
+        fun `merge when original property is not null`() {
+            val originalMap = HashMap<OriginalPropertyKey, String>()
+            val mergedOriginalMap = HashMap<OriginalPropertyKey, String>()
 
-        item.original = itemOriginalProperty
+            originalMap[OriginalPropertyKey("originalProperty", MappingType.NATIONAL_LIBRARY)] = "originalValue"
+            mergedOriginalMap[OriginalPropertyKey("mergedProperty", MappingType.NATIONAL_LIBRARY)] = "mergedValue"
 
-        val result = controller.merge(base, item)
-        Assertions.assertThat(result).isEqualTo(base)
-        verify { result.original = itemOriginalProperty }
+            val original = createBookDetails(original = originalMap)
+            val mergedData = createBookDetails(original = mergedOriginalMap)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.original).isEqualTo(originalMap + mergedOriginalMap)
+        }
     }
-
-    @Test
-    fun `merged when base original is not null`() {
-        val baseOriginalProperty = HashMap<OriginalPropertyKey, String?>()
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
-
-        val base: BookDetails = mockk(relaxed = true) {
-            every { original } returns baseOriginalProperty
-        }
-        val item: BookDetails = mockk(relaxed = true) {
-            every { original } returns itemOriginalProperty
-        }
-
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0000, MappingType.NATIONAL_LIBRARY)] = existsOriginalValue0000
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0001, MappingType.NATIONAL_LIBRARY)] = existsOriginalValue0001
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0002, MappingType.NATIONAL_LIBRARY)] = existsOriginalValue0002
-
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.NAVER_BOOK)] = itemOriginalValue0000
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.NAVER_BOOK)] = itemOriginalValue0001
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.NAVER_BOOK)] = itemOriginalValue0002
-
-        val result = controller.merge(base, item)
-        Assertions.assertThat(result).isEqualTo(base)
-        verify { result.original = (baseOriginalProperty + itemOriginalProperty).toMutableMap() }
-    }
-
 }

@@ -1,7 +1,7 @@
 package cube8540.book.batch.book.infra
 
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.external.BookDetailsController
+import cube8540.book.batch.book.domain.BookDetailsController
 
 class CompositeBookDetailsController(private vararg val delegators: BookDetailsController): BookDetailsController {
 

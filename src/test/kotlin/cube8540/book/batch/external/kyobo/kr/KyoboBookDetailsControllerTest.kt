@@ -1,135 +1,103 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.domain.OriginalPropertyKey
-import cube8540.book.batch.book.domain.Thumbnail
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalProperty0000
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalProperty0001
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalProperty0002
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalValue0000
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalValue0001
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.existsOriginalValue0002
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalProperty0000
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalProperty0001
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalProperty0002
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalValue0000
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalValue0001
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.itemOriginalValue0002
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedAuthors
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedDescription
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedDivisions
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedLargeThumbnail
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedMediumThumbnail
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedPrice
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedSeriesCode
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedSmallThumbnail
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsControllerTestEnvironment.mergedTitle
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import cube8540.book.batch.book.domain.createBookDetails
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.net.URI
 
 class KyoboBookDetailsControllerTest {
 
     private val controller = KyoboBookDetailsController()
 
-    @Test
-    fun `merge base and item`() {
-        val base: BookDetails = mockk(relaxed = true)
-        val item: BookDetails = mockk(relaxed = true) {
-            every { divisions } returns mergedDivisions
-            every { authors } returns mergedAuthors
-            every { title } returns mergedTitle
-            every { description } returns mergedDescription
-            every { price } returns mergedPrice
-            every { seriesCode } returns mergedSeriesCode
+    @Nested
+    inner class MergedDefaultProperty {
+
+        @Test
+        fun `merge base and item`() {
+            val mergedAuthors = setOf("mergedAuthors")
+            val mergedDivision = setOf("mergedAuthors")
+
+            val original = createBookDetails(isbn = "isbn0000")
+            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", price = 6000.0)
+
+            val comparingFields = listOf("seriesCode", "title", "authors", "divisions").toTypedArray()
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+                .isEqualToComparingOnlyGivenFields(mergedData, *comparingFields)
+        }
+    }
+    @Nested
+    inner class MergeThumbnail {
+
+        @Test
+        fun `merge when original thumbnail is null`() {
+            val mergedLargeThumbnail = URI.create("https://merged-large-thumbnail")
+            val mergedMediumThumbnail = URI.create("https://merged-medium-thumbnail")
+
+            val original = createBookDetails(isbn = "originalIsbn", largeThumbnail = null, mediumThumbnail = null, smallThumbnail = null)
+            val mergedData = createBookDetails(largeThumbnail = mergedLargeThumbnail, mediumThumbnail = mergedMediumThumbnail, smallThumbnail = null)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+                .isEqualToComparingOnlyGivenFields(mergedData, "thumbnail")
         }
 
-        val result = controller.merge(base, item)
-        assertThat(result).isEqualTo(base)
-        verify {
-            base.divisions = mergedDivisions
-            base.authors = mergedAuthors
-            base.title = mergedTitle
-            base.description = mergedDescription
-            base.price = mergedPrice
-            base.seriesCode = mergedSeriesCode
+        @Test
+        fun `merge when original thumbnail is not null`() {
+            val originalLargeThumbnail = URI.create("https://original-large-thumbnail")
+            val originalMediumThumbnail = URI.create("https://original-medium-thumbnail")
+            val originalSmallThumbnail = URI.create("https://original-small-thumbnail")
+
+            val mergedLargeThumbnail = URI.create("https://merged-large-thumbnail")
+            val mergedMediumThumbnail = URI.create("https://merged-medium-thumbnail")
+            val mergedSmallThumbnail = URI.create("https://merged-small-thumbnail")
+
+            val original = createBookDetails(isbn = "originalIsbn", largeThumbnail = originalLargeThumbnail, mediumThumbnail = originalMediumThumbnail, smallThumbnail = originalSmallThumbnail)
+            val mergedData = createBookDetails(largeThumbnail = mergedLargeThumbnail, mediumThumbnail = mergedMediumThumbnail, smallThumbnail = mergedSmallThumbnail)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.thumbnail!!.largeThumbnail).isEqualTo(mergedLargeThumbnail)
+            assertThat(result.thumbnail!!.mediumThumbnail).isEqualTo(mergedMediumThumbnail)
+            assertThat(result.thumbnail!!.smallThumbnail).isEqualTo(originalSmallThumbnail)
         }
     }
 
-    @Test
-    fun `merged when base thumbnail is null`() {
-        val base: BookDetails = mockk(relaxed = true) {
-            every { thumbnail } returns null
-        }
-        val item: BookDetails = mockk(relaxed = true) {
-            every { thumbnail } returns Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, mergedSmallThumbnail)
-        }
+    @Nested
+    inner class MergeOriginalProperty {
 
-        val result = controller.merge(base, item)
-        assertThat(result).isEqualTo(base)
-        verify { base.thumbnail = Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, null) }
-    }
+        @Test
+        fun `merge when original property is null`() {
+            val mergedOriginalMap = HashMap<OriginalPropertyKey, String>()
 
-    @Test
-    fun `merged when base thumbnail is not null`() {
-        val baseThumbnail = Thumbnail(null, null, mergedSmallThumbnail)
-        val base: BookDetails = mockk(relaxed = true) {
-            every { thumbnail } returns baseThumbnail
-        }
-        val item: BookDetails = mockk(relaxed = true) {
-            every { thumbnail } returns Thumbnail(mergedLargeThumbnail, mergedMediumThumbnail, null)
+            mergedOriginalMap[OriginalPropertyKey("mergedProperty", MappingType.NAVER_BOOK)] = "mergedValue"
+
+            val original = createBookDetails(original = null)
+            val mergedData = createBookDetails(original = mergedOriginalMap)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.original).isEqualTo(mergedOriginalMap)
         }
 
-        val result = controller.merge(base, item)
-        assertThat(result).isEqualTo(base)
-        assertThat(baseThumbnail.largeThumbnail).isEqualTo(mergedLargeThumbnail)
-        assertThat(baseThumbnail.mediumThumbnail).isEqualTo(mergedMediumThumbnail)
-        assertThat(baseThumbnail.smallThumbnail).isEqualTo(mergedSmallThumbnail)
-    }
+        @Test
+        fun `merge when original property is not null`() {
+            val originalMap = HashMap<OriginalPropertyKey, String>()
+            val mergedOriginalMap = HashMap<OriginalPropertyKey, String>()
 
-    @Test
-    fun `merged when base original is null`() {
-        val base: BookDetails = mockk(relaxed = true)
-        val item: BookDetails = mockk(relaxed = true)
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
+            originalMap[OriginalPropertyKey("originalProperty", MappingType.NAVER_BOOK)] = "originalValue"
+            mergedOriginalMap[OriginalPropertyKey("mergedProperty", MappingType.NAVER_BOOK)] = "mergedValue"
 
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.KYOBO)] = itemOriginalValue0000
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.KYOBO)] = itemOriginalValue0001
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.KYOBO)] = itemOriginalValue0002
-        every { item.original } returns itemOriginalProperty
+            val original = createBookDetails(original = originalMap)
+            val mergedData = createBookDetails(original = mergedOriginalMap)
 
-        item.original = itemOriginalProperty
-
-        val result = controller.merge(base, item)
-        assertThat(result).isEqualTo(base)
-        verify { base.original = itemOriginalProperty }
-    }
-
-    @Test
-    fun `merged when base original is not null`() {
-        val baseOriginalProperty = HashMap<OriginalPropertyKey, String?>()
-        val itemOriginalProperty = HashMap<OriginalPropertyKey, String?>()
-
-        val base: BookDetails = mockk(relaxed = true) {
-            every { original } returns baseOriginalProperty
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.original).isEqualTo(originalMap + mergedOriginalMap)
         }
-        val item: BookDetails = mockk(relaxed = true) {
-            every { original } returns itemOriginalProperty
-        }
-
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0000, MappingType.KYOBO)] = existsOriginalValue0000
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0001, MappingType.KYOBO)] = existsOriginalValue0001
-        baseOriginalProperty[OriginalPropertyKey(existsOriginalProperty0002, MappingType.KYOBO)] = existsOriginalValue0002
-
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0000, MappingType.KYOBO)] = itemOriginalValue0000
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0001, MappingType.KYOBO)] = itemOriginalValue0001
-        itemOriginalProperty[OriginalPropertyKey(itemOriginalProperty0002, MappingType.KYOBO)] = itemOriginalValue0002
-
-        val result = controller.merge(base, item)
-        assertThat(result).isEqualTo(base)
-        verify { base.original = (baseOriginalProperty + itemOriginalProperty).toMutableMap() }
     }
 }
