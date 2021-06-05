@@ -1,4 +1,4 @@
-package cube8540.book.batch.domain.converter
+package cube8540.book.batch.book.converter
 
 import java.net.URI
 import javax.persistence.AttributeConverter
