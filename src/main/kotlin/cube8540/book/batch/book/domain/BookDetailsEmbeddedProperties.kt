@@ -29,15 +29,15 @@ data class RawProperty(
 data class Thumbnail(
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "lage_thumbnail_url", length = 128)
-    var largeThumbnail: URI?,
+    var largeThumbnail: URI? = null,
 
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "medium_thumbnail_url", length = 128)
-    var mediumThumbnail: URI?,
+    var mediumThumbnail: URI? = null,
 
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "small_thumbnail_url", length = 128)
-    var smallThumbnail: URI?
+    var smallThumbnail: URI? = null
 ): Serializable
 
 @Embeddable
