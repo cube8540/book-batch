@@ -2,10 +2,10 @@ package cube8540.book.batch.job
 
 import cube8540.book.batch.APIConnectionProperty
 import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.application.BookCommandService
+import cube8540.book.batch.book.application.BookQueryService
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.external.kyobo.kr.KyoboBookDetailsController
 import cube8540.book.batch.external.kyobo.kr.KyoboBookRequestNames
 import cube8540.book.batch.external.kyobo.kr.KyoboLoginFilter
 import cube8540.book.batch.external.kyobo.kr.KyoboWebClientBookProcessor
@@ -58,8 +58,11 @@ class KyoboBookRequestJobConfiguration {
     @set:[Autowired Qualifier("kyoboBookDocumentMapper")]
     lateinit var documentMapper: BookDocumentMapper
 
-    @set:Autowired
-    lateinit var bookDetailsRepository: BookDetailsRepository
+    @set:[Autowired Qualifier("defaultBookQueryService")]
+    lateinit var bookDetailsService: BookQueryService
+
+    @set:[Autowired Qualifier("kyoboBookCommandService")]
+    lateinit var bookCommandService: BookCommandService
 
     @set:Autowired
     lateinit var jobParameter: BookAPIRequestJobParameter
@@ -83,7 +86,7 @@ class KyoboBookRequestJobConfiguration {
     @StepScope
     @Bean(jobReaderName)
     fun bookDetailsReader(): RepositoryBasedBookReader {
-        val reader = RepositoryBasedBookReader(bookDetailsRepository, jobParameter.from!!, jobParameter.to!!)
+        val reader = RepositoryBasedBookReader(bookDetailsService, jobParameter.from!!, jobParameter.to!!)
         reader.pageSize = chunkSize
 
         return reader
@@ -112,7 +115,7 @@ class KyoboBookRequestJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, KyoboBookDetailsController())
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookCommandService)
 
     private fun defaultHttpClient() = HttpClient.create()
         .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))

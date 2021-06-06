@@ -1,5 +1,7 @@
 package cube8540.book.batch.job
 
+import cube8540.book.batch.book.application.BookCommandService
+import cube8540.book.batch.book.application.BookQueryService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsFilterFunction
 import cube8540.book.batch.book.domain.MappingType
@@ -39,6 +41,12 @@ class BookSetUpstreamTargetJobConfiguration {
     @set:Autowired
     lateinit var stepBuilderFactory: StepBuilderFactory
 
+    @set:[Autowired Qualifier("unDetachedBookQueryService")]
+    lateinit var bookDetailsService: BookQueryService
+
+    @set:[Autowired Qualifier("externalApplicationBookCommandService")]
+    lateinit var bookCommandService: BookCommandService
+
     @set:Autowired
     lateinit var bookDetailsRepository: BookDetailsRepository
 
@@ -73,9 +81,8 @@ class BookSetUpstreamTargetJobConfiguration {
     @StepScope
     @Bean(jobReaderName)
     fun bookDetailsReader(): RepositoryBasedBookReader {
-        val reader = RepositoryBasedBookReader(bookDetailsRepository, jobParameter.from!!, jobParameter.to!!)
+        val reader = RepositoryBasedBookReader(bookDetailsService, jobParameter.from!!, jobParameter.to!!)
         reader.pageSize = chunkSize
-        reader.detached = false
         return reader
     }
 
@@ -95,5 +102,5 @@ class BookSetUpstreamTargetJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter() = RepositoryBasedUpstreamTargetWriter(bookDetailsRepository)
+    fun bookDetailsWriter(): RepositoryBasedUpstreamTargetWriter = RepositoryBasedUpstreamTargetWriter(bookCommandService)
 }
