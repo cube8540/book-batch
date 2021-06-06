@@ -1,7 +1,7 @@
 package cube8540.book.batch.book.domain
 
-import cube8540.book.batch.domain.converter.RegexConverter
-import cube8540.book.batch.domain.converter.ThumbnailConverter
+import cube8540.book.batch.book.converter.RegexConverter
+import cube8540.book.batch.book.converter.ThumbnailConverter
 import java.io.Serializable
 import java.net.URI
 import javax.persistence.*
@@ -29,15 +29,15 @@ data class RawProperty(
 data class Thumbnail(
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "lage_thumbnail_url", length = 128)
-    var largeThumbnail: URI?,
+    var largeThumbnail: URI? = null,
 
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "medium_thumbnail_url", length = 128)
-    var mediumThumbnail: URI?,
+    var mediumThumbnail: URI? = null,
 
     @Convert(converter = ThumbnailConverter::class)
     @Column(name = "small_thumbnail_url", length = 128)
-    var smallThumbnail: URI?
+    var smallThumbnail: URI? = null
 ): Serializable
 
 @Embeddable

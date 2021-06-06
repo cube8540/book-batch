@@ -38,7 +38,7 @@ class NaverBookAPIExchanger(private val webClient: WebClient, private val key: N
             .queryParam(NaverBookAPIRequestNames.display, request.size)
             .queryParam(NaverBookAPIRequestNames.publisherKeyword, request.publisher)
             .queryParam(NaverBookAPIRequestNames.isbnKeyword, request.isbn)
-            .encode(StandardCharsets.UTF_8)
+            .build()
 
         val result = webClient.get()
             .uri(uriBuilder.toUriString())

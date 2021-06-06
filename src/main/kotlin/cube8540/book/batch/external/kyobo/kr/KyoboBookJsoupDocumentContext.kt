@@ -28,19 +28,17 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     private val inputTags = document.getElementsByTag(input)
 
     override fun resolveIsbn(): String = metaTags
-        .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }
-        .attr(content)
+        .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }.attr(content)
 
     override fun resolveTitle(): String? = metaTags
-        .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }
-        .attr(content)
+        .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }?.attr(content)
 
     override fun resolveSeriesCode(): String? {
-        val seriesCode = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
-        val aBarcode = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }.attr(value)
+        val seriesCode = inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
+        val aBarcode = inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }?.attr(value)
         return if (seriesCode != null && seriesCode.isNotEmpty()) {
             seriesCode
-        } else if (aBarcode.isNotEmpty()) {
+        } else if (aBarcode?.isNotEmpty() == true) {
             aBarcode
         } else {
             null
@@ -50,8 +48,10 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     override fun resolveSeriesIsbn(): String? = null
 
     override fun resolveDivisions(): Set<String> {
-        val rawDivisions = inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }.attr(value)
-        return divisionMapper.mapping(convertCategoryCodeToRawDivisions(rawDivisions)).toSet()
+        return inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }
+            ?.attr(value)
+            ?.let { divisionMapper.mapping(convertCategoryCodeToRawDivisions(it)).toSet() }
+            ?: emptySet()
     }
 
     override fun resolvePublisher(): String? = null
@@ -59,21 +59,21 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     override fun resolvePublishDate(): LocalDate? = null
 
     override fun resolveAuthors(): Set<String> {
-        val authors = metaTags.first { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }.attr(content)
-        return authors.split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+        return metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }
+                ?.attr(content)?.split(",")?.map { v -> v.trim() }?.filter { v-> v.isNotEmpty() }?.toSet() ?: emptySet()
     }
 
     override fun resolveThumbnail(): Thumbnail {
         val largeThumbnail = metaTags
-            .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
-            .attr(content)
+            .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
+            ?.attr(content)
         val mediumThumbnail = metaTags
-            .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }
-            .attr(content)
+            .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }
+            ?.attr(content)
 
         return Thumbnail(
-            largeThumbnail = URI.create(largeThumbnail),
-            mediumThumbnail = URI.create(mediumThumbnail),
+            largeThumbnail = largeThumbnail?.let { URI.create(it) },
+            mediumThumbnail = mediumThumbnail?.let { URI.create(it) },
             smallThumbnail = null
         )
     }
@@ -83,29 +83,29 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     override fun resolveKeywords(): Set<String>? = null
 
     override fun resolvePrice(): Double? = metaTags
-        .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
-        .attr(content)?.toDouble()
+        .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
+        ?.attr(content)?.toDouble()
 
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val original = HashMap<OriginalPropertyKey, String?>()
         original[OriginalPropertyKey(KyoboBookMetaTagNameSelector.author, mappingType)] =
-            metaTags.first { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }.attr(content)
+            metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }?.attr(content)
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.title, mappingType)] = resolveTitle()
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.largeThumbnail, mappingType)] = metaTags
-            .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
-            .attr(content)
+            .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
+            ?.attr(content)
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.mediumThumbnail, mappingType)] = metaTags
-            .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }
-            .attr(content)
+            .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.mediumThumbnail) }
+            ?.attr(content)
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.originalPrice, mappingType)] = metaTags
-            .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
-            .attr(content)
+            .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
+            ?.attr(content)
         original[OriginalPropertyKey(KyoboBookInputNameSelector.seriesBarcode, mappingType)] =
-            inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
+            inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
         original[OriginalPropertyKey(KyoboBookInputNameSelector.aBarcode, mappingType)] =
-            inputTags.first { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }.attr(value)
+            inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }?.attr(value)
         original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, mappingType)] = inputTags
-            .first { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }.attr(value)
+            .find { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }?.attr(value)
         return original
     }
 

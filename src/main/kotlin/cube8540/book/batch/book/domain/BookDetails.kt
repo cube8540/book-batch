@@ -1,6 +1,5 @@
 package cube8540.book.batch.book.domain
 
-import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.domain.Persistable
@@ -58,7 +57,6 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @Column(name = "price")
     var price: Double? = context.resolvePrice()
 
-    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime? = context.createdAt()
 

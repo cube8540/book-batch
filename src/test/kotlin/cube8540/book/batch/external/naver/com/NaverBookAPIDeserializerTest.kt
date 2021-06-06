@@ -2,10 +2,7 @@ package cube8540.book.batch.external.naver.com
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.IntNode
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
-import cube8540.book.batch.book.domain.BookDetails
+import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
 import io.mockk.every
@@ -15,10 +12,6 @@ import org.junit.jupiter.api.Test
 
 class NaverBookAPIDeserializerTest {
 
-    private val totalCount = 100
-    private val display = 10
-    private val start = 1
-
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
     private val deserializer = NaverBookAPIDeserializer(publisherRawMapper)
@@ -26,74 +19,50 @@ class NaverBookAPIDeserializerTest {
     @Test
     fun `response deserialization when book is empty`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
-        val codec: XmlMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
-
-        every { responseNode.get(NaverBookAPIResponseNames.totalCount) } returns IntNode(totalCount)
-        every { responseNode.get(NaverBookAPIResponseNames.start) } returns IntNode(start)
-        every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
-        every { responseNode.get(NaverBookAPIResponseNames.item) } returns null
+        val codec: ObjectMapper = mockk(relaxed = true)
+        val responseNode = createNaverBookAPIResponse(items = null)
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.page).isEqualTo(start.toLong())
-        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
-        assertThat(response.books).isEqualTo(emptyList<BookDetails>())
+        assertThat(response.books).isEmpty()
     }
 
     @Test
     fun `response deserialization when book node is not array node`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
-        val codec: XmlMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
-        val bookNode: JsonNode = mockk(relaxed = true)
-
-        every { responseNode.get(NaverBookAPIResponseNames.start) } returns IntNode(start)
-        every { responseNode.get(NaverBookAPIResponseNames.totalCount) } returns IntNode(totalCount)
-        every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
-        every { responseNode.get(NaverBookAPIResponseNames.item) } returns bookNode
-
+        val codec: ObjectMapper = mockk(relaxed = true)
+        val responseNode = createNaverBookAPIResponse(items = createBookJsonNode())
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.page).isEqualTo(start.toLong())
-        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
         assertThat(response.books.size).isEqualTo(1)
-        assertThat(response.books.first()).isEqualTo(NaverBookAPIJsonNodeContext(bookNode, publisherRawMapper))
+        assertThat(response.books.first()).isEqualTo(NaverBookAPIJsonNodeContext(createBookJsonNode(), publisherRawMapper))
     }
 
     @Test
     fun `response deserialization when book node is array node`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
-        val codec: XmlMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
-        val bookNode0: JsonNode = mockk(relaxed = true)
-        val bookNode1: JsonNode = mockk(relaxed = true)
-        val bookNode2: JsonNode = mockk(relaxed = true)
-        val bookArrayNode = ArrayNode(mockk(relaxed = true))
-
-        bookArrayNode.add(bookNode0)
-        bookArrayNode.add(bookNode1)
-        bookArrayNode.add(bookNode2)
-
-        every { responseNode.get(NaverBookAPIResponseNames.start) } returns IntNode(start)
-        every { responseNode.get(NaverBookAPIResponseNames.totalCount) } returns IntNode(totalCount)
-        every { responseNode.get(NaverBookAPIResponseNames.display) } returns IntNode(display)
-        every { responseNode.get(NaverBookAPIResponseNames.item) } returns bookArrayNode
+        val codec: ObjectMapper = mockk(relaxed = true)
+        val bookArrayNode = createBookJsonArrayNode(
+            createBookJsonNode(isbn = "isbn00000"),
+            createBookJsonNode(isbn = "isbn00001"),
+            createBookJsonNode(isbn = "isbn00002")
+        )
+        val responseNode: JsonNode = createNaverBookAPIResponse(total = 3, display = 3, start = 1, items = bookArrayNode)
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.page).isEqualTo(start.toLong())
-        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
-        assertThat(response.books.size).isEqualTo(3)
-        assertThat(response.books[0]).isEqualTo(NaverBookAPIJsonNodeContext(bookNode0, publisherRawMapper))
-        assertThat(response.books[1]).isEqualTo(NaverBookAPIJsonNodeContext(bookNode1, publisherRawMapper))
-        assertThat(response.books[2]).isEqualTo(NaverBookAPIJsonNodeContext(bookNode2, publisherRawMapper))
+        assertThat(response.books.size).isEqualTo(bookArrayNode.size())
+        assertThat(response.books).contains(
+            NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherRawMapper),
+            NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherRawMapper),
+            NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherRawMapper)
+        )
     }
 }

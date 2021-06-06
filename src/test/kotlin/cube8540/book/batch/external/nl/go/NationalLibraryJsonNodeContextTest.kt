@@ -1,22 +1,6 @@
 package cube8540.book.batch.external.nl.go
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.IntNode
-import com.fasterxml.jackson.databind.node.TextNode
-import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.expectedTitle
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.isbn0
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.isbn1
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.publishPreDate
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.publisherCode
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.realPublishDate
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.responsePublishPreDate
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.responsePublisher
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.responseRealPublishDate
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.title
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.titleWithVolume
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.titleWithVolumeAndText
-import cube8540.book.batch.external.nl.go.NationalLibraryJsonNodeContextTestEnvironment.volume
+import cube8540.book.batch.book.domain.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -24,122 +8,135 @@ import org.junit.jupiter.api.Test
 
 class NationalLibraryJsonNodeContextTest {
 
-    private val jsonNode: JsonNode = mockk(relaxed = true)
     private val publisherMapper: PublisherRawMapper = mockk(relaxed = true)
-
-    private val context = NationalLibraryJsonNodeContext(jsonNode, publisherMapper)
 
     @Test
     fun `resolve isbn when isbn is null`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.isbn) } returns null
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+        val bookNode = createBookJsonNode(isbn = null)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveIsbn()
-        assertThat(result).isEqualTo(isbn0)
+        assertThat(result).isEqualTo(defaultSeriesIsbn)
     }
 
     @Test
     fun `resolve isbn when isbn is empty`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode("")
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+        val bookNode = createBookJsonNode(isbn = "")
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveIsbn()
-        assertThat(result).isEqualTo(isbn0)
+        assertThat(result).isEqualTo(defaultSeriesIsbn)
     }
 
     @Test
     fun `resolve isbn when isbn is not null and not empty`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.isbn) } returns TextNode(isbn0)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn1)
+        val bookNode = createBookJsonNode()
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveIsbn()
-        assertThat(result).isEqualTo(isbn0)
+        assertThat(result).isEqualTo(defaultIsbn)
     }
 
     @Test
     fun `resolve book title when original title has volume`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(titleWithVolume)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.seriesNo) } returns IntNode(volume)
+        val volume = 1
+        val titleWithVolume = "$defaultTitle $volume"
+
+        val bookNode = createBookJsonNode(title = titleWithVolume, seriesNo = volume)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveTitle()
-        assertThat(result).isEqualTo(expectedTitle)
+        assertThat(result).isEqualTo(titleWithVolume)
     }
 
     @Test
     fun `resolve book title when original title has volume, text`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(titleWithVolumeAndText)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.seriesNo) } returns IntNode(volume)
+        val volume = 1
+        val titleWithVolumeAndText = "$defaultTitle ${volume}권"
+
+        val bookNode = createBookJsonNode(title = titleWithVolumeAndText, seriesNo = volume)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveTitle()
-        assertThat(result).isEqualTo(expectedTitle)
+        assertThat(result).startsWith(defaultTitle).endsWith(volume.toString())
     }
 
     @Test
     fun `resolve book title when original title has volume and json node has not volume`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(titleWithVolume)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.seriesNo) } returns null
+        val titleWithVolume = "$defaultTitle 1"
+
+        val bookNode = createBookJsonNode(title = titleWithVolume, seriesNo = null)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveTitle()
-        assertThat(result).isEqualTo(expectedTitle)
+        assertThat(result).isEqualTo(titleWithVolume)
     }
 
     @Test
     fun `extract book title when original title has volume, text and json node has not volume`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(titleWithVolumeAndText)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.seriesNo) } returns null
+        val volume = 1
+        val titleWithVolumeAndText = "$defaultTitle ${volume}권"
+
+        val bookNode = createBookJsonNode(title = titleWithVolumeAndText, seriesNo = null)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveTitle()
-        assertThat(result).isEqualTo(expectedTitle)
+        assertThat(result).startsWith(defaultTitle).endsWith(volume.toString())
     }
 
     @Test
     fun `extract book title`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.title) } returns TextNode(title)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.seriesNo) } returns IntNode(volume)
+        val volume = 1
+
+        val bookNode = createBookJsonNode(seriesNo = volume)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveTitle()
-        assertThat(result).isEqualTo(expectedTitle)
+        assertThat(result).startsWith(defaultTitle).endsWith(volume.toString())
     }
 
     @Test
     fun `extract publisher code`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.publisher) } returns TextNode(responsePublisher)
-        every { publisherMapper.mapping(responsePublisher) } returns publisherCode
+        val bookNode = createBookJsonNode(publisher = "publisherCode")
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
+
+        every { publisherMapper.mapping("publisherCode") } returns "resolvedPublisherCode"
 
         val result = context.resolvePublisher()
-        assertThat(result).isEqualTo(publisherCode)
+        assertThat(result).isEqualTo("resolvedPublisherCode")
     }
 
     @Test
     fun `extract publish date is null`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns null
-        every { jsonNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
+        val bookNode = createBookJsonNode(realPublishDate = null)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolvePublishDate()
-        assertThat(result).isEqualTo(publishPreDate)
+        assertThat(result).isEqualTo(defaultPublishDate)
     }
 
     @Test
     fun `extract publish date is empty`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode("")
-        every { jsonNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
+        val bookNode = createBookJsonNode(realPublishDate = "")
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolvePublishDate()
-        assertThat(result).isEqualTo(publishPreDate)
+        assertThat(result).isEqualTo(defaultPublishDate)
     }
 
     @Test
     fun `extract publish date`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.realPublishDate) } returns TextNode(responseRealPublishDate)
-        every { jsonNode.get(NationalLibraryAPIResponseNames.publishPreDate) } returns TextNode(responsePublishPreDate)
+        val bookNode = createBookJsonNode()
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolvePublishDate()
-        assertThat(result).isEqualTo(realPublishDate)
+        assertThat(result).isEqualTo(defaultRealPublishDate)
     }
 
     @Test
     fun `extract series isbn when set isbn is null`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns null
+        val bookNode = createBookJsonNode(seriesIsbn = null)
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveSeriesIsbn()
         assertThat(result).isNull()
@@ -147,7 +144,8 @@ class NationalLibraryJsonNodeContextTest {
 
     @Test
     fun `extract series isbn when set isbn is empty`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode("")
+        val bookNode = createBookJsonNode(seriesIsbn = "")
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveSeriesIsbn()
         assertThat(result).isNull()
@@ -155,9 +153,10 @@ class NationalLibraryJsonNodeContextTest {
 
     @Test
     fun `extract series isbn`() {
-        every { jsonNode.get(NationalLibraryAPIResponseNames.setIsbn) } returns TextNode(isbn0)
+        val bookNode = createBookJsonNode()
+        val context = NationalLibraryJsonNodeContext(bookNode, publisherMapper)
 
         val result = context.resolveSeriesIsbn()
-        assertThat(result).isEqualTo(isbn0)
+        assertThat(result).isEqualTo(defaultSeriesIsbn)
     }
 }

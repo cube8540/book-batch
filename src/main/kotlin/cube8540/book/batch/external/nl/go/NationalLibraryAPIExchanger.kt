@@ -6,7 +6,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.util.retry.Retry
 import java.net.URI
-import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.format.DateTimeFormatter
 
@@ -34,7 +33,7 @@ class NationalLibraryAPIExchanger(private val webClient: WebClient, private val 
             .queryParam(NationalLibraryAPIRequestNames.pageSize, request.size)
             .queryParam(NationalLibraryAPIRequestNames.pageNumber, pageDecision.calculation(request.page!!, request.size!!))
             .queryParam(NationalLibraryAPIRequestNames.publisherKeyword, request.publisher)
-            .encode(StandardCharsets.UTF_8)
+            .build()
 
         return webClient.get()
             .uri(uriBuilder.toUriString())

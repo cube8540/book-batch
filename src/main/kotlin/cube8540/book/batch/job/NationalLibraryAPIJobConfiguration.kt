@@ -3,13 +3,12 @@ package cube8540.book.batch.job
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.APIConnectionProperty
 import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsContext
 import cube8540.book.batch.book.domain.BookDetailsFilterFunction
-import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIExchanger
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIRequestNames
-import cube8540.book.batch.external.nl.go.NationalLibraryBookDetailsController
 import cube8540.book.batch.job.processor.BookDetailsFilterProcessor
 import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
 import cube8540.book.batch.job.processor.BookDetailsPublisherNonNullProcessor
@@ -71,8 +70,8 @@ class NationalLibraryAPIJobConfiguration {
     @set:[Autowired Qualifier("nationalLibraryFilterFunction")]
     lateinit var filterFunction: BookDetailsFilterFunction
 
-    @set:Autowired
-    lateinit var bookDetailsRepository: BookDetailsRepository
+    @set:[Autowired Qualifier("nationalLibraryBookCommandService")]
+    lateinit var bookCommandService: BookCommandService
 
     var chunkSize: Int = defaultChunkSize
 
@@ -136,6 +135,6 @@ class NationalLibraryAPIJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, NationalLibraryBookDetailsController())
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookCommandService)
 
 }

@@ -1,21 +1,9 @@
 package cube8540.book.batch.book.infra
 
+import cube8540.book.batch.book.domain.createDivision
+import cube8540.book.batch.book.domain.createRaw
+import cube8540.book.batch.book.domain.defaultMappingType
 import cube8540.book.batch.book.repository.DivisionCustomRepository
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.divisionCode0
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.divisionCode1
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.divisionCode2
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.divisions
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.mappingType
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw00
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw01
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw02
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw10
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw11
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw12
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw20
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw21
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.raw22
-import cube8540.book.batch.book.infra.DefaultDivisionRawMapperTestEnvironment.reloadedDivisions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -31,22 +19,19 @@ class DefaultDivisionRawMapperTest {
 
     private val divisionRepository: DivisionCustomRepository = mockk(relaxed = true)
 
-    private val divisionRawMapper: DefaultDivisionRawMapper
-
-    init {
-        every { divisionRepository.findByMappingType(mappingType) } returns divisions
-
-        divisionRawMapper = DefaultDivisionRawMapper(mappingType, divisionRepository)
-        divisionRawMapper.afterPropertiesSet()
-    }
-
     @Nested
     inner class InitializationTest {
 
         @Test
         fun `initialization cache`() {
-            assertThat(divisionRawMapper.cache).isEqualTo(divisions)
-            verify { divisionRepository.detached(divisionRawMapper.cache) }
+            val mapper = DefaultDivisionRawMapper(defaultMappingType, divisionRepository)
+            val divisions = listOf(createDivision(code = "division01"), createDivision(code = "division02"), createDivision(code = "division03"))
+
+            every { divisionRepository.findByMappingType(defaultMappingType) } returns divisions
+            mapper.afterPropertiesSet()
+
+            assertThat(mapper.cache).isEqualTo(divisions)
+            verify { divisionRepository.detached(mapper.cache) }
         }
     }
 
@@ -56,35 +41,30 @@ class DefaultDivisionRawMapperTest {
         @ParameterizedTest
         @MethodSource(value = ["mappedRawAndDivisionCodeProvider"])
         fun `find division code by given raw tests`(givenRaws: List<String>, resultDivisionCodes: List<String>) {
-            val result = divisionRawMapper.mapping(givenRaws)
+            val mapper = DefaultDivisionRawMapper(defaultMappingType, divisionRepository)
+            val divisions = listOf(
+                createDivision(code = "divisionCode0", raws = setOf(createRaw("raw00000"), createRaw("raw00001"), createRaw("raw00002"))),
+                createDivision(code = "divisionCode1", raws = setOf(createRaw("raw10000"), createRaw("raw10001"), createRaw("raw10002"))),
+                createDivision(code = "divisionCode2", raws = setOf(createRaw("raw20000"), createRaw("raw20001"), createRaw("raw20002")))
+            )
 
+            every { divisionRepository.findByMappingType(defaultMappingType) } returns divisions
+            mapper.afterPropertiesSet()
+
+            val result = mapper.mapping(givenRaws)
             assertThat(result).isEqualTo(resultDivisionCodes)
         }
 
         private fun mappedRawAndDivisionCodeProvider() = Stream.of(
-            Arguments.of(listOf(raw00, raw10, raw20), listOf(divisionCode0, divisionCode1, divisionCode2)),
-            Arguments.of(listOf(raw01, raw11, raw21), listOf(divisionCode0, divisionCode1, divisionCode2)),
-            Arguments.of(listOf(raw02, raw12, raw22), listOf(divisionCode0, divisionCode1, divisionCode2)),
-            Arguments.of(listOf(raw00, raw10), listOf(divisionCode0, divisionCode1)),
-            Arguments.of(listOf(raw00, raw20), listOf(divisionCode0, divisionCode2)),
-            Arguments.of(listOf(raw10, raw20), listOf(divisionCode1, divisionCode2)),
-            Arguments.of(listOf(raw00), listOf(divisionCode0)),
-            Arguments.of(listOf(raw10), listOf(divisionCode1)),
-            Arguments.of(listOf(raw20), listOf(divisionCode2)),
+            Arguments.of(listOf("raw00000", "raw10000", "raw20000"), listOf("divisionCode0", "divisionCode1", "divisionCode2")),
+            Arguments.of(listOf("raw00001", "raw10001", "raw20001"), listOf("divisionCode0", "divisionCode1", "divisionCode2")),
+            Arguments.of(listOf("raw00002", "raw10002", "raw20002"), listOf("divisionCode0", "divisionCode1", "divisionCode2")),
+            Arguments.of(listOf("raw00000", "raw10000"), listOf("divisionCode0", "divisionCode1")),
+            Arguments.of(listOf("raw00000", "raw20000"), listOf("divisionCode0", "divisionCode2")),
+            Arguments.of(listOf("raw10000", "raw20000"), listOf("divisionCode1", "divisionCode2")),
+            Arguments.of(listOf("raw00000"), listOf("divisionCode0")),
+            Arguments.of(listOf("raw10000"), listOf("divisionCode1")),
+            Arguments.of(listOf("raw20000"), listOf("divisionCode2")),
         )
-    }
-
-    @Nested
-    inner class ReloadTest {
-
-        @Test
-        fun `reload division`() {
-            every { divisionRepository.findByMappingType(mappingType) } returns reloadedDivisions
-
-            divisionRawMapper.reload()
-
-            assertThat(divisionRawMapper.cache).isEqualTo(reloadedDivisions)
-            verify { divisionRepository.detached(reloadedDivisions) }
-        }
     }
 }

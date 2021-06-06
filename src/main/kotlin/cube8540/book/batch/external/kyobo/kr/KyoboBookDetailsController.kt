@@ -2,7 +2,7 @@ package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.Thumbnail
-import cube8540.book.batch.external.BookDetailsController
+import cube8540.book.batch.book.domain.BookDetailsController
 
 class KyoboBookDetailsController: BookDetailsController {
     override fun merge(base: BookDetails, item: BookDetails): BookDetails {

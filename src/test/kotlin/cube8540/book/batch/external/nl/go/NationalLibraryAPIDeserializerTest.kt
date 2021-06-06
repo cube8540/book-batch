@@ -3,24 +3,17 @@ package cube8540.book.batch.external.nl.go
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.TextNode
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.external.BookAPIResponse
 import cube8540.book.batch.external.exception.InternalBadRequestException
-import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.pageNumber
-import cube8540.book.batch.external.nl.go.NationalLibraryAPIDeserializerTestEnvironment.totalCount
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.catchThrowable
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 class NationalLibraryAPIDeserializerTest {
-    private val errorResult = "ERROR"
-    private val errorCode = "errorCode0001"
-    private val errorMessage = "errorMessage0001"
 
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
@@ -30,40 +23,32 @@ class NationalLibraryAPIDeserializerTest {
     fun `response is error`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: JsonMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
+        val responseNode = createNationalLibraryAPIErrorResponse(errorCode = "errorCode0000", errorMessage = "errorMessage00000")
 
         deserializer.exceptionCreator = mockk(relaxed = true) {
-            every { create(errorCode, errorMessage) } returns InternalBadRequestException(errorMessage)
+            every { create("errorCode0000", "errorMessage00000") } returns InternalBadRequestException("errorMessage00000")
         }
-
-        every { responseNode.get(NationalLibraryAPIResponseNames.result) } returns TextNode(errorResult)
-        every { responseNode.get(NationalLibraryAPIResponseNames.errorCode) } returns TextNode(errorCode)
-        every { responseNode.get(NationalLibraryAPIResponseNames.errorMessage) } returns TextNode(errorMessage)
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
-        val thrown = catchThrowable { deserializer.deserialize(jsonParser, mockk(relaxed = true)) }
-        assertThat(thrown).isInstanceOf(InternalBadRequestException::class.java)
-        assertThat((thrown as InternalBadRequestException).message).isEqualTo(errorMessage)
+        assertThatThrownBy { deserializer.deserialize(jsonParser, mockk(relaxed = true)) }
+            .isInstanceOf(InternalBadRequestException::class.java)
+            .hasMessage("errorMessage00000")
     }
 
     @Test
     fun `response deserialization when book is empty`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: JsonMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
-
-        every { responseNode.get(NationalLibraryAPIResponseNames.pageNo) } returns TextNode(pageNumber.toString())
-        every { responseNode.get(NationalLibraryAPIResponseNames.totalCount) } returns TextNode(totalCount.toString())
-        every { responseNode.get(NationalLibraryAPIResponseNames.documents) } returns null
+        val responseNode = createNationalLibraryAPIResponse(page = 1, total = 0, docs = null)
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.page).isEqualTo(pageNumber.toLong())
-        assertThat(response.totalCount).isEqualTo(totalCount.toLong())
+        assertThat(response.page).isEqualTo(1L)
+        assertThat(response.totalCount).isZero
         assertThat(response.books).isEqualTo(emptyList<BookDetails>())
     }
 
@@ -71,21 +56,23 @@ class NationalLibraryAPIDeserializerTest {
     fun `response deserialization when book is not empty`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
         val codec: JsonMapper = mockk(relaxed = true)
-        val responseNode: JsonNode = mockk(relaxed = true)
 
-        val documentsNode = ArrayNode(mockk(relaxed = true))
-        val bookNode: JsonNode = mockk(relaxed = true)
-
-        documentsNode.add(bookNode)
-
-        every { responseNode.get(NationalLibraryAPIResponseNames.pageNo) } returns TextNode(pageNumber.toString())
-        every { responseNode.get(NationalLibraryAPIResponseNames.totalCount) } returns TextNode(totalCount.toString())
-        every { responseNode.get(NationalLibraryAPIResponseNames.documents) } returns documentsNode
+        val bookArray = createBookJsonArrayNode(
+            createBookJsonNode(isbn = "isbn00000"),
+            createBookJsonNode(isbn = "isbn00001"),
+            createBookJsonNode(isbn = "isbn00002")
+        )
+        val bookResponse = createNationalLibraryAPIResponse(total = 3, page = 1, docs = bookArray)
 
         every { jsonParser.codec } returns codec
-        every { codec.readTree<JsonNode>(jsonParser) } returns responseNode
+        every { codec.readTree<JsonNode>(jsonParser) } returns bookResponse
 
         val response = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.books[0]).isEqualTo(NationalLibraryJsonNodeContext(bookNode, publisherRawMapper))
+        assertThat(response.books.size).isEqualTo(3)
+        assertThat(response.books).contains(
+            NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherRawMapper),
+            NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherRawMapper),
+            NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherRawMapper)
+        )
     }
 }

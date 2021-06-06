@@ -3,12 +3,11 @@ package cube8540.book.batch.job
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.APIConnectionProperty
 import cube8540.book.batch.AuthenticationProperty
+import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsContext
-import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.external.naver.com.NaverBookAPIExchanger
 import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
-import cube8540.book.batch.external.naver.com.NaverBookDetailsController
 import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
 import cube8540.book.batch.job.processor.BookDetailsPublisherNonNullProcessor
 import cube8540.book.batch.job.processor.ContextToBookDetailsProcessor
@@ -66,8 +65,8 @@ class NaverBookAPIJobConfiguration {
     @set:[Autowired Qualifier("naverBookAPIObjectMapper")]
     lateinit var objectMapper: ObjectMapper
 
-    @set:Autowired
-    lateinit var bookDetailsRepository: BookDetailsRepository
+    @set:[Autowired Qualifier("naverBookAPICommandService")]
+    lateinit var bookCommandService: BookCommandService
 
     var chunkSize = defaultChunkSize
 
@@ -127,5 +126,5 @@ class NaverBookAPIJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookDetailsRepository, NaverBookDetailsController())
+    fun bookDetailsWriter() = RepositoryBasedBookWriter(bookCommandService)
 }
