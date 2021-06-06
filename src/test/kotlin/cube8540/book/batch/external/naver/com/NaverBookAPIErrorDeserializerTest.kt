@@ -2,7 +2,8 @@ package cube8540.book.batch.external.naver.com
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.databind.ObjectMapper
+import cube8540.book.batch.external.BookAPIErrorResponse
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -10,31 +11,18 @@ import org.junit.jupiter.api.Test
 
 class NaverBookAPIErrorDeserializerTest {
 
-    private val errorCode = "errorCode0000"
-    private val errorMessage = "errorMessage0000"
-
     private val deserializer = NaverBookAPIErrorDeserializer()
 
     @Test
     fun `error deserialization`() {
         val jsonParser: JsonParser = mockk(relaxed = true)
-        val codec: XmlMapper = mockk(relaxed = true)
-        val resultNode: JsonNode = mockk(relaxed = true)
-        val errorCodeNode: JsonNode = mockk(relaxed = true) {
-            every { asText() } returns errorCode
-        }
-        val errorMessageNode: JsonNode = mockk(relaxed = true) {
-            every { asText() } returns errorMessage
-        }
-
-        every { resultNode.get(NaverBookAPIResponseNames.errorCode) } returns errorCodeNode
-        every { resultNode.get(NaverBookAPIResponseNames.errorMessage) } returns errorMessageNode
+        val codec: ObjectMapper = mockk(relaxed = true)
+        val resultNode = createNaverBookErrorResponse(errorCode = "errorCode0000", errorMessage = "errorMessage0000")
 
         every { jsonParser.codec } returns codec
         every { codec.readTree<JsonNode>(jsonParser) } returns resultNode
 
         val response = deserializer.deserialize(jsonParser, mockk(relaxed = true))
-        assertThat(response.code).isEqualTo(errorCode)
-        assertThat(response.message).isEqualTo(errorMessage)
+        assertThat(response).isEqualTo(BookAPIErrorResponse("errorCode0000", "errorMessage0000"))
     }
 }
