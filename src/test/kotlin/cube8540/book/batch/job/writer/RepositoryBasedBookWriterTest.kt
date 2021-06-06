@@ -1,9 +1,11 @@
 package cube8540.book.batch.job.writer
 
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.book.domain.BookDetailsController
+import cube8540.book.batch.book.domain.createBookDetails
+import cube8540.book.batch.book.repository.BookDetailsRepository
 import io.mockk.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
@@ -22,72 +24,74 @@ class RepositoryBasedBookWriterTest {
     }
 
     @Test
-    fun `upsert to merged returns null`() {
-        val item0000: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0000"
-        }
-        val item0001: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0001"
-        }
-        val item0002: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0002"
-        }
-        val item0003: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0003"
-        }
+    fun `insert request book`() {
+        val requestList = mutableListOf(
+            createBookDetails(isbn = "originalIsbn0000"),
+            createBookDetails(isbn = "originalIsbn0001"),
+            createBookDetails(isbn = "originalIsbn0002")
+        )
+        val insertedBookCaptor = slot<Iterable<BookDetails>>()
 
-        val existsBook0: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0001"
-        }
-        val existsBook1: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0002"
-        }
+        every { repository.findById(requestList.map { it.isbn }) } returns emptyList()
+        every { repository.saveAll(capture(insertedBookCaptor)) } returnsArgument 0
 
-        val mergedBook0: BookDetails = mockk(relaxed = true)
-
-        val items = listOf(item0000, item0001, item0002, item0003).toMutableList()
-        every { repository.findById(listOf("isbn0000", "isbn0001", "isbn0002", "isbn0003")) } returns listOf(existsBook0, existsBook1)
-        every { controller.merge(existsBook0, item0001) } returns mergedBook0
-        every { controller.merge(existsBook1, item0002) } returns null
-
-        writer.write(items)
-        verify { repository.saveAll(listOf(item0000, item0003)) }
-        verify { repository.saveAll(listOf(mergedBook0)) }
+        writer.write(requestList)
+        assertThat(insertedBookCaptor.captured).isEqualTo(requestList)
     }
 
     @Test
-    fun `upsert to repository`() {
-        val item0000: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0000"
-        }
-        val item0001: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0001"
-        }
-        val item0002: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0002"
-        }
-        val item0003: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0003"
-        }
+    fun `update request book`() {
+        val requestList = mutableListOf(
+            createBookDetails(isbn = "requestIsbn00000"),
+            createBookDetails(isbn = "requestIsbn00001"),
+            createBookDetails(isbn = "requestIsbn00002")
+        )
+        val existsList = listOf(
+            createBookDetails(isbn = "requestIsbn00000", isNew = false),
+            createBookDetails(isbn = "requestIsbn00001", isNew = false),
+            createBookDetails(isbn = "requestIsbn00002", isNew = false)
+        )
+        val mergedResultBookList = listOf(
+            createBookDetails(isbn = "mergedIsbn0000", isNew = false),
+            createBookDetails(isbn = "mergedIsbn0001", isNew = false),
+            createBookDetails(isbn = "mergedIsbn0002", isNew = false)
+        )
+        val existsBookCaptor = mutableListOf<BookDetails>()
+        val updatedBookCaptor = slot<Iterable<BookDetails>>()
 
-        val existsBook0: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0001"
-        }
-        val existsBook1: BookDetails = mockk(relaxed = true) {
-            every { isbn } returns "isbn0002"
-        }
+        every { repository.findById(requestList.map { it.isbn }) } returns existsList
+        every { controller.merge(capture(existsBookCaptor), requestList[0]) } returns mergedResultBookList[0]
+        every { controller.merge(capture(existsBookCaptor), requestList[1]) } returns mergedResultBookList[1]
+        every { controller.merge(capture(existsBookCaptor), requestList[2]) } returns mergedResultBookList[2]
+        every { repository.saveAll(capture(updatedBookCaptor)) } returnsArgument 0
 
-        val mergedBook0: BookDetails = mockk(relaxed = true)
-        val mergedBook1: BookDetails = mockk(relaxed = true)
+        writer.write(requestList)
+        assertThat(existsBookCaptor).usingFieldByFieldElementComparator().containsAll(existsList)
+        assertThat(updatedBookCaptor.captured).usingFieldByFieldElementComparator().containsAll(mergedResultBookList)
+    }
 
-        val items = listOf(item0000, item0001, item0002, item0003).toMutableList()
-        every { repository.findById(listOf("isbn0000", "isbn0001", "isbn0002", "isbn0003")) } returns listOf(existsBook0, existsBook1)
-        every { controller.merge(existsBook0, item0001) } returns mergedBook0
-        every { controller.merge(existsBook1, item0002) } returns mergedBook1
+    @Test
+    fun `insert and update`() {
+        val requestList = mutableListOf(
+            createBookDetails(isbn = "requestIsbn00000"),
+            createBookDetails(isbn = "requestIsbn00001"),
+            createBookDetails(isbn = "requestIsbn00002")
+        )
+        val existsList = listOf(createBookDetails(isbn = "requestIsbn00001", isNew = false))
+        val mergedResultBook = createBookDetails(isbn = "mergedIsbn0001", isNew = false)
+        val existsBookCaptor = slot<BookDetails>()
+        val upsertBookCaptor = slot<Iterable<BookDetails>>()
 
-        writer.write(items)
-        verify { repository.saveAll(listOf(item0000, item0003)) }
-        verify { repository.saveAll(listOf(mergedBook0, mergedBook1)) }
+        every { repository.findById(requestList.map { it.isbn }) } returns existsList
+        every { controller.merge(capture(existsBookCaptor), requestList[1]) } returns mergedResultBook
+        every { repository.saveAll(capture(upsertBookCaptor)) } returnsArgument 0
+
+        writer.write(requestList)
+        assertThat(existsBookCaptor.captured).isEqualToComparingFieldByField(existsList[0])
+        assertThat(upsertBookCaptor.captured).hasSize(3)
+            .usingFieldByFieldElementComparator()
+            .isEqualTo(listOf(requestList[0], mergedResultBook, requestList[2]))
+
     }
 
     @AfterEach

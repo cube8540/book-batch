@@ -15,7 +15,7 @@ const val defaultSeriesCode = "seriesCode00000"
 const val defaultSeriesIsbn = "seriesIsbn00000"
 
 const val defaultPublisher = "publisher000001"
-val defaultPublishDate = LocalDate.of(2021, 6, 5)
+val defaultPublishDate: LocalDate = LocalDate.of(2021, 6, 5)
 
 val defaultMappingType: MappingType = MappingType.values()[Random.nextInt(MappingType.values().size)]
 
@@ -39,6 +39,8 @@ val defaultOriginal = emptyMap<OriginalPropertyKey, String>()
 const val defaultPublisherCode = "publisherCode00001"
 const val defaultDivisionCode = "divisionCode00001"
 const val defaultDivisionDepth = 0
+
+val bookDetailsAssertIgnoringFields = listOf("createdAt", "original").toTypedArray()
 
 fun createBookContext(
     isbn: String = defaultIsbn,

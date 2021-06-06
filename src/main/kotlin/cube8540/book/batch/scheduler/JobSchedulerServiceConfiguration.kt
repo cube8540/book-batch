@@ -13,25 +13,15 @@ import cube8540.book.batch.scheduler.application.LocalDateWithPublisherScheduler
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.context.ApplicationEventPublisher
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class JobSchedulerServiceConfiguration {
 
-    @set:[Autowired Qualifier(NationalLibraryAPIJobConfiguration.jobName)]
-    lateinit var nationalLibraryAPIJob: Job
-
-    @set:[Autowired Qualifier(NaverBookAPIJobConfiguration.jobName)]
-    lateinit var naverBookAPIJob: Job
-
-    @set:[Autowired Qualifier(KyoboBookRequestJobConfiguration.jobName)]
-    lateinit var kyoboBookRequestJob: Job
-
-    @set:[Autowired Qualifier(BookSetUpstreamTargetJobConfiguration.jobName)]
-    lateinit var setUpstreamTargetJob: Job
+    @set:Autowired
+    lateinit var applicationContext: ApplicationContext
 
     @set:Autowired
     lateinit var jobLauncher: JobLauncher
@@ -39,26 +29,27 @@ class JobSchedulerServiceConfiguration {
     @set:Autowired
     lateinit var publisherRepository: PublisherRepository
 
-    @set:Autowired
-    lateinit var eventPublisher: ApplicationEventPublisher
-
     @Bean
     fun jobSchedulerService(): JobSchedulerService {
         val nationalLibraryAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NATIONAL_LIBRARY, publisherRepository)
         val naverBookAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NAVER_BOOK, publisherRepository)
-        val kyoboBookRequestJobSchedulerService = LocalDateJobSchedulerService(kyoboBookRequestJob, jobLauncher)
-        val setUpstreamJobSchedulerService = LocalDateJobSchedulerService(setUpstreamTargetJob, jobLauncher)
+        val kyoboBookRequestJobSchedulerService = LocalDateJobSchedulerService(
+            applicationContext.getBean(KyoboBookRequestJobConfiguration.jobName, Job::class.java), jobLauncher)
+        val setUpstreamJobSchedulerService = LocalDateJobSchedulerService(
+            applicationContext.getBean(BookSetUpstreamTargetJobConfiguration.jobName, Job::class.java), jobLauncher)
 
-        nationalLibraryAPIJobSchedulerService.job = nationalLibraryAPIJob
+        nationalLibraryAPIJobSchedulerService.job = applicationContext
+            .getBean(NationalLibraryAPIJobConfiguration.jobName, Job::class.java)
         nationalLibraryAPIJobSchedulerService.jobLauncher = jobLauncher
-        nationalLibraryAPIJobSchedulerService.eventPublisher = eventPublisher
+        nationalLibraryAPIJobSchedulerService.eventPublisher = applicationContext
 
-        naverBookAPIJobSchedulerService.job = naverBookAPIJob
+        naverBookAPIJobSchedulerService.job = applicationContext
+            .getBean(NaverBookAPIJobConfiguration.jobName, Job::class.java)
         naverBookAPIJobSchedulerService.jobLauncher = jobLauncher
-        naverBookAPIJobSchedulerService.eventPublisher = eventPublisher
+        naverBookAPIJobSchedulerService.eventPublisher = applicationContext
 
-        kyoboBookRequestJobSchedulerService.eventPublisher = eventPublisher
-        setUpstreamJobSchedulerService.eventPublisher = eventPublisher
+        kyoboBookRequestJobSchedulerService.eventPublisher = applicationContext
+        setUpstreamJobSchedulerService.eventPublisher = applicationContext
 
         return CompositeJobSchedulerService()
             .addDelegate(nationalLibraryAPIJobSchedulerService)

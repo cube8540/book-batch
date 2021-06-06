@@ -17,9 +17,9 @@ data class BookAPIRequest(
 )
 
 data class BookAPIResponse(
-    val totalCount: Long,
-    val page: Long,
-    val books: List<BookDetailsContext>
+    val totalCount: Long = 0,
+    val page: Long = 0,
+    val books: List<BookDetailsContext> = emptyList()
 )
 
 data class BookAPIErrorResponse(

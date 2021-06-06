@@ -22,30 +22,6 @@ class CompositeBookDetailsControllerTest {
     }
 
     @Test
-    fun `returns null during merge`() {
-        val base: BookDetails = createBookDetails(isbn = "originalIsbn00001")
-        val item: BookDetails = createBookDetails(isbn = "mergedIsbn00001")
-
-        val firstMergedResult: BookDetails = mockk(relaxed = true)
-        val firstMergedController: BookDetailsController = mockk {
-            every { merge(base, item) } returns firstMergedResult
-        }
-        val secondMergedResult = null
-        val secondMergedController: BookDetailsController = mockk {
-            every { merge(firstMergedResult, item) } returns secondMergedResult
-        }
-        val thirdMergedResult: BookDetails = mockk(relaxed = true)
-        val thirdMergedController: BookDetailsController = mockk {
-            every { merge(any(), item) } returns thirdMergedResult
-        }
-
-        val controller = CompositeBookDetailsController(firstMergedController, secondMergedController, thirdMergedController)
-
-        val result = controller.merge(base, item)
-        assertThat(result).isNull()
-    }
-
-    @Test
     fun `merge book details`() {
         val base: BookDetails = createBookDetails(isbn = "originalIsbn00001")
         val item: BookDetails = createBookDetails(isbn = "mergedIsbn00001")

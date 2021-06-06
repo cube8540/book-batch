@@ -1,6 +1,8 @@
 package cube8540.book.batch.job.reader
 
-import cube8540.book.batch.book.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.createBookContext
+import cube8540.book.batch.book.domain.defaultIsbn
+import cube8540.book.batch.book.domain.defaultPublisherCode
 import cube8540.book.batch.external.BookAPIRequest
 import cube8540.book.batch.external.BookAPIResponse
 import cube8540.book.batch.external.ExternalBookAPIExchanger
@@ -8,33 +10,33 @@ import cube8540.book.batch.job.BookAPIRequestJobParameter
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.time.LocalDate
 
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class WebClientBookReaderTest {
 
-    private val publisher = "publisher00001"
-    private val isbn = "isbn-00-000"
     private val from = LocalDate.of(2021, 5, 1)
     private val to = LocalDate.of(2021, 5, 31)
 
     private val exchanger: ExternalBookAPIExchanger = mockk(relaxed = true)
     private val request = BookAPIRequestJobParameter()
 
-    private val reader = WebClientBookReader(exchanger, request)
+    private lateinit var reader: WebClientBookReader
 
-    init {
-        request.isbn = isbn
-        request.publisher = publisher
+    @BeforeEach
+    fun setup() {
+        request.isbn = defaultIsbn
+        request.publisher = defaultPublisherCode
         request.from = from
         request.to = to
+
+        reader = WebClientBookReader(exchanger, request)
     }
 
     @Test
     fun `read value api result is null`() {
-        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, defaultIsbn, defaultPublisherCode)
 
         every { exchanger.exchange(request) } returns null
 
@@ -44,10 +46,9 @@ class WebClientBookReaderTest {
 
     @Test
     fun `read value api result books is empty`() {
-        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
-        val bookAPIResponse: BookAPIResponse = mockk(relaxed = true)
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, defaultIsbn, defaultPublisherCode)
+        val bookAPIResponse = BookAPIResponse()
 
-        every { bookAPIResponse.books } returns emptyList()
         every { exchanger.exchange(request) } returns bookAPIResponse
 
         val result = reader.read()
@@ -56,14 +57,17 @@ class WebClientBookReaderTest {
 
     @Test
     fun `read value`() {
-        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, isbn, publisher)
-        val bookAPIResponse: BookAPIResponse = mockk(relaxed = true)
-        val books: List<BookDetailsContext> = listOf(mockk(), mockk(), mockk())
+        val request = BookAPIRequest(reader.page + 1, reader.pageSize, from, to, defaultIsbn, defaultPublisherCode)
+        val bookDetailsContext = listOf(
+            createBookContext(isbn = "isbn0000"),
+            createBookContext(isbn = "isbn0001"),
+            createBookContext(isbn = "isbn0002")
+        )
+        val bookAPIResponse = BookAPIResponse(totalCount = 3, page = reader.page.toLong(), books = bookDetailsContext)
 
-        every { bookAPIResponse.books } returns books
         every { exchanger.exchange(request) } returns bookAPIResponse
 
         val result = reader.read()
-        assertThat(result).isEqualTo(books.first())
+        assertThat(result).isEqualTo(bookDetailsContext.first())
     }
 }
