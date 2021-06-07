@@ -19,6 +19,7 @@ import java.util.*
 @EnableConfigurationProperties(value = [
     AuthenticationProperty::class,
     APIConnectionProperty::class,
+    EndpointProperty::class
 ])
 class BatchApplication {
     companion object {

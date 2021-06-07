@@ -1,10 +1,15 @@
 package cube8540.book.batch.external
 
 import cube8540.book.batch.book.domain.BookDetailsContext
+import java.net.URI
 import java.time.LocalDate
 
 interface ExternalBookAPIExchanger {
     fun exchange(request: BookAPIRequest): BookAPIResponse?
+}
+
+interface ExternalBookAPIUpstream {
+    fun upstream(upstreamRequest: BookUpstreamAPIRequest)
 }
 
 data class BookAPIRequest(
@@ -14,6 +19,22 @@ data class BookAPIRequest(
     val to: LocalDate? = null,
     val isbn: String? = null,
     val publisher: String? = null
+)
+
+data class BookUpstreamAPIRequest(val requests: List<BookUpstreamAPIRequestDetails>)
+data class BookUpstreamAPIRequestDetails(
+    val isbn: String,
+    val title: String,
+    val publishDate: LocalDate,
+    val publisherCode: String,
+    val seriesIsbn: String? = null,
+    val seriesCode: String? = null,
+    val largeThumbnail: URI? = null,
+    val mediumThumbnail: URI? = null,
+    val smallThumbnail: URI? = null,
+    val authors: List<String>? = null,
+    val description: String? = null,
+    val price: Double? = null
 )
 
 data class BookAPIResponse(

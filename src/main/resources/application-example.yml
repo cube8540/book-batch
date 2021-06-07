@@ -1,6 +1,17 @@
 spring:
   main:
     web-application-type: none
+  security:
+    oauth2:
+      client:
+        registration:
+          application:
+            authorization-grant-type: client_credentials
+            client-id: # your application client id
+            client-secret: # your application client secret
+        provider:
+          application:
+            token-uri: # your application token endpoint
   datasource:
     hikari:
       username: #your database username
@@ -28,6 +39,10 @@ api:
     max-awit-second: 5
     retry-count: 1
     retry-delay-second: 5
+  endpoint:
+    application:
+      upstream: # your application upstream endpoint
+      host: #your application host
   authentication:
     national-library:
       key: # your national library api key
