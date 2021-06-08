@@ -78,6 +78,7 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     }
 
     @PostLoad
+    @PostPersist
     fun markingPersistedEntity() {
         this.newObject = false
     }
