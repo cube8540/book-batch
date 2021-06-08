@@ -1,6 +1,7 @@
 package cube8540.book.batch.external.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import cube8540.book.batch.EndpointProperty
 import cube8540.book.batch.book.application.DefaultBookCommandService
 import cube8540.book.batch.book.repository.BookDetailsRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +20,9 @@ import org.springframework.web.reactive.function.client.WebClient
 @Configuration
 class ExternalApplicationBeanConfiguration {
 
+    @set:Autowired
+    lateinit var endpointProperty: EndpointProperty
+
     @set:[Autowired Qualifier("defaultObjectMapper")]
     lateinit var objectMapper: ObjectMapper
 
@@ -32,6 +36,7 @@ class ExternalApplicationBeanConfiguration {
         oauth.setDefaultClientRegistrationId("application")
 
         return WebClient.builder()
+            .baseUrl(endpointProperty.application.host)
             .exchangeStrategies(
                 ExchangeStrategies.builder().codecs {
                     val decoder = Jackson2JsonDecoder(objectMapper)

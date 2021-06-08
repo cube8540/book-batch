@@ -45,6 +45,29 @@ class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepo
         return PageImpl(bookDetailsExpression.fetch(), pageRequest, queryResults.total)
     }
 
+    override fun findUpstreamByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails> {
+        val queryFactory = JPAQueryFactory(entityManager)
+        val queryExpression = queryFactory.select(bookDetails.isbn)
+            .from(bookDetails)
+            .where(
+                bookDetails.publishDate.between(from, to),
+                bookDetails.isUpstreamTarget.isTrue
+            )
+        querydsl!!.applyPagination(pageRequest, queryExpression)
+
+        val queryResults = queryExpression.fetchResults()
+
+        val bookDetailsExpression = from(bookDetails)
+            .distinct()
+            .leftJoin(bookDetails.divisions).fetchJoin()
+            .leftJoin(bookDetails.authors).fetchJoin()
+            .leftJoin(bookDetails.keywords).fetchJoin()
+            .where(bookDetails.isbn.`in`(queryResults.results))
+        querydsl!!.applySorting(pageRequest.sort, bookDetailsExpression)
+
+        return PageImpl(bookDetailsExpression.fetch(), pageRequest, queryResults.total)
+    }
+
     override fun detached(entity: BookDetails) {
         entityManager!!.detach(entity)
     }
