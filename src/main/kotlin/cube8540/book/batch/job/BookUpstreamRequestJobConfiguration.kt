@@ -1,5 +1,6 @@
 package cube8540.book.batch.job
 
+import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.application.BookQueryService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.external.ExternalBookAPIUpstream
@@ -36,6 +37,9 @@ class BookUpstreamRequestJobConfiguration {
     @set:[Autowired Qualifier("upstreamBookQueryService")]
     lateinit var bookDetailsService: BookQueryService
 
+    @set:Autowired
+    lateinit var bookCommandService: BookCommandService
+
     @set:[Autowired Qualifier("externalApplicationBookUpstream")]
     lateinit var upstream: ExternalBookAPIUpstream
 
@@ -68,6 +72,6 @@ class BookUpstreamRequestJobConfiguration {
 
     @StepScope
     @Bean(jobWriterName)
-    fun bookDetailsWriter(): WebClientBookUpstreamWriter = WebClientBookUpstreamWriter(upstream)
+    fun bookDetailsWriter(): WebClientBookUpstreamWriter = WebClientBookUpstreamWriter(upstream, bookCommandService)
 
 }
