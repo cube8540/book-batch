@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import cube8540.book.batch.external.application.ExternalApplicationEndpointInfo
 import cube8540.book.batch.external.kyobo.kr.KyoboAuthenticationInfo
 import cube8540.book.batch.external.naver.com.NaverBookAPIKey
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIKey
@@ -31,8 +32,6 @@ class ObjectMapperConfiguration {
             .addSerializer(LocalDateTime::class.java, LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             .addDeserializer(LocalDate::class.java, LocalDateDeserializer(DateTimeFormatter.ISO_DATE))
             .addSerializer(LocalDate::class.java, LocalDateSerializer(DateTimeFormatter.ISO_DATE))
-
-
         return ObjectMapper()
             .registerModule(timeModule)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -46,6 +45,12 @@ class APIConnectionProperty(
     val maxWaitSecond: Int? = 5,
     val retryCount: Int? = 1,
     val retryDelaySecond: Int? = 5
+)
+
+@ConstructorBinding
+@ConfigurationProperties(prefix = "api.endpoint")
+class EndpointProperty(
+    val application: ExternalApplicationEndpointInfo
 )
 
 @ConstructorBinding

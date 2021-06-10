@@ -10,6 +10,8 @@ interface BookDetailsCustomRepository: CustomRepository<BookDetails> {
     fun findById(isbn: List<String>): List<BookDetails>
 
     fun findByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails>
+
+    fun findUpstreamByPublishDateBetween(from: LocalDate, to: LocalDate, pageRequest: PageRequest): Page<BookDetails>
 }
 
 interface BookDetailsRepository: JpaRepository<BookDetails, String>, BookDetailsCustomRepository

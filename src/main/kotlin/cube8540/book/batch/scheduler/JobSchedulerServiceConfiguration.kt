@@ -2,10 +2,7 @@ package cube8540.book.batch.scheduler
 
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.repository.PublisherRepository
-import cube8540.book.batch.job.BookSetUpstreamTargetJobConfiguration
-import cube8540.book.batch.job.KyoboBookRequestJobConfiguration
-import cube8540.book.batch.job.NationalLibraryAPIJobConfiguration
-import cube8540.book.batch.job.NaverBookAPIJobConfiguration
+import cube8540.book.batch.job.*
 import cube8540.book.batch.scheduler.application.CompositeJobSchedulerService
 import cube8540.book.batch.scheduler.application.JobSchedulerService
 import cube8540.book.batch.scheduler.application.LocalDateJobSchedulerService
@@ -33,10 +30,13 @@ class JobSchedulerServiceConfiguration {
     fun jobSchedulerService(): JobSchedulerService {
         val nationalLibraryAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NATIONAL_LIBRARY, publisherRepository)
         val naverBookAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NAVER_BOOK, publisherRepository)
+
         val kyoboBookRequestJobSchedulerService = LocalDateJobSchedulerService(
             applicationContext.getBean(KyoboBookRequestJobConfiguration.jobName, Job::class.java), jobLauncher)
         val setUpstreamJobSchedulerService = LocalDateJobSchedulerService(
             applicationContext.getBean(BookSetUpstreamTargetJobConfiguration.jobName, Job::class.java), jobLauncher)
+        val upstreamJobSchedulerService = LocalDateJobSchedulerService(
+            applicationContext.getBean(BookUpstreamRequestJobConfiguration.jobName, Job::class.java), jobLauncher)
 
         nationalLibraryAPIJobSchedulerService.job = applicationContext
             .getBean(NationalLibraryAPIJobConfiguration.jobName, Job::class.java)
@@ -50,11 +50,13 @@ class JobSchedulerServiceConfiguration {
 
         kyoboBookRequestJobSchedulerService.eventPublisher = applicationContext
         setUpstreamJobSchedulerService.eventPublisher = applicationContext
+        upstreamJobSchedulerService.eventPublisher = applicationContext
 
         return CompositeJobSchedulerService()
             .addDelegate(nationalLibraryAPIJobSchedulerService)
             .addDelegate(naverBookAPIJobSchedulerService)
             .addDelegate(kyoboBookRequestJobSchedulerService)
             .addDelegate(setUpstreamJobSchedulerService)
+            .addDelegate(upstreamJobSchedulerService)
     }
 }

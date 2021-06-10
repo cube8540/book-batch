@@ -101,12 +101,14 @@ fun createBookDetails(
     description: String? = defaultDescription,
     price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal,
+    isUpstream: Boolean = false,
     isNew: Boolean = true
 ): BookDetails {
   val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, price, original))
     if (!isNew) {
         book.markingPersistedEntity()
     }
+    book.isUpstreamTarget = isUpstream
     return book
 }
 
