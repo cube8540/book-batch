@@ -37,7 +37,7 @@ class BookUpstreamRequestJobConfiguration {
     @set:[Autowired Qualifier("upstreamBookQueryService")]
     lateinit var bookDetailsService: BookQueryService
 
-    @set:Autowired
+    @set:[Autowired Qualifier("externalApplicationBookCommandService")]
     lateinit var bookCommandService: BookCommandService
 
     @set:[Autowired Qualifier("externalApplicationBookUpstream")]
