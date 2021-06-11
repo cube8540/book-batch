@@ -33,6 +33,6 @@ class UpstreamBookQueryServiceTest {
 
         val results = service.loadBookDetails(from, to, pageRequest)
         assertThat(results).isEqualTo(PageImpl(bookDetails))
-        verify { bookDetailsRepository.detached(bookDetails) }
+        verify(exactly = 0) { bookDetailsRepository.detached(bookDetails) }
     }
 }

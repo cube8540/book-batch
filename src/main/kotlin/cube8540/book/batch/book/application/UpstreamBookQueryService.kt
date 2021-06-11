@@ -10,10 +10,6 @@ import java.time.LocalDate
 
 @Service
 class UpstreamBookQueryService @Autowired constructor(private val bookDetailsRepository: BookDetailsRepository): BookQueryService {
-    override fun loadBookDetails(publishFrom: LocalDate, publishTo: LocalDate, pageRequest: PageRequest): Page<BookDetails> {
-        val page = bookDetailsRepository.findUpstreamByPublishDateBetween(publishFrom, publishTo, pageRequest)
-
-        bookDetailsRepository.detached(page.content)
-        return page
-    }
+    override fun loadBookDetails(publishFrom: LocalDate, publishTo: LocalDate, pageRequest: PageRequest): Page<BookDetails> =
+        bookDetailsRepository.findUpstreamByPublishDateBetween(publishFrom, publishTo, pageRequest)
 }

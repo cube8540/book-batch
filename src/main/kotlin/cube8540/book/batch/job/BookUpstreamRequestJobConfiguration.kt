@@ -25,7 +25,7 @@ class BookUpstreamRequestJobConfiguration {
         const val jobStepName = jobName + "Step"
         const val jobReaderName = jobName + "JobReader"
         const val jobWriterName = jobName + "JobWriter"
-        const val defaultChunkSize = 100
+        const val defaultChunkSize = 1000
     }
 
     @set:Autowired
