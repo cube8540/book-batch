@@ -16,12 +16,13 @@ CREATE TABLE IF NOT EXISTS BATCH_JOB_EXECUTION  (
     END_TIME DATETIME(6) DEFAULT NULL ,
     STATUS VARCHAR(10) ,
     EXIT_CODE VARCHAR(2500) ,
-    EXIT_MESSAGE VARCHAR(2500) ,
+    EXIT_MESSAGE TEXT,
     LAST_UPDATED DATETIME(6),
     JOB_CONFIGURATION_LOCATION VARCHAR(2500) NULL,
     constraint JOB_INST_EXEC_FK foreign key (JOB_INSTANCE_ID)
       references BATCH_JOB_INSTANCE(JOB_INSTANCE_ID)
 ) ENGINE=InnoDB;
+alter table BATCH_JOB_EXECUTION modify EXIT_MESSAGE TEXT;
 
 CREATE TABLE IF NOT EXISTS BATCH_JOB_EXECUTION_PARAMS  (
     JOB_EXECUTION_ID BIGINT NOT NULL ,
@@ -98,3 +99,125 @@ CREATE TABLE IF NOT EXISTS BATCH_JOB_SEQ (
 ) ENGINE=InnoDB;
 
 INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
+
+create table if not exists book_details (
+    isbn varchar(13) not null primary key,
+    title varchar(256) not null,
+    series_code varchar(32),
+    series_isbn varchar(32),
+    publisher_code varchar(32) not null,
+    publish_date date not null,
+    lage_thumbnail_url varchar(128),
+    medium_thumbnail_url varchar(128),
+    small_thumbnail_url varchar(128),
+    description text,
+    price double,
+    created_at timestamp not null,
+    upstream_target boolean not null default false
+) engine = InnoDB;
+alter table book_details modify title varchar(256) not null;
+alter table book_details add column if not exists upstream_target boolean not null default false;
+alter table book_details add column if not exists series_isbn varchar(32);
+create index if not exists book_publish_date_index on book_details (publish_date);
+create index if not exists book_created_at_index on book_details (created_at desc);
+create index if not exists book_series_code_index on book_details (series_code);
+create index if not exists book_series_isbn_index on book_details (series_isbn);
+
+create table if not exists book_detail_divisions (
+    isbn varchar(13) not null,
+    division_code varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB;
+
+create table if not exists book_detail_authors (
+    isbn varchar(13) not null,
+    author varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB;
+
+create table if not exists book_detail_keywords (
+    isbn varchar(13) not null,
+    keyword varchar(32) not null,
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB;
+
+create table if not exists book_detail_originals (
+    isbn varchar(32) not null,
+    property varchar(32) not null,
+    mapping_type varchar(32) not null,
+    value varchar(1024),
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB;
+
+create table if not exists divisions (
+    division_code varchar(32) not null primary key,
+    depth integer not null,
+    name varchar(32)
+) engine = InnoDB;
+alter table divisions add column if not exists name varchar(32);
+
+create table if not exists division_raw_mappings (
+    division_code varchar(32) not null,
+    raw varchar(32) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (division_code) references divisions(division_code)
+) engine = InnoDB;
+
+create table if not exists publishers (
+    publisher_code varchar(32) not null primary key,
+    name varchar(32)
+) engine = InnoDB;
+alter table publishers add column if not exists name varchar(32);
+
+create table if not exists publisher_raw_mappings (
+    publisher_code varchar(32) not null,
+    raw varchar(64) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (publisher_code) references publishers(publisher_code)
+) engine = InnoDB;
+alter table publisher_raw_mappings modify raw varchar(64) not null;
+
+create table if not exists publisher_keyword_mappings (
+    publisher_code varchar(32) not null,
+    keyword varchar(32) not null,
+    mapping_type varchar(32) not null,
+
+    foreign key (publisher_code) references publishers(publisher_code)
+) engine = InnoDB;
+
+create table if not exists book_original_filters (
+    id varchar(32) not null primary key,
+    name varchar(32) not null,
+    mapping_type varchar(32) not null,
+    is_root boolean not null,
+    operator_type varchar(32),
+    property_name varchar(32),
+    regex varchar(128),
+    parent_id varchar(32),
+
+    foreign key (parent_id) references book_original_filters(id)
+);
+
+create table if not exists job_scheduler_reservations (
+    id bigint not null primary key auto_increment,
+    name varchar(32),
+    `from` date not null,
+    `to` date not null,
+    created_at datetime not null,
+    status varchar(32) not null
+);
+
+create table if not exists job_scheduler_results (
+    reservation_id bigint not null,
+    job_instance_id bigint not null,
+
+    primary key (reservation_id, job_instance_id),
+    constraint job_scheduler_result_reservation_id foreign key (reservation_id) references job_scheduler_reservations (id),
+    constraint job_scheduler_result_instance_id foreign key (job_instance_id) references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
+);
