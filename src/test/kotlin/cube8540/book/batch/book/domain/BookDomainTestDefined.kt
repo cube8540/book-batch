@@ -1,5 +1,6 @@
 package cube8540.book.batch.book.domain
 
+import cube8540.book.batch.external.nl.go.defaultErrorMessage
 import io.github.cube8540.validator.core.Operator
 import io.mockk.every
 import io.mockk.mockk
@@ -40,7 +41,11 @@ const val defaultPublisherCode = "publisherCode00001"
 const val defaultDivisionCode = "divisionCode00001"
 const val defaultDivisionDepth = 0
 
-val bookDetailsAssertIgnoringFields = listOf("createdAt", "original").toTypedArray()
+const val defaultFailedReasonProperty = "failedIsbn"
+const val defaultFailedReasonMessage = "failedMessage"
+
+val bookDetailsAssertIgnoringFields = listOf(BookDetails::createdAt.name, BookDetails::original.name).toTypedArray()
+val upstreamFailedLogAssertIgnoringFields = listOf(UpstreamFailedLog::sequence.name, UpstreamFailedLog::createdAt.name).toTypedArray()
 
 fun createBookContext(
     isbn: String = defaultIsbn,
@@ -153,3 +158,13 @@ fun createPublisher(
 ): Publisher = Publisher(code = code, raws = raws, keywords = keywords)
 
 fun createRaw(raw: String = "", mappingType: MappingType = defaultMappingType): RawProperty = RawProperty(raw, mappingType)
+
+fun createFailedLog(
+    book: BookDetails,
+    reasons: List<UpstreamFailedReason> = emptyList()
+) = UpstreamFailedLog(book, reasons)
+
+fun createFailedReason(
+    property: String = defaultFailedReasonProperty,
+    message: String = defaultErrorMessage
+): UpstreamFailedReason = UpstreamFailedReason(property, message)
