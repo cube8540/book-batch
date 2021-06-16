@@ -49,3 +49,11 @@ data class PropertyRegex(
     @Column(name = "regex", length = 128)
     var regex: Regex
 ): Serializable
+
+
+@Embeddable
+data class UpstreamFailedReason(
+    var property: String,
+
+    var message: String
+): Serializable

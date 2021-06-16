@@ -201,3 +201,19 @@ create table if not exists job_scheduler_results (
     constraint job_scheduler_result_reservation_id foreign key (reservation_id) references job_scheduler_reservations (id),
     constraint job_scheduler_result_instance_id foreign key (job_instance_id) references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
 );
+
+create table if not exists book_upstream_failed_logs (
+    sequence bigint not null primary key auto_increment,
+    isbn varchar(13) not null,
+    created_at timestamp not null,
+
+    constraint book_upstream_failed_log_isbn foreign key (isbn) references book_details(isbn)
+);
+
+create table if not exists book_upstream_failed_reasons (
+    failed_id bigint not null,
+    property varchar(64) not null,
+    message varchar(128) not null,
+
+    constraint book_upstream_failed_reason_id foreign key (failed_id) references book_upstream_failed_logs(sequence)
+);
