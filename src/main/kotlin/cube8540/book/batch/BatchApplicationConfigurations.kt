@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.external.application.ExternalApplicationEndpointInfo
 import cube8540.book.batch.external.kyobo.kr.KyoboAuthenticationInfo
 import cube8540.book.batch.external.naver.com.NaverBookAPIKey
@@ -34,6 +35,7 @@ class ObjectMapperConfiguration {
             .addSerializer(LocalDate::class.java, LocalDateSerializer(DateTimeFormatter.ISO_DATE))
         return ObjectMapper()
             .registerModule(timeModule)
+            .registerModule(KotlinModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
     }

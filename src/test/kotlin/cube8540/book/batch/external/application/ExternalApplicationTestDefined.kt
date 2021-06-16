@@ -1,6 +1,9 @@
 package cube8540.book.batch.external.application
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.book.domain.*
 import cube8540.book.batch.external.BookUpstreamAPIRequest
 import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
@@ -10,7 +13,58 @@ import okhttp3.mockwebserver.RecordedRequest
 import java.net.URI
 import java.time.LocalDate
 
-val defaultObjectMapper = ObjectMapper()
+val defaultObjectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+
+fun createUpstreamResponseJson(
+    successBooks: List<String> = emptyList(),
+    failedBooks: JsonNode?
+): JsonNode {
+    val objectMapper = ObjectMapper()
+
+    val successArray = objectMapper.createArrayNode()
+    successBooks.forEach { successArray.add(it) }
+
+    val node = objectMapper.createObjectNode()
+    node.set<JsonNode>(ExternalUpstreamResponse::successBooks.name, successArray)
+    failedBooks?.let { node.set<JsonNode>(ExternalUpstreamResponse::failedBooks.name, it) }
+
+    return node
+}
+
+fun createUpstreamFailedBooksJson(
+    isbn: String = defaultIsbn,
+    errors: JsonNode?
+): JsonNode {
+    val objectMapper = ObjectMapper()
+
+    val node = objectMapper.createObjectNode()
+    node.set<JsonNode>(ExternalUpstreamFailedBooks::isbn.name, objectMapper.convertValue(isbn, JsonNode::class.java))
+    errors?.let { node.set<JsonNode>(ExternalUpstreamFailedBooks::errors.name, it) }
+
+    return node
+}
+
+fun createUpstreamFailedReasonJson(
+    property: String = defaultFailedReasonProperty,
+    reason: String = defaultFailedReasonMessage
+): JsonNode {
+    val objectMapper = ObjectMapper()
+
+    val node = objectMapper.createObjectNode()
+    node.set<JsonNode>(ExternalUpstreamFailedReason::property.name, objectMapper.convertValue(property, JsonNode::class.java))
+    node.set<JsonNode>(ExternalUpstreamFailedReason::message.name, objectMapper.convertValue(reason, JsonNode::class.java))
+
+    return node
+}
+
+fun jsonArrayNode(vararg values: JsonNode): ArrayNode {
+    val objectMapper = ObjectMapper()
+
+    val node = objectMapper.createArrayNode()
+    node.addAll(values.asList().toMutableList())
+
+    return node
+}
 
 fun createUpstreamBook(
     vararg requests: BookUpstreamAPIRequestDetails
