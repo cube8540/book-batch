@@ -59,7 +59,7 @@ class NaverBookAPIDeserializerTest {
 
         val response: BookAPIResponse = deserializer.deserialize(jsonParser, mockk(relaxed = true))
         assertThat(response.books.size).isEqualTo(bookArrayNode.size())
-        assertThat(response.books).contains(
+        assertThat(response.books).containsExactly(
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherRawMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherRawMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherRawMapper)

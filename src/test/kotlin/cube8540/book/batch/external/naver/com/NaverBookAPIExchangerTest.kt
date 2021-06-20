@@ -62,7 +62,7 @@ class NaverBookAPIExchangerTest {
         assertThat(result.totalCount).isEqualTo(3)
         assertThat(result.page).isEqualTo(realRequestedPage.toLong())
         assertThat(result.books.size).isEqualTo(3)
-        assertThat(result.books).contains(
+        assertThat(result.books).containsExactly(
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherMapper)
@@ -106,7 +106,7 @@ class NaverBookAPIExchangerTest {
         assertThat(result.totalCount).isEqualTo(3)
         assertThat(result.page).isEqualTo(realRequestedPage.toLong())
         assertThat(result.books.size).isEqualTo(3)
-        assertThat(result.books).contains(
+        assertThat(result.books).containsExactly(
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherMapper),
             NaverBookAPIJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherMapper)

@@ -55,8 +55,8 @@ class WebClientBookUpstreamWriterTest {
         }
         assertThat(setUpstreamRequestCaptor.captured)
             .usingElementComparatorIgnoringFields(*bookDetailsAssertIgnoringFields)
-            .isEqualTo(listOf(createBookDetails(isbn = "isbn0000", isUpstream = false),
+            .containsExactly(createBookDetails(isbn = "isbn0000", isUpstream = false),
                 createBookDetails(isbn = "isbn0001", isUpstream = false),
-                createBookDetails(isbn = "isbn0002", isUpstream = false)))
+                createBookDetails(isbn = "isbn0002", isUpstream = false))
     }
 }

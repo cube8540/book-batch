@@ -70,8 +70,10 @@ class DefaultBookCommandServiceTest {
             every { bookDetailsRepository.saveAll(capture(updatedBookCaptor)) } returnsArgument 0
 
             service.upsertBookDetails(requestList)
-            assertThat(existsBookCaptor).usingFieldByFieldElementComparator().containsAll(existsList)
-            assertThat(updatedBookCaptor.captured).usingFieldByFieldElementComparator().containsAll(mergedResultBookList)
+            assertThat(existsBookCaptor)
+                .usingFieldByFieldElementComparator().isEqualTo(existsList)
+            assertThat(updatedBookCaptor.captured)
+                .usingFieldByFieldElementComparator().isEqualTo(mergedResultBookList)
         }
 
         @Test
@@ -91,10 +93,11 @@ class DefaultBookCommandServiceTest {
             every { bookDetailsRepository.saveAll(capture(upsertBookCaptor)) } returnsArgument 0
 
             service.upsertBookDetails(requestList)
-            assertThat(existsBookCaptor.captured).isEqualToComparingFieldByField(existsList[0])
+            assertThat(existsBookCaptor.captured)
+                .isEqualToComparingFieldByField(existsList[0])
             assertThat(upsertBookCaptor.captured).hasSize(3)
                 .usingFieldByFieldElementComparator()
-                .isEqualTo(listOf(requestList[0], mergedResultBook, requestList[2]))
+                .containsExactly(requestList[0], mergedResultBook, requestList[2])
 
         }
 
