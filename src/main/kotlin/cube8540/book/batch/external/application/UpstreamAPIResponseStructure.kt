@@ -1,8 +1,8 @@
 package cube8540.book.batch.external.application
 
 data class ExternalUpstreamResponse(
-    var successBooks: List<String>,
-    var failedBooks: List<ExternalUpstreamFailedBooks>
+    var successBooks: List<String>?,
+    var failedBooks: List<ExternalUpstreamFailedBooks>?
 )
 
 data class ExternalUpstreamFailedBooks(
