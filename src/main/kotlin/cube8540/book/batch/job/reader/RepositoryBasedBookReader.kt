@@ -2,7 +2,7 @@ package cube8540.book.batch.job.reader
 
 import cube8540.book.batch.book.application.BookQueryService
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.domain.QBookDetails
+import cube8540.book.batch.book.domain.QBookDetails
 import org.springframework.batch.item.database.AbstractPagingItemReader
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort

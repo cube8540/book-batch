@@ -2,8 +2,8 @@ package cube8540.book.batch.book.repository
 
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.domain.Publisher
-import cube8540.book.batch.domain.QPublisher
-import cube8540.book.batch.domain.QRawProperty
+import cube8540.book.batch.book.domain.QPublisher
+import cube8540.book.batch.book.domain.QRawProperty
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 

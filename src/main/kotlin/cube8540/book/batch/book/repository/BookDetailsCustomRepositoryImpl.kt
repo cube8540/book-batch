@@ -2,7 +2,7 @@ package cube8540.book.batch.book.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.domain.QBookDetails
+import cube8540.book.batch.book.domain.QBookDetails
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
