@@ -69,7 +69,7 @@ class NationalLibraryAPIDeserializerTest {
 
         val response = deserializer.deserialize(jsonParser, mockk(relaxed = true))
         assertThat(response.books.size).isEqualTo(3)
-        assertThat(response.books).contains(
+        assertThat(response.books).containsExactly(
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherRawMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherRawMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherRawMapper)

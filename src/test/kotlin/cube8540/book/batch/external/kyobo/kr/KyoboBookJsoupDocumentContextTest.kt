@@ -19,7 +19,7 @@ class KyoboBookJsoupDocumentContextTest {
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
         val result = context.resolveAuthors()
-        assertThat(result).containsAll(authors)
+        assertThat(result).isEqualTo(authors)
     }
 
     @Test
@@ -35,7 +35,7 @@ class KyoboBookJsoupDocumentContextTest {
         every { divisionMapper.mapping(categories) } returns mappedCategories
 
         val result = context.resolveDivisions()
-        assertThat(result).containsAll(mappedCategories)
+        assertThat(result).containsExactlyElementsOf(mappedCategories)
     }
 
     @Test

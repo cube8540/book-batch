@@ -56,7 +56,7 @@ class NationalLibraryAPIExchangerTest {
         val result = exchanger.exchange(exchangeParameter)
         assertThat(result?.totalCount).isEqualTo(3)
         assertThat(result?.page).isEqualTo(realRequestedPage.toLong())
-        assertThat(result?.books).contains(
+        assertThat(result?.books).containsExactly(
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherMapper)
@@ -84,7 +84,7 @@ class NationalLibraryAPIExchangerTest {
         val result = exchanger.exchange(exchangeParameter)
         assertThat(result?.totalCount).isEqualTo(3)
         assertThat(result?.page).isEqualTo(realRequestedPage.toLong())
-        assertThat(result?.books).contains(
+        assertThat(result?.books).containsExactly(
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00000"), publisherMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00001"), publisherMapper),
             NationalLibraryJsonNodeContext(createBookJsonNode(isbn = "isbn00002"), publisherMapper)

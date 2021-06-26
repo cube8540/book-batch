@@ -40,9 +40,12 @@ class KyoboLoginFilterTest {
 
         val result = kyoboLoginFilter.filter(clientRequest, nextFunction)
         assertThat(result).isEqualTo(exchangeResult)
-        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey]).contains(defaultHeaderCookieValue)
-        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey]).isEqualTo(defaultHeaderCookieValue)
-        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime).isEqualTo(defaultKyoboLoginIssuedAt)
+        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey])
+            .containsExactly(defaultHeaderCookieValue)
+        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey])
+            .isEqualTo(defaultHeaderCookieValue)
+        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime)
+            .isEqualTo(defaultKyoboLoginIssuedAt)
     }
 
     @Test
@@ -61,9 +64,12 @@ class KyoboLoginFilterTest {
 
         val result = kyoboLoginFilter.filter(clientRequest, nextFunction)
         assertThat(result).isEqualTo(exchangeResult)
-        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey]).contains(defaultHeaderCookieValue)
-        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey]).isEqualTo(defaultHeaderCookieValue)
-        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime).isEqualTo(defaultKyoboLoginExpiredDateTime)
+        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey])
+            .containsExactly(defaultHeaderCookieValue)
+        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey])
+            .isEqualTo(defaultHeaderCookieValue)
+        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime)
+            .isEqualTo(defaultKyoboLoginExpiredDateTime)
     }
 
     @Test
@@ -80,9 +86,12 @@ class KyoboLoginFilterTest {
 
         val result = kyoboLoginFilter.filter(clientRequest, nextFunction)
         assertThat(result).isEqualTo(exchangeResult)
-        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey]).contains("oldCookieValue0000")
-        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey]).isEqualTo("oldCookieValue0000")
-        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime).isEqualTo(defaultKyoboLoginIssuedAt)
+        assertThat(nextRequestCaptor.captured.cookies()[defaultHeaderCookieKey])
+            .containsExactly("oldCookieValue0000")
+        assertThat(kyoboLoginFilter.loginInfo!!.cookies[defaultHeaderCookieKey])
+            .isEqualTo("oldCookieValue0000")
+        assertThat(kyoboLoginFilter.loginInfo!!.issuedDateTime)
+            .isEqualTo(defaultKyoboLoginIssuedAt)
     }
 }
 

@@ -5,7 +5,7 @@ import cube8540.book.batch.book.repository.BookDetailsRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -32,7 +32,7 @@ class UnDetachedBookDetailsServiceTest {
         every { bookDetailsRepository.findByPublishDateBetween(from, to, pageRequest) } returns PageImpl(bookDetails)
 
         val results = service.loadBookDetails(from, to, pageRequest)
-        Assertions.assertThat(results).isEqualTo(PageImpl(bookDetails))
+        assertThat(results).isEqualTo(PageImpl(bookDetails))
         verify(exactly = 0) { bookDetailsRepository.detached(bookDetails) }
     }
 }
