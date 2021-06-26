@@ -114,7 +114,7 @@ create table if not exists book_details (
     price double,
     created_at timestamp not null,
     upstream_target boolean not null default false
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 alter table book_details modify title varchar(256) not null;
 alter table book_details add column if not exists upstream_target boolean not null default false;
 alter table book_details add column if not exists series_isbn varchar(32);
@@ -128,36 +128,36 @@ create table if not exists book_detail_divisions (
     division_code varchar(32) not null,
 
     foreign key (isbn) references book_details(isbn)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_detail_authors (
     isbn varchar(13) not null,
     author varchar(32) not null,
 
     foreign key (isbn) references book_details(isbn)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_detail_keywords (
     isbn varchar(13) not null,
     keyword varchar(32) not null,
 
     foreign key (isbn) references book_details(isbn)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_detail_originals (
-    isbn varchar(32) not null,
+    isbn varchar(13) not null,
     property varchar(32) not null,
     mapping_type varchar(32) not null,
     value varchar(1024),
 
     foreign key (isbn) references book_details(isbn)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists divisions (
     division_code varchar(32) not null primary key,
     depth integer not null,
     name varchar(32)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 alter table divisions add column if not exists name varchar(32);
 
 create table if not exists division_raw_mappings (
@@ -166,12 +166,12 @@ create table if not exists division_raw_mappings (
     mapping_type varchar(32) not null,
 
     foreign key (division_code) references divisions(division_code)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists publishers (
     publisher_code varchar(32) not null primary key,
     name varchar(32)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 alter table publishers add column if not exists name varchar(32);
 
 create table if not exists publisher_raw_mappings (
@@ -180,7 +180,7 @@ create table if not exists publisher_raw_mappings (
     mapping_type varchar(32) not null,
 
     foreign key (publisher_code) references publishers(publisher_code)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 alter table publisher_raw_mappings modify raw varchar(64) not null;
 
 create table if not exists publisher_keyword_mappings (
@@ -189,7 +189,7 @@ create table if not exists publisher_keyword_mappings (
     mapping_type varchar(32) not null,
 
     foreign key (publisher_code) references publishers(publisher_code)
-) engine = InnoDB;
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_original_filters (
     id varchar(32) not null primary key,
@@ -202,7 +202,7 @@ create table if not exists book_original_filters (
     parent_id varchar(32),
 
     foreign key (parent_id) references book_original_filters(id)
-);
+) engine = InnoDB charset=utf8;
 
 create table if not exists job_scheduler_reservations (
     id bigint not null primary key auto_increment,
@@ -211,7 +211,7 @@ create table if not exists job_scheduler_reservations (
     `to` date not null,
     created_at datetime not null,
     status varchar(32) not null
-);
+) engine = InnoDB charset=utf8;
 
 create table if not exists job_scheduler_results (
     reservation_id bigint not null,
@@ -220,20 +220,20 @@ create table if not exists job_scheduler_results (
     primary key (reservation_id, job_instance_id),
     constraint job_scheduler_result_reservation_id foreign key (reservation_id) references job_scheduler_reservations (id),
     constraint job_scheduler_result_instance_id foreign key (job_instance_id) references BATCH_JOB_INSTANCE (JOB_INSTANCE_ID)
-);
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_upstream_failed_logs (
     sequence bigint not null primary key auto_increment,
     isbn varchar(13) not null,
     created_at timestamp not null,
 
-    constraint book_upstream_failed_log_isbn foreign key (isbn) references book_details (isbn)
-) charset=utf8;
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB charset=utf8;
 
 create table if not exists book_upstream_failed_reasons (
     failed_id bigint not null,
     property varchar(64) not null,
     message varchar(128) not null,
 
-    constraint book_upstream_failed_reason_id foreign key (failed_id) references book_upstream_failed_logs(sequence)
-);
+    foreign key (failed_id) references book_upstream_failed_logs(sequence)
+) engine = InnoDB charset=utf8;
