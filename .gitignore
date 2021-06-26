@@ -274,6 +274,10 @@ local.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-/src/main/resources/application-local.yml
-/src/main/resources/application-dev.yml
-/src/main/resources/application-test.yml
+/src/main/resources/*
+!/src/main/resources/application-example.yml
+!/src/main/resources/static
+!/src/main/resources/templates
+!/src/main/resources/data-*.sql
+!/src/main/resources/schema-*.sql
+!/src/main/resources/lucy-xss-servlet-filter-rule.xml
