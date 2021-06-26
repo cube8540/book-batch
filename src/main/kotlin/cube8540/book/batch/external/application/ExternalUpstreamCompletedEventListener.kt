@@ -13,14 +13,12 @@ class ExternalUpstreamCompletedEventListener
 constructor(private val logService: UpstreamFailedLogService): ApplicationListener<ExternalUpstreamCompletedEvent> {
 
     override fun onApplicationEvent(event: ExternalUpstreamCompletedEvent) {
-        if (event.result.failedBooks.isNotEmpty()) {
-            val requests = event.result.failedBooks.map { failed ->
-                UpstreamFailedLogRegisterRequest(failed.isbn, failed.errors.map { error ->
-                    UpstreamFailedReason(error.property, error.message)
-                })
+        event.result.failedBooks
+            ?.map { UpstreamFailedLogRegisterRequest(it.isbn, it.errors.map { err -> UpstreamFailedReason(err.property, err.message) }) }
+            ?.let {
+                if (it.isNotEmpty()) {
+                    logService.registerFailedLogs(it)
+                }
             }
-
-            logService.registerFailedLogs(requests)
-        }
     }
 }
