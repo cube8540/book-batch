@@ -2,7 +2,7 @@ package cube8540.book.batch.book.repository
 
 import cube8540.book.batch.book.domain.BookOriginalFilter
 import cube8540.book.batch.book.domain.MappingType
-import cube8540.book.batch.domain.QBookOriginalFilter
+import cube8540.book.batch.book.domain.QBookOriginalFilter
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 

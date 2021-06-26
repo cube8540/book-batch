@@ -2,8 +2,8 @@ package cube8540.book.batch.book.repository
 
 import cube8540.book.batch.book.domain.Division
 import cube8540.book.batch.book.domain.MappingType
-import cube8540.book.batch.domain.QDivision
-import cube8540.book.batch.domain.QRawProperty
+import cube8540.book.batch.book.domain.QDivision
+import cube8540.book.batch.book.domain.QRawProperty
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 
