@@ -112,10 +112,11 @@ create table if not exists book_detail_divisions (
 
 create table if not exists book_detail_authors (
     isbn varchar(13) not null,
-    author varchar(32) not null,
+    author varchar(128) not null,
 
     foreign key (isbn) references book_details(isbn)
 );
+alter table book_detail_authors alter column author varchar(128) not null;
 
 create table if not exists book_detail_keywords (
     isbn varchar(13) not null,
