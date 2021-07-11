@@ -78,7 +78,13 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         )
     }
 
-    override fun resolveDescription(): String? = document.select(KyoboBookClassSelector.description)?.first()?.text()
+    override fun resolveDescription(): String? {
+        val element = document.select(KyoboBookClassSelector.description)?.first()
+        element?.select("br")?.append("\\n")
+        element?.select("p")?.prepend("\\n\\n")
+
+        return element?.text()?.replace("\\\\n", "\n")
+    }
 
     override fun resolveKeywords(): Set<String>? = null
 

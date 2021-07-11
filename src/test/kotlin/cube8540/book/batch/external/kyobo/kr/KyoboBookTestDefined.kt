@@ -108,7 +108,7 @@ fun createDocument(
             .appendElement("div").addClass("content_left")
                 .appendElement("div").addClass("box_detail_content")
                     .appendElement("div").addClass("box_detail_article")
-                    .text(description)
+                    .append(description)
     }
 
     return document

@@ -53,7 +53,13 @@ class KyoboWebClientBookProcessorTest {
         mockWebServer.dispatcher = createKyoboBookRequestDispatcher(result = bookDetailsPageResponse)
 
         val result = processor.process(bookDetails)
-        assertThat(responseBodyCaptor.captured.html()).isEqualTo(Jsoup.parse(responseBody).html())
+        val expectedDocument = Jsoup.parse(responseBody)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+
+        assertThat(responseBodyCaptor.captured.outputSettings().prettyPrint())
+            .isEqualTo(expectedDocument.outputSettings().prettyPrint())
+        assertThat(responseBodyCaptor.captured.html())
+            .isEqualTo(expectedDocument.html())
         assertThat(result).isNull()
     }
 
@@ -74,7 +80,13 @@ class KyoboWebClientBookProcessorTest {
         mockWebServer.dispatcher = createKyoboBookRequestDispatcher(isbn = "originalIsbn", result = bookDetailsPageResponse)
 
         val result = processor.process(bookDetails)
-        assertThat(responseBodyCaptor.captured.html()).isEqualTo(Jsoup.parse(responseBody).html())
+        val expectedDocument = Jsoup.parse(responseBody)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+
+        assertThat(responseBodyCaptor.captured.outputSettings().prettyPrint())
+            .isEqualTo(expectedDocument.outputSettings().prettyPrint())
+        assertThat(responseBodyCaptor.captured.html())
+            .isEqualTo(expectedDocument.html())
         assertThat(result).isEqualTo(mergeCompletedResult)
         assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "resolvedIsbn"))
     }
@@ -104,8 +116,14 @@ class KyoboWebClientBookProcessorTest {
         every { controller.merge(bookDetails, capture(mergeItemCaptor)) } returns mergeCompletedResult
 
         val result = processor.process(bookDetails)
+        val expectedDocument = Jsoup.parse(responseBody)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+
         assertThat(result).isEqualTo(mergeCompletedResult)
-        assertThat(responseBodyCaptor.captured.html()).isEqualTo(Jsoup.parse(responseBody).html())
+        assertThat(responseBodyCaptor.captured.outputSettings().prettyPrint())
+            .isEqualTo(expectedDocument.outputSettings().prettyPrint())
+        assertThat(responseBodyCaptor.captured.html())
+            .isEqualTo(expectedDocument.html())
         assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "resolvedIsbn"))
     }
 }
