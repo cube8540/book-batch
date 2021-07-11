@@ -83,7 +83,7 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         element?.select("br")?.append("\\n")
         element?.select("p")?.prepend("\\n\\n")
 
-        return element?.text()?.replace("\\\\n", "\n")
+        return element?.text()
     }
 
     override fun resolveKeywords(): Set<String>? = null
