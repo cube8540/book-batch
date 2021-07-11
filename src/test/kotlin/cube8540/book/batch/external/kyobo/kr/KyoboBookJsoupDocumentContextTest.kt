@@ -106,4 +106,15 @@ class KyoboBookJsoupDocumentContextTest {
         val result = context.resolveDescription()
         assertThat(result).isEqualTo("\\n\\n$descriptionText")
     }
+
+    @Test
+    fun `resolve document with new line`() {
+        val descriptionText = "description0000000\\n"
+        val document = createDocument(description = descriptionText)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveDescription()
+        assertThat(result).isEqualTo(descriptionText)
+    }
 }
