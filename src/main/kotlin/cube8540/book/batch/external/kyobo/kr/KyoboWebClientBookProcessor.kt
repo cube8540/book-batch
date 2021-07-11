@@ -5,6 +5,7 @@ import cube8540.book.batch.book.domain.BookDetailsController
 import cube8540.book.batch.external.BookDocumentMapper
 import cube8540.book.batch.external.exception.ExternalException
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.retry.Retry
@@ -28,7 +29,11 @@ class KyoboWebClientBookProcessor(
     override fun process(item: BookDetails): BookDetails? {
         return try {
             val result = exchange(item.isbn)
-            val documentContext = documentMapper.convertValue(Jsoup.parse(result))
+
+            val document = Jsoup.parse(result)
+                .outputSettings(Document.OutputSettings().prettyPrint(false))
+
+            val documentContext = documentMapper.convertValue(document)
             controller.merge(item, BookDetails(documentContext))
         } catch (e: ExternalException) {
             null

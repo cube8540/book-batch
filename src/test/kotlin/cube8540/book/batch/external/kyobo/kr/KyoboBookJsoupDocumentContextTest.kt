@@ -4,6 +4,7 @@ import cube8540.book.batch.book.domain.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
 
 class KyoboBookJsoupDocumentContextTest {
@@ -83,5 +84,26 @@ class KyoboBookJsoupDocumentContextTest {
         val result = context.resolveThumbnail()
         assertThat(result)
             .isEqualTo(Thumbnail(largeThumbnail = defaultLargeThumbnail, mediumThumbnail = defaultMediumThumbnail))
+    }
+
+    @Test
+    fun `resolve document with br tag`() {
+        val descriptionText = "description0000000"
+        val document = createDocument(description = "$descriptionText<br/>")
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveDescription()
+        assertThat(result).isEqualTo("$descriptionText \\n")
+    }
+
+    @Test
+    fun `resolve document with p tag`() {
+        val descriptionText = "description0000000"
+        val document = createDocument(description = "<p>$descriptionText</p>")
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveDescription()
+        assertThat(result).isEqualTo("\\n\\n$descriptionText")
     }
 }
