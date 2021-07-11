@@ -118,6 +118,8 @@ create table if not exists book_details (
 alter table book_details modify title varchar(256) not null;
 alter table book_details add column if not exists upstream_target boolean not null default false;
 alter table book_details add column if not exists series_isbn varchar(32);
+alter table book_details change created_at created_at timestamp not null default current_timestamp;
+alter table book_details change updated_at updated_at timestamp not null default current_timestamp;
 create index if not exists book_publish_date_index on book_details (publish_date);
 create index if not exists book_created_at_index on book_details (created_at desc);
 create index if not exists book_series_code_index on book_details (series_code);
@@ -230,6 +232,7 @@ create table if not exists book_upstream_failed_logs (
 
     foreign key (isbn) references book_details(isbn)
 ) engine = InnoDB charset=utf8;
+alter table book_upstream_failed_logs change created_at created_at timestamp not null default current_timestamp;
 
 create table if not exists book_upstream_failed_reasons (
     failed_id bigint not null,
