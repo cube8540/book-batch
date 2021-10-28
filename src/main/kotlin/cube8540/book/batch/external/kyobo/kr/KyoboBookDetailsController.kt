@@ -20,6 +20,7 @@ class KyoboBookDetailsController: BookDetailsController {
         }
 
         base.description = item.description
+        base.indexes = item.indexes
         base.price = item.price
 
         if (base.original != null && item.original != null) {

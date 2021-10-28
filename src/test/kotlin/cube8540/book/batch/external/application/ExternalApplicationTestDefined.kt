@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.book.domain.*
 import cube8540.book.batch.external.BookUpstreamAPIRequest
 import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.external.kyobo.kr.defaultIndexes
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -82,9 +83,10 @@ fun createUpstreamBookDetails(
     smallThumbnail: URI? = defaultSmallThumbnail,
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
+    indexes: List<String>? = defaultIndexes,
     price: Double? = defaultPrice
 ): BookUpstreamAPIRequestDetails =
-    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, price)
+    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, indexes, price)
 
 fun createExternalUpstreamDispatcher(
     params: BookUpstreamAPIRequest,

@@ -85,6 +85,8 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
 
     override fun resolveDescription(): String?  = null
 
+    override fun resolveIndex(): List<String>? = null
+
     override fun resolveKeywords(): Set<String>?  = null
 
     override fun resolvePrice(): Double? = null

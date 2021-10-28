@@ -27,6 +27,9 @@ val defaultKyoboLoginIssuedAt: LocalDateTime = LocalDateTime.of(2021, 5, 5, 20, 
 val defaultKyoboLoginExpiredDateTime: LocalDateTime = defaultKyoboLoginIssuedAt.plusSeconds(KyoboLoginFilter.expiredSeconds.toLong()).plusNanos(1)
 val defaultKyoboLoginNotExpiredDateTime: LocalDateTime = defaultKyoboLoginIssuedAt.plusSeconds(KyoboLoginFilter.expiredSeconds.toLong()).minusNanos(1)
 
+val defaultIndexes = listOf("index0001", "index0002", "index0003")
+val defaultIndexesHtml = defaultIndexes.joinToString(separator = "<br >")
+
 fun createDocument(
     url: String? = documentURL,
     isbn: String? = defaultIsbn,
@@ -39,6 +42,7 @@ fun createDocument(
     seriesBarcode: String? = defaultSeriesCode,
     aBarcode: String? = defaultABarcode,
     description: String? = defaultDescription,
+    indexHtml: String? = defaultIndexesHtml,
     categoryCode: String? = defaultCategoryCode
 ): Document {
     val document = Document(url)
@@ -103,12 +107,21 @@ fun createDocument(
             .attr("value", categoryCode)
     }
 
+    val contentAttribute = document.appendElement("div").addClass("content_middle")
+        .appendElement("div").addClass("content_left")
+        .appendElement("div").addClass("box_detail_content")
+
     description?.let {
-        document.appendElement("div").addClass("content_middle")
-            .appendElement("div").addClass("content_left")
-                .appendElement("div").addClass("box_detail_content")
-                    .appendElement("div").addClass("box_detail_article")
-                    .append(description)
+        contentAttribute.append("<!-- *** s:책소개 *** -->")
+        contentAttribute.appendElement("div").addClass("box_detail_article").append(description)
+
+        contentAttribute.appendElement("dev")
+    }
+
+    indexHtml?.let {
+        contentAttribute.append("<!-- *** s:목차 *** -->")
+        contentAttribute.appendElement("h2").addClass("title_detail_basic").addClass("목차")
+        contentAttribute.appendElement("dev").addClass("box_detail_article").append(indexHtml)
     }
 
     return document

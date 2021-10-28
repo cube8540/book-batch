@@ -25,6 +25,7 @@ open class WebClientBookUpstreamWriter(
             smallThumbnail = it.thumbnail?.smallThumbnail,
             authors = it.authors?.toList(),
             description = it.description,
+            indexes = it.indexes,
             price = it.price
         ) }
         externalUpstream.upstream(BookUpstreamAPIRequest(bookUpstreamRequestDetails))
