@@ -19,11 +19,12 @@ class KyoboBookDetailsControllerTest {
         fun `merge base and item`() {
             val mergedAuthors = setOf("mergedAuthors")
             val mergedDivision = setOf("mergedAuthors")
+            val mergedIndex = listOf("mergedIndex0000")
 
             val original = createBookDetails(isbn = "isbn0000")
-            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", price = 6000.0)
+            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex, price = 6000.0)
 
-            val comparingFields = listOf("seriesCode", "title", "authors", "divisions").toTypedArray()
+            val comparingFields = listOf("seriesCode", "title", "authors", "divisions", "index").toTypedArray()
 
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)

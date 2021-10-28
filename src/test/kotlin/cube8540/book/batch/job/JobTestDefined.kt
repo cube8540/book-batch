@@ -18,9 +18,10 @@ fun createBookUpstreamRequestDetails(
     smallThumbnail: URI? = defaultSmallThumbnail,
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
+    index: List<String>? = defaultBookIndex,
     price: Double? = defaultPrice
 ): BookUpstreamAPIRequestDetails =
-    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, price)
+    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, index, price)
 
 fun createBookUpstreamRequest(
     vararg request: BookUpstreamAPIRequestDetails

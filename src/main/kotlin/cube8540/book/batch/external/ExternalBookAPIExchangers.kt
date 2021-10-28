@@ -34,6 +34,7 @@ data class BookUpstreamAPIRequestDetails(
     val smallThumbnail: URI? = null,
     val authors: List<String>? = null,
     val description: String? = null,
+    val indexes: List<String>? = null,
     val price: Double? = null
 )
 

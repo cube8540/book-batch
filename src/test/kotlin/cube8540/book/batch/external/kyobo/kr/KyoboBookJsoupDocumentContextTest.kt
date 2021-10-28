@@ -111,10 +111,95 @@ class KyoboBookJsoupDocumentContextTest {
     fun `resolve document with new line`() {
         val descriptionText = "description0000000\\n"
         val document = createDocument(description = descriptionText)
-            .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
         val result = context.resolveDescription()
         assertThat(result).isEqualTo(descriptionText)
+    }
+
+    @Test
+    fun `resolve document is empty`() {
+        val document = createDocument(description = null)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveDescription()
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `resolve index br tag with sapce`() {
+        val index = "index0001<br >index0002<br >index0003<br >index0004<br >"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
+    }
+
+    @Test
+    fun `resolve index br tag with out space`() {
+        val index = "index0001<br>index0002<br>index0003<br>index0004<br>"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
+    }
+
+    @Test
+    fun `resolve index br tag with slash`() {
+        val index = "index0001<br/>index0002<br/>index0003<br/>index0004<br/>"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
+    }
+
+    @Test
+    fun `resolve index title with escape characters`() {
+        val index = "\t\r\nindex0001<br/>\n\t\rindex0002<br/>\t\r\nindex0003<br/>\t\n\rindex0004<br/>"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
+    }
+
+    @Test
+    fun `resolve index title is empty`() {
+        val index = "\t\r\nindex0001<br/><br/>\t\r\nindex0003<br/><br/>"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index0001", "index0003")
+    }
+
+    @Test
+    fun `resolve index title is multiple space`() {
+        val index = "\t\r\n  index 0001<br/>\n\t\rindex 0002<br/>\t\r\n    index 0003<br/>\t\n\rindex 0004<br/>"
+        val document = createDocument(indexHtml = index)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).containsExactly("index 0001", "index 0002", "index 0003", "index 0004")
+    }
+
+    @Test
+    fun `resolve index is empty`() {
+        val document = createDocument(indexHtml = null)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveIndex()
+        assertThat(result).isNull()
     }
 }

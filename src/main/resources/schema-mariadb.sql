@@ -124,6 +124,14 @@ create index if not exists book_created_at_index on book_details (created_at des
 create index if not exists book_series_code_index on book_details (series_code);
 create index if not exists book_series_isbn_index on book_details (series_isbn);
 
+create table if not exists book_indexes (
+    isbn varchar(13) not null,
+    title varchar(128) not null,
+    odr int not null,
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB charset = utf8;
+
 create table if not exists book_detail_divisions (
     isbn varchar(13) not null,
     division_code varchar(32) not null,

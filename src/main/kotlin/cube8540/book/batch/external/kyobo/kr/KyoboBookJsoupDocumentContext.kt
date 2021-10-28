@@ -2,7 +2,9 @@ package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
+import org.jsoup.nodes.Comment
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Node
 import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
@@ -79,11 +81,35 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     }
 
     override fun resolveDescription(): String? {
-        val element = document.select(KyoboBookClassSelector.description)?.first()
-        element?.select("br")?.append("\\n")
-        element?.select("p")?.prepend("\\n\\n")
+        val element = document.select(KyoboBookClassSelector.bookContent).first()
+        val previousComment = findFirstComment(element)
 
-        return element?.text()
+        val commentText = previousComment?.data?.replace(" ", "")
+        return if (commentText == KyoboBookCommentText.descriptionCommentText) {
+            element?.select("br")?.append("\\n")
+            element?.select("p")?.prepend("\\n\\n")
+
+            element?.text()
+        } else {
+            null
+        }
+    }
+
+    override fun resolveIndex(): List<String>? {
+        val element = document.select(KyoboBookClassSelector.bookContent).last()
+        val previousComment = findFirstComment(element)
+
+        val commentText = previousComment?.data?.replace(" ", "")
+        if (commentText != KyoboBookCommentText.indexCommentText) {
+            return null
+        }
+        val indexList = element?.html()
+            ?.replace("\r", "")
+            ?.replace("\n", "")
+            ?.replace("\t", "")
+            ?.replace(Regex("\\s+"), " ")
+            ?.split("<br>", ignoreCase = true)
+        return indexList?.filter { it.isNotEmpty() && it.isNotBlank() }?.map { it.trim() }
     }
 
     override fun resolveKeywords(): Set<String>? = null
@@ -141,5 +167,13 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
             }
         }
         return textGroup.mapIndexed { index, _ -> textGroup.subList(0, (index + 1)).joinToString("") }
+    }
+
+    private fun findFirstComment(node: Node?): Comment? {
+        return when (node) {
+            null -> null
+            is Comment -> node
+            else -> findFirstComment(node.previousSibling())
+        }
     }
 }
