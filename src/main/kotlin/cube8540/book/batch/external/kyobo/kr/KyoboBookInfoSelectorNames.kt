@@ -20,5 +20,10 @@ object KyoboBookInputNameSelector {
 }
 
 object KyoboBookClassSelector {
-    const val description = ".content_middle > .content_left > .box_detail_content > .box_detail_article"
+    const val bookContent = ".content_middle > .content_left > .box_detail_content > .box_detail_article"
+}
+
+object KyoboBookCommentText {
+    const val descriptionCommentText = "***s:책소개***"
+    const val indexCommentText = "***s:목차***"
 }

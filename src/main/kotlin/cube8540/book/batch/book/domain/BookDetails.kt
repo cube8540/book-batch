@@ -1,5 +1,6 @@
 package cube8540.book.batch.book.domain
 
+import org.hibernate.annotations.BatchSize
 import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.DynamicUpdate
 import org.springframework.data.domain.Persistable
@@ -48,6 +49,13 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @Lob
     @Column(name = "description", columnDefinition = "text")
     var description: String? = context.resolveDescription()
+
+    @ElementCollection
+    @CollectionTable(name = "book_indexes", joinColumns = [JoinColumn(name = "isbn", nullable = false)])
+    @Column(name = "title", length = 128)
+    @OrderColumn(name = "odr")
+    @BatchSize(size = 500)
+    var indexes: MutableList<String>? = context.resolveIndex()?.toMutableList()
 
     @ElementCollection
     @CollectionTable(name = "book_detail_keywords", joinColumns = [JoinColumn(name = "isbn", nullable = false)])

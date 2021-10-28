@@ -24,6 +24,8 @@ interface BookDetailsContext {
 
     fun resolveDescription(): String?
 
+    fun resolveIndex(): List<String>?
+
     fun resolveKeywords(): Set<String>?
 
     fun resolvePrice(): Double?

@@ -47,6 +47,8 @@ const val defaultFailedReasonMessage = "failedMessage"
 val bookDetailsAssertIgnoringFields = listOf(BookDetails::createdAt.name, BookDetails::original.name).toTypedArray()
 val upstreamFailedLogAssertIgnoringFields = listOf(UpstreamFailedLog::sequence.name, UpstreamFailedLog::createdAt.name).toTypedArray()
 
+val defaultBookIndex = listOf("index00000", "index00001", "index00002")
+
 fun createBookContext(
     isbn: String = defaultIsbn,
     title: String? = defaultTitle,
@@ -61,6 +63,7 @@ fun createBookContext(
     authors: Set<String>? = defaultAuthors,
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
+    index: List<String>? = defaultBookIndex,
     price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal
 ): BookDetailsContext {
@@ -83,6 +86,7 @@ fun createBookContext(
     every { context.resolveAuthors() } returns authors
     every { context.resolveKeywords() } returns keywords
     every { context.resolveDescription() } returns description
+    every { context.resolveIndex() } returns index
     every { context.resolvePrice() } returns price
 
     every { context.resolveOriginal() } returns original
@@ -104,12 +108,13 @@ fun createBookDetails(
     authors: Set<String>? = defaultAuthors,
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
+    index: List<String>? = defaultBookIndex,
     price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal,
     isUpstream: Boolean = false,
     isNew: Boolean = true
 ): BookDetails {
-  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, price, original))
+  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, index, price, original))
     if (!isNew) {
         book.markingPersistedEntity()
     }
