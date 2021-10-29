@@ -124,6 +124,9 @@ fun createDocument(
         contentAttribute.appendElement("dev").addClass("box_detail_article").append(indexHtml)
     }
 
+    // 출판사 총평과 같은 기타 DEV 태그
+    contentAttribute.appendElement("dev").addClass("box_detail_article").append("")
+
     return document
 }
 
