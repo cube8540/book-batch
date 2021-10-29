@@ -4,6 +4,7 @@ import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
 import org.jsoup.nodes.Comment
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import java.net.URI
 import java.time.Clock
@@ -81,28 +82,15 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     }
 
     override fun resolveDescription(): String? {
-        val element = document.select(KyoboBookClassSelector.bookContent).first()
-        val previousComment = findFirstComment(element)
+        val element = findArticleByCommentText(KyoboBookCommentText.descriptionCommentText)
+        element?.select("br")?.append("\\n")
+        element?.select("p")?.prepend("\\n\\n")
 
-        val commentText = previousComment?.data?.replace(" ", "")
-        return if (commentText == KyoboBookCommentText.descriptionCommentText) {
-            element?.select("br")?.append("\\n")
-            element?.select("p")?.prepend("\\n\\n")
-
-            element?.text()
-        } else {
-            null
-        }
+        return element?.text()
     }
 
     override fun resolveIndex(): List<String>? {
-        val element = document.select(KyoboBookClassSelector.bookContent).last()
-        val previousComment = findFirstComment(element)
-
-        val commentText = previousComment?.data?.replace(" ", "")
-        if (commentText != KyoboBookCommentText.indexCommentText) {
-            return null
-        }
+        val element = findArticleByCommentText(KyoboBookCommentText.indexCommentText)
         val indexList = element?.html()
             ?.replace("\r", "")
             ?.replace("\n", "")
@@ -167,6 +155,11 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
             }
         }
         return textGroup.mapIndexed { index, _ -> textGroup.subList(0, (index + 1)).joinToString("") }
+    }
+
+    private fun findArticleByCommentText(commentText: String): Element? {
+        val elements = document.select(KyoboBookClassSelector.bookContent)
+        return elements.find { findFirstComment(it)?.data?.replace(" ", "") == commentText }
     }
 
     private fun findFirstComment(node: Node?): Comment? {

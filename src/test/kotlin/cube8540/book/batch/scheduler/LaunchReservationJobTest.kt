@@ -13,7 +13,8 @@ import kotlin.random.Random
 
 class LaunchReservationJobTest {
 
-    private val jobSchedulerService: JobSchedulerService = mockk(relaxed = true)
+    private val regularJobSchedulerService: JobSchedulerService = mockk(relaxed = true)
+    private val nonRegularJobSchedulerService: JobSchedulerService = mockk(relaxed = true)
     private val jobSchedulerReservationService: JobSchedulerReservationService = mockk(relaxed = true)
 
     private val from = LocalDate.of(2021, 1, 1)
@@ -22,7 +23,8 @@ class LaunchReservationJobTest {
     private val jobScheduler = JobSchedulerConfiguration()
 
     init {
-        jobScheduler.jobSchedulerService = jobSchedulerService
+        jobScheduler.regularJobSchedulerService = regularJobSchedulerService
+        jobScheduler.nonRegularJobSchedulerService = nonRegularJobSchedulerService
         jobScheduler.jobSchedulerReservationService = jobSchedulerReservationService
     }
 
@@ -33,7 +35,8 @@ class LaunchReservationJobTest {
         jobScheduler.launchReservationJob()
         verify(exactly = 0) {
             jobSchedulerReservationService.updateStatus(any(), any())
-            jobSchedulerService.launchBookDetailsRequest(any())
+            regularJobSchedulerService.launchBookDetailsRequest(any())
+            nonRegularJobSchedulerService.launchBookDetailsRequest(any())
         }
     }
 
@@ -50,9 +53,12 @@ class LaunchReservationJobTest {
 
         val parameter = JobSchedulerLaunchParameter(from, to, reservationId)
         jobScheduler.launchReservationJob()
+        verify(exactly = 0) {
+            regularJobSchedulerService.launchBookDetailsRequest(any())
+        }
         verifyOrder {
             jobSchedulerReservationService.updateStatus(reservationId, JobSchedulerReservationStatus.PROCESSING)
-            jobSchedulerService.launchBookDetailsRequest(parameter)
+            nonRegularJobSchedulerService.launchBookDetailsRequest(parameter)
             jobSchedulerReservationService.updateStatus(reservationId, JobSchedulerReservationStatus.COMPLETED)
         }
     }

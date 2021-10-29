@@ -52,3 +52,5 @@ api:
     kyobo:
       username: # your https://www.kyobobook.co.kr login username
       password: # your https://www.kyobobook.co.kr login password
+    aladin:
+      ttb-key: # your aladin ttb key
