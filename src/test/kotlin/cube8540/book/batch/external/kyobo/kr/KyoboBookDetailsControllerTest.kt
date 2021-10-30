@@ -23,7 +23,7 @@ class KyoboBookDetailsControllerTest {
             val mergedIndex = listOf("mergedIndex0000")
 
             val original = createBookDetails(isbn = "isbn0000")
-            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex, price = 6000.0)
+            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex)
 
             val comparingFields = listOf(
                 BookDetails::seriesCode.name,

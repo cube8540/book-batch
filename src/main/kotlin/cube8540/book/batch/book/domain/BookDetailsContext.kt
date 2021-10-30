@@ -28,8 +28,6 @@ interface BookDetailsContext {
 
     fun resolveKeywords(): Set<String>?
 
-    fun resolvePrice(): Double?
-
     fun resolveOriginal(): Map<OriginalPropertyKey, String?>?
 
     fun createdAt(): LocalDateTime?

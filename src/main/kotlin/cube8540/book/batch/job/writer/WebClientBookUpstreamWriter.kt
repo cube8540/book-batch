@@ -26,7 +26,6 @@ open class WebClientBookUpstreamWriter(
             authors = it.authors?.toList(),
             description = it.description,
             indexes = it.indexes,
-            price = it.price
         ) }
         externalUpstream.upstream(BookUpstreamAPIRequest(bookUpstreamRequestDetails))
 

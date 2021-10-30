@@ -50,13 +50,10 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
 
     override fun resolveKeywords(): Set<String>? = null
 
-    override fun resolvePrice(): Double? = jsonNode.get(AladinAPIResponseNames.price)?.asDouble()
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(AladinAPIResponseNames.isbn, mappingType)] = resolveIsbn()
         map[OriginalPropertyKey(AladinAPIResponseNames.title, mappingType)] = resolveTitle()
-        map[OriginalPropertyKey(AladinAPIResponseNames.price, mappingType)] = resolvePrice()?.toString()
 
         map[OriginalPropertyKey(AladinAPIResponseNames.categoryId, mappingType)] =
             jsonNode.get(AladinAPIResponseNames.categoryId)?.asText()

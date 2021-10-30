@@ -89,8 +89,6 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
 
     override fun resolveKeywords(): Set<String>?  = null
 
-    override fun resolvePrice(): Double? = null
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(NationalLibraryAPIResponseNames.isbn, mappingType)] =

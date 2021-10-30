@@ -62,9 +62,6 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @Column(name = "keyword", length = 32)
     var keywords: MutableSet<String>? = context.resolveKeywords()?.toMutableSet()
 
-    @Column(name = "price")
-    var price: Double? = context.resolvePrice()
-
     @Column(name = "created_at", nullable = false)
     var createdAt: LocalDateTime? = context.createdAt()
 

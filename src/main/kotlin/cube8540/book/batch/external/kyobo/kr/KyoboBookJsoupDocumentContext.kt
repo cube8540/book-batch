@@ -102,10 +102,6 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
 
     override fun resolveKeywords(): Set<String>? = null
 
-    override fun resolvePrice(): Double? = metaTags
-        .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
-        ?.attr(content)?.toDouble()
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val original = HashMap<OriginalPropertyKey, String?>()
         original[OriginalPropertyKey(KyoboBookMetaTagNameSelector.author, mappingType)] =

@@ -64,7 +64,6 @@ fun createBookContext(
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
     index: List<String>? = defaultBookIndex,
-    price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal
 ): BookDetailsContext {
     val context: BookDetailsContext = mockk(relaxed = true)
@@ -87,7 +86,6 @@ fun createBookContext(
     every { context.resolveKeywords() } returns keywords
     every { context.resolveDescription() } returns description
     every { context.resolveIndex() } returns index
-    every { context.resolvePrice() } returns price
 
     every { context.resolveOriginal() } returns original
 
@@ -109,12 +107,11 @@ fun createBookDetails(
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
     index: List<String>? = defaultBookIndex,
-    price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal,
     isUpstream: Boolean = false,
     isNew: Boolean = true
 ): BookDetails {
-  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, index, price, original))
+  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, index, original))
     if (!isNew) {
         book.markingPersistedEntity()
     }

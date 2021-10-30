@@ -60,8 +60,7 @@ fun createBookJsonNode(
     publisher: String? = defaultPublisherCode,
     publishDate: LocalDate? = defaultPublishDate,
     categoryId: Int? = defaultCategoryId,
-    link: String? = defaultLink,
-    price: Double? = defaultPrice
+    link: String? = defaultLink
 ): JsonNode {
     val objectMapper = ObjectMapper()
 
@@ -73,7 +72,6 @@ fun createBookJsonNode(
     publishDate?.let { node.set<JsonNode>(AladinAPIResponseNames.publishDate, objectMapper.convertValue(it.format(DateTimeFormatter.ISO_DATE), JsonNode::class.java)) }
     categoryId?.let { node.set<JsonNode>(AladinAPIResponseNames.categoryId, objectMapper.convertValue(it, JsonNode::class.java)) }
     link?.let { node.set<JsonNode>(AladinAPIResponseNames.link, objectMapper.convertValue(it, JsonNode::class.java)) }
-    price?.let { node.set<JsonNode>(AladinAPIResponseNames.price, objectMapper.convertValue(it, JsonNode::class.java)) }
 
     return node
 }
