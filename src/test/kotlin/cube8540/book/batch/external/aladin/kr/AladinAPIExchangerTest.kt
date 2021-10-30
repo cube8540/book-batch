@@ -74,7 +74,7 @@ class AladinAPIExchangerTest {
         val between = ChronoUnit.DAYS.between(from, to)
         val betweenThemRequestDate = from.plusDays(Random.nextLong(0, between))
         val beforeRequestDate = from.minusDays(Random.nextLong(1, 100))
-        val afterRequestDate = from.plusDays(Random.nextLong(1, 100))
+        val afterRequestDate = to.plusDays(Random.nextLong(1, 100))
 
         val bookArray = createBookJsonArrayNode(
             createBookJsonNode(isbn = "isbn0000", publishDate = betweenThemRequestDate),
