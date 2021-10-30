@@ -28,9 +28,9 @@ interface BookDetailsContext {
 
     fun resolveKeywords(): Set<String>?
 
-    fun resolvePrice(): Double?
-
     fun resolveOriginal(): Map<OriginalPropertyKey, String?>?
+
+    fun resolveExternalLink(): Map<MappingType, BookExternalLink>?
 
     fun createdAt(): LocalDateTime?
 }

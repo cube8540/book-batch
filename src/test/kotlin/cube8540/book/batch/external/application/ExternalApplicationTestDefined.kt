@@ -83,10 +83,9 @@ fun createUpstreamBookDetails(
     smallThumbnail: URI? = defaultSmallThumbnail,
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
-    indexes: List<String>? = defaultIndexes,
-    price: Double? = defaultPrice
+    indexes: List<String>? = defaultIndexes
 ): BookUpstreamAPIRequestDetails =
-    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, indexes, price)
+    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, indexes)
 
 fun createExternalUpstreamDispatcher(
     params: BookUpstreamAPIRequest,

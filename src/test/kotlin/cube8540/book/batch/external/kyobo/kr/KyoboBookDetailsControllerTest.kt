@@ -1,9 +1,6 @@
 package cube8540.book.batch.external.kyobo.kr
 
-import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.book.domain.MappingType
-import cube8540.book.batch.book.domain.OriginalPropertyKey
-import cube8540.book.batch.book.domain.createBookDetails
+import cube8540.book.batch.book.domain.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -23,7 +20,7 @@ class KyoboBookDetailsControllerTest {
             val mergedIndex = listOf("mergedIndex0000")
 
             val original = createBookDetails(isbn = "isbn0000")
-            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex, price = 6000.0)
+            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex)
 
             val comparingFields = listOf(
                 BookDetails::seriesCode.name,
@@ -106,6 +103,43 @@ class KyoboBookDetailsControllerTest {
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
             assertThat(result.original).isEqualTo(originalMap + mergedOriginalMap)
+        }
+    }
+
+    @Nested
+    inner class MergeExternalLink {
+
+        @Test
+        fun `merge when original external link is null`() {
+            val mergedExternalLink = HashMap<MappingType, BookExternalLink>()
+
+            mergedExternalLink[MappingType.KYOBO] = BookExternalLink(
+                productDetailPage = URI.create("/"), originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
+
+            val original = createBookDetails(externalLink = null)
+            val mergedData = createBookDetails(externalLink = mergedExternalLink)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.externalLinks).isEqualTo(mergedExternalLink)
+        }
+
+        @Test
+        fun `merge when original external link is not null`() {
+            val originalExternalLink = HashMap<MappingType, BookExternalLink>()
+            val mergedExternalLink = HashMap<MappingType, BookExternalLink>()
+
+            originalExternalLink[MappingType.ALADIN] = BookExternalLink(
+                productDetailPage = URI.create("/"), originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
+            mergedExternalLink[MappingType.KYOBO] = BookExternalLink(
+                productDetailPage = URI.create("/"), originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
+
+            val original = createBookDetails(externalLink = originalExternalLink)
+            val mergedData = createBookDetails(externalLink = mergedExternalLink)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result).isEqualTo(original)
+            assertThat(result.externalLinks).isEqualTo(originalExternalLink + mergedExternalLink)
         }
     }
 }

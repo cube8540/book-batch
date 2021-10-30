@@ -11,6 +11,11 @@ class AladinBookDetailsController: BookDetailsController {
         } else if (base.original == null) {
             base.original = item.original
         }
+        if (base.externalLinks != null && item.externalLinks != null) {
+            base.externalLinks = (base.externalLinks!! + item.externalLinks!!).toMutableMap()
+        } else if (item.externalLinks != null) {
+            base.externalLinks = item.externalLinks
+        }
         return base
     }
 }

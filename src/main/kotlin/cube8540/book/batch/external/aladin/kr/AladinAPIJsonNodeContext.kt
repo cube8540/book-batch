@@ -3,6 +3,7 @@ package cube8540.book.batch.external.aladin.kr
 import com.fasterxml.jackson.databind.JsonNode
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
+import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -50,13 +51,10 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
 
     override fun resolveKeywords(): Set<String>? = null
 
-    override fun resolvePrice(): Double? = jsonNode.get(AladinAPIResponseNames.price)?.asDouble()
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(AladinAPIResponseNames.isbn, mappingType)] = resolveIsbn()
         map[OriginalPropertyKey(AladinAPIResponseNames.title, mappingType)] = resolveTitle()
-        map[OriginalPropertyKey(AladinAPIResponseNames.price, mappingType)] = resolvePrice()?.toString()
 
         map[OriginalPropertyKey(AladinAPIResponseNames.categoryId, mappingType)] =
             jsonNode.get(AladinAPIResponseNames.categoryId)?.asText()
@@ -69,6 +67,14 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
         map[OriginalPropertyKey(AladinAPIResponseNames.publisher, mappingType)] =
             jsonNode.get(AladinAPIResponseNames.publisher)?.asText()
         return map
+    }
+
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink> {
+        val uri = jsonNode.get(AladinAPIResponseNames.link).let { URI.create(it.asText()) }
+        val originalPrice = jsonNode.get(AladinAPIResponseNames.originalPrice)?.asDouble()
+        val salePrice = jsonNode.get(AladinAPIResponseNames.salePrice)?.asDouble()
+
+        return mapOf(MappingType.ALADIN to BookExternalLink(uri, originalPrice, salePrice))
     }
 
     override fun createdAt(): LocalDateTime? = LocalDateTime.now(clock)

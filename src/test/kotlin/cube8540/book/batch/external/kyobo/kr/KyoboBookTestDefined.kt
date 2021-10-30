@@ -38,7 +38,8 @@ fun createDocument(
     title: String? = defaultTitle,
     largeThumbnail: String? = defaultLargeThumbnail.toString(),
     mediumThumbnail: String? = defaultMediumThumbnail.toString(),
-    price: Double? = defaultPrice,
+    originalPrice: Double? = defaultOriginalPrice,
+    salePrice: Double? = defaultSalePrice,
     seriesBarcode: String? = defaultSeriesCode,
     aBarcode: String? = defaultABarcode,
     description: String? = defaultDescription,
@@ -83,10 +84,16 @@ fun createDocument(
             .attr("content", mediumThumbnail)
     }
 
-    price?.let {
+    originalPrice?.let {
         document.appendElement("meta")
             .attr("property", KyoboBookMetaTagPropertySelector.originalPrice)
-            .attr("content", price.toString())
+            .attr("content", originalPrice.toString())
+    }
+
+    salePrice?.let {
+        document.appendElement("meta")
+            .attr("property", KyoboBookMetaTagPropertySelector.salePrice)
+            .attr("content", salePrice.toString())
     }
 
     seriesBarcode?.let {

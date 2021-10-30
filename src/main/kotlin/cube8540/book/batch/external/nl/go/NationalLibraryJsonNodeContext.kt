@@ -89,8 +89,6 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
 
     override fun resolveKeywords(): Set<String>?  = null
 
-    override fun resolvePrice(): Double? = null
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(NationalLibraryAPIResponseNames.isbn, mappingType)] =
@@ -121,6 +119,8 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
             jsonNode.get(NationalLibraryAPIResponseNames.updateDate)?.asText()
         return map
     }
+
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink>? = null
 
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
 

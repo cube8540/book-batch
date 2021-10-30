@@ -11,6 +11,7 @@ object KyoboBookMetaTagPropertySelector {
     const val largeThumbnail = "og:image"
     const val mediumThumbnail = "eg:itemImage"
     const val originalPrice = "eg:originalPrice"
+    const val salePrice = "eg:salePrice"
 }
 
 object KyoboBookInputNameSelector {

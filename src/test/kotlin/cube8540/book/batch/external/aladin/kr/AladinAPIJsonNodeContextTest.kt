@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.aladin.kr
 
-import cube8540.book.batch.book.domain.PublisherRawMapper
+import cube8540.book.batch.book.domain.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -40,5 +40,17 @@ class AladinAPIJsonNodeContextTest {
 
         val result = context.resolvePublisher()
         assertThat(result).isEqualTo("resolvedPublisherCode")
+    }
+
+    @Test
+    fun `resolve external link`() {
+        val jsonNode = createBookJsonNode(link = defaultLink, originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
+        val context = AladinAPIJsonNodeContext(jsonNode, publisherRawMapper)
+
+        val result = context.resolveExternalLink()
+        assertThat(result.keys).containsExactly(MappingType.ALADIN)
+        assertThat(result[MappingType.ALADIN]!!.productDetailPage).isEqualTo(defaultLinkUri)
+        assertThat(result[MappingType.ALADIN]!!.originalPrice).isEqualTo(defaultOriginalPrice)
+        assertThat(result[MappingType.ALADIN]!!.salePrice).isEqualTo(defaultSalePrice)
     }
 }

@@ -2,8 +2,10 @@ package cube8540.book.batch.job.writer
 
 import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
+import cube8540.book.batch.book.domain.BookExternalLink
 import cube8540.book.batch.external.BookUpstreamAPIRequest
 import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.external.BookUpstreamExternalLink
 import cube8540.book.batch.external.ExternalBookAPIUpstream
 import org.springframework.batch.item.support.AbstractItemStreamItemWriter
 
@@ -26,11 +28,14 @@ open class WebClientBookUpstreamWriter(
             authors = it.authors?.toList(),
             description = it.description,
             indexes = it.indexes,
-            price = it.price
+            externalLinks = it.externalLinks?.mapValues { pair -> convertToUpstreamExternalLink(pair.value) }
         ) }
         externalUpstream.upstream(BookUpstreamAPIRequest(bookUpstreamRequestDetails))
 
         items.forEach { it.isUpstreamTarget = false }
         bookCommandService.updateForUpstream(items)
     }
+
+    private fun convertToUpstreamExternalLink(externalLink: BookExternalLink): BookUpstreamExternalLink =
+        BookUpstreamExternalLink(externalLink.productDetailPage.toString(), externalLink.originalPrice, externalLink.salePrice)
 }

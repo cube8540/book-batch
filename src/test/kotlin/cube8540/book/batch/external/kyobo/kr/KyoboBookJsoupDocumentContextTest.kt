@@ -1,9 +1,11 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.book.domain.*
+import cube8540.book.batch.getQueryParams
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.entry
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
 
@@ -201,5 +203,23 @@ class KyoboBookJsoupDocumentContextTest {
 
         val result = context.resolveIndex()
         assertThat(result).isNull()
+    }
+
+    @Test
+    fun `resolve external link`() {
+        val document = createDocument(isbn = defaultIsbn, originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
+            .outputSettings(Document.OutputSettings().prettyPrint(false))
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.resolveExternalLink()
+        assertThat(result.keys).containsExactly(MappingType.KYOBO)
+        assertThat(result[MappingType.KYOBO]!!.productDetailPage.host)
+            .isEqualTo(KyoboBookRequestNames.kyoboHost)
+        assertThat(result[MappingType.KYOBO]!!.productDetailPage.path)
+            .isEqualTo(KyoboBookRequestNames.kyoboBookDetailsPath)
+        assertThat(result[MappingType.KYOBO]!!.productDetailPage.getQueryParams())
+            .containsExactly(entry(KyoboBookRequestNames.isbn, listOf(defaultIsbn)))
+        assertThat(result[MappingType.KYOBO]!!.originalPrice).isEqualTo(defaultOriginalPrice)
+        assertThat(result[MappingType.KYOBO]!!.salePrice).isEqualTo(defaultSalePrice)
     }
 }

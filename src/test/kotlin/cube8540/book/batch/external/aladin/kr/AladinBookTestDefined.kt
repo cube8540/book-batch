@@ -27,7 +27,6 @@ import kotlin.random.Random
 const val defaultTtbKey = "ttbKey000000"
 
 val defaultCategoryId = Random.nextInt(0, Int.MAX_VALUE)
-const val defaultLink = "https://localhost:1234"
 
 fun createAladinBookAPIResponse(
     total: Int? = 1,
@@ -61,7 +60,8 @@ fun createBookJsonNode(
     publishDate: LocalDate? = defaultPublishDate,
     categoryId: Int? = defaultCategoryId,
     link: String? = defaultLink,
-    price: Double? = defaultPrice
+    originalPrice: Double? = defaultOriginalPrice,
+    salePrice: Double? = defaultSalePrice
 ): JsonNode {
     val objectMapper = ObjectMapper()
 
@@ -73,7 +73,8 @@ fun createBookJsonNode(
     publishDate?.let { node.set<JsonNode>(AladinAPIResponseNames.publishDate, objectMapper.convertValue(it.format(DateTimeFormatter.ISO_DATE), JsonNode::class.java)) }
     categoryId?.let { node.set<JsonNode>(AladinAPIResponseNames.categoryId, objectMapper.convertValue(it, JsonNode::class.java)) }
     link?.let { node.set<JsonNode>(AladinAPIResponseNames.link, objectMapper.convertValue(it, JsonNode::class.java)) }
-    price?.let { node.set<JsonNode>(AladinAPIResponseNames.price, objectMapper.convertValue(it, JsonNode::class.java)) }
+    originalPrice?.let { node.set<JsonNode>(AladinAPIResponseNames.originalPrice, objectMapper.convertValue(it, JsonNode::class.java)) }
+    salePrice?.let { node.set<JsonNode>(AladinAPIResponseNames.salePrice, objectMapper.convertValue(it, JsonNode::class.java)) }
 
     return node
 }
