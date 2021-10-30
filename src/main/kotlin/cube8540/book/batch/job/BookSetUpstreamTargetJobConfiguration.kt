@@ -62,6 +62,9 @@ class BookSetUpstreamTargetJobConfiguration {
     @set:[Autowired Qualifier("kyoboBookFilterFunction")]
     lateinit var kyoboBookDetailsFilterFunction: BookDetailsFilterFunction
 
+    @set:[Autowired Qualifier("aladinAPIFilterFunction")]
+    lateinit var aladinAPIFilterFunction: BookDetailsFilterFunction
+
     var chunkSize = defaultChunkSize
 
     @Bean(jobName)
@@ -94,7 +97,8 @@ class BookSetUpstreamTargetJobConfiguration {
                 BookDetailsOriginalDataApproveProcessor(
                     MappingType.NATIONAL_LIBRARY to nationalLibraryBookDetailsFilterFunction,
                     MappingType.NAVER_BOOK to naverBookAPIFilterFunction,
-                    MappingType.KYOBO to kyoboBookDetailsFilterFunction
+                    MappingType.KYOBO to kyoboBookDetailsFilterFunction,
+                    MappingType.ALADIN to aladinAPIFilterFunction
                 ),
                 BookSetUpstreamTargetProcessor()
             )
