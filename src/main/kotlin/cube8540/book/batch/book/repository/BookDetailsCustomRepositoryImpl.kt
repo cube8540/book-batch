@@ -20,6 +20,8 @@ class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepo
             .leftJoin(bookDetails.authors).fetchJoin()
             .leftJoin(bookDetails.keywords).fetchJoin()
             .leftJoin(bookDetails.original).fetchJoin()
+            .leftJoin(bookDetails.indexes).fetchJoin()
+            .leftJoin(bookDetails.externalLinks).fetchJoin()
             .where(bookDetails.isbn.`in`(isbn))
             .fetch()
     }
@@ -39,8 +41,8 @@ class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepo
             .leftJoin(bookDetails.authors).fetchJoin()
             .leftJoin(bookDetails.keywords).fetchJoin()
             .leftJoin(bookDetails.original).fetchJoin()
-            .leftJoin(bookDetails.externalLinks).fetchJoin()
             .leftJoin(bookDetails.indexes).fetchJoin()
+            .leftJoin(bookDetails.externalLinks).fetchJoin()
             .where(bookDetails.isbn.`in`(queryResults.results))
         querydsl!!.applySorting(pageRequest.sort, bookDetailsExpression)
 
@@ -64,6 +66,8 @@ class BookDetailsCustomRepositoryImpl: BookDetailsCustomRepository, QuerydslRepo
             .leftJoin(bookDetails.divisions).fetchJoin()
             .leftJoin(bookDetails.authors).fetchJoin()
             .leftJoin(bookDetails.keywords).fetchJoin()
+            .leftJoin(bookDetails.indexes).fetchJoin()
+            .leftJoin(bookDetails.externalLinks).fetchJoin()
             .where(bookDetails.isbn.`in`(queryResults.results))
         querydsl!!.applySorting(pageRequest.sort, bookDetailsExpression)
 
