@@ -1,6 +1,5 @@
 package cube8540.book.batch.book.domain
 
-import cube8540.book.batch.external.aladin.kr.defaultLink
 import cube8540.book.batch.external.nl.go.defaultErrorMessage
 import io.github.cube8540.validator.core.Operator
 import io.mockk.every
@@ -51,7 +50,9 @@ val upstreamFailedLogAssertIgnoringFields = listOf(UpstreamFailedLog::sequence.n
 
 val defaultBookIndex = listOf("index00000", "index00001", "index00002")
 
-val defaultExternalLink = mapOf(MappingType.KYOBO to BookExternalLink(URI.create(defaultLink), defaultOriginalPrice, defaultSalePrice))
+const val defaultLink = "https://localhost:1234"
+val defaultLinkUri = URI.create(defaultLink)
+val defaultExternalLink = mapOf(MappingType.KYOBO to BookExternalLink(defaultLinkUri, defaultOriginalPrice, defaultSalePrice))
 
 fun createBookContext(
     isbn: String = defaultIsbn,

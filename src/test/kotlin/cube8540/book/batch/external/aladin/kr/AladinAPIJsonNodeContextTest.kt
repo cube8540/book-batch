@@ -1,14 +1,10 @@
 package cube8540.book.batch.external.aladin.kr
 
-import cube8540.book.batch.book.domain.MappingType
-import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.book.domain.defaultOriginalPrice
-import cube8540.book.batch.book.domain.defaultSalePrice
+import cube8540.book.batch.book.domain.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.net.URI
 
 class AladinAPIJsonNodeContextTest {
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
@@ -53,7 +49,7 @@ class AladinAPIJsonNodeContextTest {
 
         val result = context.resolveExternalLink()
         assertThat(result.keys).containsExactly(MappingType.ALADIN)
-        assertThat(result[MappingType.ALADIN]!!.productDetailPage).isEqualTo(URI.create(defaultLink))
+        assertThat(result[MappingType.ALADIN]!!.productDetailPage).isEqualTo(defaultLinkUri)
         assertThat(result[MappingType.ALADIN]!!.originalPrice).isEqualTo(defaultOriginalPrice)
         assertThat(result[MappingType.ALADIN]!!.salePrice).isEqualTo(defaultSalePrice)
     }

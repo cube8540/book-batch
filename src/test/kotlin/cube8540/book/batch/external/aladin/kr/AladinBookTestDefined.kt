@@ -27,7 +27,6 @@ import kotlin.random.Random
 const val defaultTtbKey = "ttbKey000000"
 
 val defaultCategoryId = Random.nextInt(0, Int.MAX_VALUE)
-const val defaultLink = "https://localhost:1234"
 
 fun createAladinBookAPIResponse(
     total: Int? = 1,

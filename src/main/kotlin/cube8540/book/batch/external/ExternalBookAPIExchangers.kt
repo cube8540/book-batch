@@ -1,6 +1,7 @@
 package cube8540.book.batch.external
 
 import cube8540.book.batch.book.domain.BookDetailsContext
+import cube8540.book.batch.book.domain.MappingType
 import java.net.URI
 import java.time.LocalDate
 
@@ -22,6 +23,11 @@ data class BookAPIRequest(
 )
 
 data class BookUpstreamAPIRequest(val requests: List<BookUpstreamAPIRequestDetails>)
+data class BookUpstreamExternalLink(
+    var productDetailPage: String,
+    var originalPrice: Double? = null,
+    var salePrice: Double? = null
+)
 data class BookUpstreamAPIRequestDetails(
     val isbn: String,
     val title: String,
@@ -34,7 +40,8 @@ data class BookUpstreamAPIRequestDetails(
     val smallThumbnail: URI? = null,
     val authors: List<String>? = null,
     val description: String? = null,
-    val indexes: List<String>? = null
+    val indexes: List<String>? = null,
+    val externalLinks: Map<MappingType, BookUpstreamExternalLink>? = null
 )
 
 data class BookAPIResponse(

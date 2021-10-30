@@ -3,8 +3,14 @@ package cube8540.book.batch.job
 import cube8540.book.batch.book.domain.*
 import cube8540.book.batch.external.BookUpstreamAPIRequest
 import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.external.BookUpstreamExternalLink
 import java.net.URI
 import java.time.LocalDate
+
+val defaultBookUpstreamExternalLink = mapOf(
+    MappingType.KYOBO to BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice),
+    MappingType.ALADIN to BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice)
+)
 
 fun createBookUpstreamRequestDetails(
     isbn: String = defaultIsbn,
@@ -18,9 +24,24 @@ fun createBookUpstreamRequestDetails(
     smallThumbnail: URI? = defaultSmallThumbnail,
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
-    index: List<String>? = defaultBookIndex
+    index: List<String>? = defaultBookIndex,
+    upstreamExternalLink: Map<MappingType, BookUpstreamExternalLink>? = defaultBookUpstreamExternalLink
 ): BookUpstreamAPIRequestDetails =
-    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, index)
+    BookUpstreamAPIRequestDetails(
+        isbn,
+        title,
+        publishDate,
+        publisher,
+        seriesIsbn,
+        seriesCode,
+        largeThumbnail,
+        mediumThumbnail,
+        smallThumbnail,
+        authors,
+        description,
+        index,
+        upstreamExternalLink
+    )
 
 fun createBookUpstreamRequest(
     vararg request: BookUpstreamAPIRequestDetails
