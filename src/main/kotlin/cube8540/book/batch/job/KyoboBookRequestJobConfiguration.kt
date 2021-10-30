@@ -40,7 +40,7 @@ class KyoboBookRequestJobConfiguration {
         const val jobWriterName = jobName + "JobWriter"
         const val defaultChunkSize = 100
 
-        internal var host = URI.create(KyoboBookRequestNames.kyoboHost)
+        internal var host = URI.create(KyoboBookRequestNames.kyoboDomain)
     }
 
     @set:Autowired

@@ -3,6 +3,7 @@ package cube8540.book.batch.external.aladin.kr
 import com.fasterxml.jackson.databind.JsonNode
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
+import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -66,6 +67,14 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
         map[OriginalPropertyKey(AladinAPIResponseNames.publisher, mappingType)] =
             jsonNode.get(AladinAPIResponseNames.publisher)?.asText()
         return map
+    }
+
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink> {
+        val uri = jsonNode.get(AladinAPIResponseNames.link).let { URI.create(it.asText()) }
+        val originalPrice = jsonNode.get(AladinAPIResponseNames.originalPrice)?.asDouble()
+        val salePrice = jsonNode.get(AladinAPIResponseNames.salePrice)?.asDouble()
+
+        return mapOf(MappingType.ALADIN to BookExternalLink(uri, originalPrice, salePrice))
     }
 
     override fun createdAt(): LocalDateTime? = LocalDateTime.now(clock)

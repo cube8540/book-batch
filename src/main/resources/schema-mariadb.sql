@@ -123,12 +123,22 @@ create index if not exists book_publish_date_index on book_details (publish_date
 create index if not exists book_created_at_index on book_details (created_at desc);
 create index if not exists book_series_code_index on book_details (series_code);
 create index if not exists book_series_isbn_index on book_details (series_isbn);
-alter table book_details drop column price;
+alter table book_details drop column if exists price;
 
 create table if not exists book_indexes (
     isbn varchar(13) not null,
     title varchar(128) not null,
     odr int not null,
+
+    foreign key (isbn) references book_details(isbn)
+) engine = InnoDB charset = utf8;
+
+create table if not exists book_external_links (
+    isbn varchar(13) not null,
+    mapping_type varchar(32) not null,
+    product_detail_page varchar(248) not null,
+    original_price double,
+    sale_price double,
 
     foreign key (isbn) references book_details(isbn)
 ) engine = InnoDB charset = utf8;

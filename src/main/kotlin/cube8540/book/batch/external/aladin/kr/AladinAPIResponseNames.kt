@@ -11,7 +11,8 @@ object AladinAPIResponseNames {
     const val publisher = "publisher"
     const val publishDate = "pubDate"
     const val isbn = "isbn13"
-    const val price = "priceSales"
+    const val originalPrice = "priceStandard"
+    const val salePrice = "priceSales"
     const val categoryId = "categoryId"
     const val link = "link"
 }

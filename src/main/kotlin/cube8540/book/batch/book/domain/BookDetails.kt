@@ -71,6 +71,12 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @Column(name = "value", length = 1024)
     var original: MutableMap<OriginalPropertyKey, String?>? = context.resolveOriginal()?.toMutableMap()
 
+    @ElementCollection
+    @CollectionTable(name = "book_external_links", joinColumns = [JoinColumn(name = "isbn", nullable = false)])
+    @MapKeyColumn(name = "mapping_type", length = 32)
+    @MapKeyEnumerated(EnumType.STRING)
+    var externalLinks: MutableMap<MappingType, BookExternalLink>? = context.resolveExternalLink()?.toMutableMap()
+
     @Column(name = "upstream_target", nullable = false)
     var isUpstreamTarget: Boolean? = false
 

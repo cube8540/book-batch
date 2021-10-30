@@ -30,5 +30,7 @@ interface BookDetailsContext {
 
     fun resolveOriginal(): Map<OriginalPropertyKey, String?>?
 
+    fun resolveExternalLink(): Map<MappingType, BookExternalLink>?
+
     fun createdAt(): LocalDateTime?
 }

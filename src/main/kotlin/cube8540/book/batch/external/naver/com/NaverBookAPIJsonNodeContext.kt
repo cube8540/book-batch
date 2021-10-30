@@ -78,6 +78,8 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
         return map
     }
 
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink>? = null
+
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
 
     override fun equals(other: Any?): Boolean = when (other) {
