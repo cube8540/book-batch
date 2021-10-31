@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "cube8540.book"
-version = "0.6.2"
+version = "0.6.3"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
