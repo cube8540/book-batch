@@ -120,6 +120,7 @@ fun createDocument(
 
     description?.let {
         contentAttribute.append("<!-- *** s:책소개 *** -->")
+        contentAttribute.append("<!-- 2021-11-01 -->")
         contentAttribute.appendElement("div").addClass("box_detail_article").append(description)
 
         contentAttribute.appendElement("dev")
@@ -127,6 +128,7 @@ fun createDocument(
 
     indexHtml?.let {
         contentAttribute.append("<!-- *** s:목차 *** -->")
+        contentAttribute.append("<!-- 2021-11-01 -->")
         contentAttribute.appendElement("h2").addClass("title_detail_basic").addClass("목차")
         contentAttribute.appendElement("dev").addClass("box_detail_article").append(indexHtml)
     }
