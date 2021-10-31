@@ -1,8 +1,8 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.book.domain.Thumbnail
 import cube8540.book.batch.book.domain.BookDetailsController
+import cube8540.book.batch.book.domain.Thumbnail
 
 class KyoboBookDetailsController: BookDetailsController {
     override fun merge(base: BookDetails, item: BookDetails): BookDetails {
@@ -21,12 +21,16 @@ class KyoboBookDetailsController: BookDetailsController {
 
         base.description = item.description
         base.indexes = item.indexes
-        base.price = item.price
 
         if (base.original != null && item.original != null) {
             base.original = (base.original!! + item.original!!).toMutableMap()
         } else if (item.original != null) {
             base.original = item.original
+        }
+        if (base.externalLinks != null && item.externalLinks != null) {
+            base.externalLinks = (base.externalLinks!! + item.externalLinks!!).toMutableMap()
+        } else if (item.externalLinks != null) {
+            base.externalLinks = item.externalLinks
         }
 
         return base

@@ -55,8 +55,6 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
 
     override fun resolveKeywords(): Set<String>? = null
 
-    override fun resolvePrice(): Double?  = null
-
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(NaverBookAPIResponseNames.isbn, mappingType)] =
@@ -79,6 +77,8 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
             jsonNode.get(NaverBookAPIResponseNames.publishDate)?.asText()
         return map
     }
+
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink>? = null
 
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
 

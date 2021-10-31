@@ -4,7 +4,9 @@ import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
 import org.jsoup.nodes.Comment
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
@@ -81,28 +83,15 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     }
 
     override fun resolveDescription(): String? {
-        val element = document.select(KyoboBookClassSelector.bookContent).first()
-        val previousComment = findFirstComment(element)
+        val element = findArticleByCommentText(KyoboBookCommentText.descriptionCommentText)
+        element?.select("br")?.append("\\n")
+        element?.select("p")?.prepend("\\n\\n")
 
-        val commentText = previousComment?.data?.replace(" ", "")
-        return if (commentText == KyoboBookCommentText.descriptionCommentText) {
-            element?.select("br")?.append("\\n")
-            element?.select("p")?.prepend("\\n\\n")
-
-            element?.text()
-        } else {
-            null
-        }
+        return element?.text()
     }
 
     override fun resolveIndex(): List<String>? {
-        val element = document.select(KyoboBookClassSelector.bookContent).last()
-        val previousComment = findFirstComment(element)
-
-        val commentText = previousComment?.data?.replace(" ", "")
-        if (commentText != KyoboBookCommentText.indexCommentText) {
-            return null
-        }
+        val element = findArticleByCommentText(KyoboBookCommentText.indexCommentText)
         val indexList = element?.html()
             ?.replace("\r", "")
             ?.replace("\n", "")
@@ -113,10 +102,6 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     }
 
     override fun resolveKeywords(): Set<String>? = null
-
-    override fun resolvePrice(): Double? = metaTags
-        .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.originalPrice) }
-        ?.attr(content)?.toDouble()
 
     override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
         val original = HashMap<OriginalPropertyKey, String?>()
@@ -139,6 +124,22 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, mappingType)] = inputTags
             .find { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }?.attr(value)
         return original
+    }
+
+    override fun resolveExternalLink(): Map<MappingType, BookExternalLink> {
+        val uriComponentBuilder = UriComponentsBuilder.newInstance()
+            .uri(URI.create(KyoboBookRequestNames.kyoboDomain + KyoboBookRequestNames.kyoboBookDetailsPath))
+            .queryParam(KyoboBookRequestNames.isbn, resolveIsbn())
+            .build()
+
+        val originalPrice = metaTags.find { it.attr(property) == KyoboBookMetaTagPropertySelector.originalPrice }
+            ?.attr(content)
+            ?.toDouble()
+        val salePrice = metaTags.find { it.attr(property) == KyoboBookMetaTagPropertySelector.salePrice }
+            ?.attr(content)
+            ?.toDouble()
+
+        return mapOf(MappingType.KYOBO to BookExternalLink(uriComponentBuilder.toUri(), originalPrice, salePrice))
     }
 
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
@@ -167,6 +168,11 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
             }
         }
         return textGroup.mapIndexed { index, _ -> textGroup.subList(0, (index + 1)).joinToString("") }
+    }
+
+    private fun findArticleByCommentText(commentText: String): Element? {
+        val elements = document.select(KyoboBookClassSelector.bookContent)
+        return elements.find { findFirstComment(it)?.data?.replace(" ", "") == commentText }
     }
 
     private fun findFirstComment(node: Node?): Comment? {

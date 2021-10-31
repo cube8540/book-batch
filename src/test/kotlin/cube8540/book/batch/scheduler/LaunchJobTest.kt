@@ -21,7 +21,7 @@ class LaunchJobTest {
     private val jobScheduler = JobSchedulerConfiguration()
 
     init {
-        jobScheduler.jobSchedulerService = jobSchedulerService
+        jobScheduler.regularJobSchedulerService = jobSchedulerService
         JobSchedulerConfiguration.clock = Clock.fixed(datetime.toDefaultInstance(), BatchApplication.DEFAULT_TIME_ZONE.toZoneId())
     }
 

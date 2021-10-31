@@ -1,10 +1,9 @@
 package cube8540.book.batch.job.writer
 
 import cube8540.book.batch.book.application.BookCommandService
-import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.book.domain.bookDetailsAssertIgnoringFields
-import cube8540.book.batch.book.domain.createBookDetails
+import cube8540.book.batch.book.domain.*
 import cube8540.book.batch.external.BookUpstreamAPIRequest
+import cube8540.book.batch.external.BookUpstreamExternalLink
 import cube8540.book.batch.external.ExternalBookAPIUpstream
 import cube8540.book.batch.job.createBookUpstreamRequest
 import cube8540.book.batch.job.createBookUpstreamRequestDetails
@@ -21,20 +20,22 @@ class WebClientBookUpstreamWriterTest {
 
     @Test
     fun `upstream book`() {
+        val bookExternalLink = BookExternalLink(defaultLinkUri, defaultOriginalPrice, defaultSalePrice)
         val bookDetails = mutableListOf(
-            createBookDetails(isbn = "isbn0000"),
-            createBookDetails(isbn = "isbn0001"),
-            createBookDetails(isbn = "isbn0002")
+            createBookDetails(isbn = "isbn0000", externalLink = mapOf(MappingType.ALADIN to bookExternalLink)),
+            createBookDetails(isbn = "isbn0001", externalLink = mapOf(MappingType.ALADIN to bookExternalLink)),
+            createBookDetails(isbn = "isbn0002", externalLink = mapOf(MappingType.ALADIN to bookExternalLink))
         )
         val bookUpstreamRequestCaptor = slot<BookUpstreamAPIRequest>()
+        val upstreamBookExternalLink = BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice)
 
         every { upstream.upstream(capture(bookUpstreamRequestCaptor)) } just runs
 
         writer.write(bookDetails)
         assertThat(bookUpstreamRequestCaptor.captured).isEqualTo(createBookUpstreamRequest(
-            createBookUpstreamRequestDetails(isbn = "isbn0000"),
-            createBookUpstreamRequestDetails(isbn = "isbn0001"),
-            createBookUpstreamRequestDetails(isbn = "isbn0002")
+            createBookUpstreamRequestDetails(isbn = "isbn0000", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink)),
+            createBookUpstreamRequestDetails(isbn = "isbn0001", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink)),
+            createBookUpstreamRequestDetails(isbn = "isbn0002", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink))
         ))
     }
 
@@ -55,8 +56,10 @@ class WebClientBookUpstreamWriterTest {
         }
         assertThat(setUpstreamRequestCaptor.captured)
             .usingElementComparatorIgnoringFields(*bookDetailsAssertIgnoringFields)
-            .containsExactly(createBookDetails(isbn = "isbn0000", isUpstream = false),
+            .containsExactly(
+                createBookDetails(isbn = "isbn0000", isUpstream = false),
                 createBookDetails(isbn = "isbn0001", isUpstream = false),
-                createBookDetails(isbn = "isbn0002", isUpstream = false))
+                createBookDetails(isbn = "isbn0002", isUpstream = false)
+            )
     }
 }

@@ -28,7 +28,8 @@ val defaultAuthors = emptySet<String>()
 val defaultKeywords = emptySet<String>()
 val defaultRaws = emptySet<RawProperty>()
 const val defaultDescription = "description000000"
-const val defaultPrice = 5000.0
+const val defaultOriginalPrice = 5000.0
+const val defaultSalePrice = 4500.0
 
 val defaultBookOriginalFilterId = UUID.randomUUID().toString().replace("-", "")
 val defaultBookOriginalFilterIdGenerator: BookDetailsFilterIdGenerator = mockk(relaxed = true) {
@@ -49,6 +50,10 @@ val upstreamFailedLogAssertIgnoringFields = listOf(UpstreamFailedLog::sequence.n
 
 val defaultBookIndex = listOf("index00000", "index00001", "index00002")
 
+const val defaultLink = "https://localhost:1234"
+val defaultLinkUri = URI.create(defaultLink)
+val defaultExternalLink = mapOf(MappingType.KYOBO to BookExternalLink(defaultLinkUri, defaultOriginalPrice, defaultSalePrice))
+
 fun createBookContext(
     isbn: String = defaultIsbn,
     title: String? = defaultTitle,
@@ -64,8 +69,8 @@ fun createBookContext(
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
     index: List<String>? = defaultBookIndex,
-    price: Double? = defaultPrice,
-    original: Map<OriginalPropertyKey, String>? = defaultOriginal
+    original: Map<OriginalPropertyKey, String>? = defaultOriginal,
+    externalLink: Map<MappingType, BookExternalLink>? = defaultExternalLink
 ): BookDetailsContext {
     val context: BookDetailsContext = mockk(relaxed = true)
 
@@ -87,9 +92,9 @@ fun createBookContext(
     every { context.resolveKeywords() } returns keywords
     every { context.resolveDescription() } returns description
     every { context.resolveIndex() } returns index
-    every { context.resolvePrice() } returns price
 
     every { context.resolveOriginal() } returns original
+    every { context.resolveExternalLink() } returns externalLink
 
     return context
 }
@@ -109,12 +114,12 @@ fun createBookDetails(
     keywords: Set<String>? = defaultKeywords,
     description: String? = defaultDescription,
     index: List<String>? = defaultBookIndex,
-    price: Double? = defaultPrice,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal,
+    externalLink: Map<MappingType, BookExternalLink>? = defaultExternalLink,
     isUpstream: Boolean = false,
     isNew: Boolean = true
 ): BookDetails {
-  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, index, price, original))
+  val book = BookDetails(createBookContext(isbn, title, publisher, publishDate, seriesCode, seriesIsbn, largeThumbnail, mediumThumbnail, smallThumbnail, divisions, authors, keywords, description, index, original, externalLink))
     if (!isNew) {
         book.markingPersistedEntity()
     }
