@@ -26,6 +26,8 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         private const val value = "value"
 
         private val mappingType = MappingType.KYOBO
+
+        private val boxDescriptionCommentRegex = Regex("^(\\*{3})(\\S|\\s)+(\\*{3})\$")
     }
 
     private val metaTags = document.getElementsByTag(meta)
@@ -176,10 +178,19 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     }
 
     private fun findFirstComment(node: Node?): Comment? {
-        return when (node) {
-            null -> null
-            is Comment -> node
-            else -> findFirstComment(node.previousSibling())
+        if (node == null) {
+            return null
+        }
+        if (node !is Comment) {
+            return findFirstComment(node.previousSibling())
+        }
+        return if (isBoxDescriptionComment(node)) {
+            node
+        } else {
+            findFirstComment(node.previousSibling())
         }
     }
+
+    private fun isBoxDescriptionComment(comment: Comment): Boolean =
+        comment.data?.let { boxDescriptionCommentRegex.matches(it.trim()) } ?: false
 }
