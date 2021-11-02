@@ -4,6 +4,7 @@ import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.book.domain.defaultPublisher
 import cube8540.book.batch.external.BookAPIRequest
 import cube8540.book.batch.external.PageDecision
+import cube8540.book.batch.external.aladin.kr.AladinAPIExchanger.Companion.maximumDataCount
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.mockwebserver.MockResponse
@@ -20,8 +21,8 @@ import kotlin.random.Random
 
 class AladinAPIExchangerTest {
 
-    private val randomPage = Random.nextInt()
-    private val randomSize = Random.nextInt()
+    private val randomPage = Random.nextInt(1, 4)
+    private val randomSize = Random.nextInt(1, 50)
     private val realRequestedPage = Random.nextInt(1, 999)
 
     private val from = LocalDate.of(2021,  5, 1)
@@ -67,6 +68,17 @@ class AladinAPIExchangerTest {
             AladinAPIJsonNodeContext(createBookJsonNode(isbn = "isbn0001", publishDate = betweenThemRequestDate), publisherMapper),
             AladinAPIJsonNodeContext(createBookJsonNode(isbn = "isbn0002", publishDate = betweenThemRequestDate), publisherMapper)
         )
+    }
+
+    @Test
+    fun `exchange book api when page multiple size is grater then maximum data count`() {
+        val page = (maximumDataCount / randomSize) + 1
+        val exchangeParameter = BookAPIRequest(page = page, size = randomSize, from = from, to = to, publisher = defaultPublisher)
+
+        val result = exchanger.exchange(exchangeParameter)!!
+        assertThat(result.page).isZero
+        assertThat(result.totalCount).isZero
+        assertThat(result.books).isEmpty()
     }
 
     @Test
