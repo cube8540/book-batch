@@ -14,6 +14,8 @@ class AladinAPIExchanger(private val webClient: WebClient, private val key: Alad
         const val defaultRetryCount = 1
         const val defaultRetryDelaySecond = 5
 
+        const val maximumDataCount = 200
+
         const val defaultQueryType = "Publisher"
         const val defaultSearchTarget = "Book"
         const val defaultOutput = "js"
@@ -35,12 +37,15 @@ class AladinAPIExchanger(private val webClient: WebClient, private val key: Alad
     var maxResults = defaultMaxResults
 
     override fun exchange(request: BookAPIRequest): BookAPIResponse? {
+        if (request.page!! * request.size!! > maximumDataCount) {
+            return BookAPIResponse(0, 0, emptyList())
+        }
         val uriBuilder = UriComponentsBuilder.newInstance()
             .uri(URI.create(AladinAPIRequestNames.endpointPath))
             .queryParam(AladinAPIRequestNames.ttbKey, key.ttbKey)
             .queryParam(AladinAPIRequestNames.queryType, queryType)
             .queryParam(AladinAPIRequestNames.query, request.publisher)
-            .queryParam(AladinAPIRequestNames.start, pageDecision.calculation(request.page!!, request.size!!))
+            .queryParam(AladinAPIRequestNames.start, pageDecision.calculation(request.page, request.size))
             .queryParam(AladinAPIRequestNames.maxResults, maxResults)
             .queryParam(AladinAPIRequestNames.searchTarget, searchTarget)
             .queryParam(AladinAPIRequestNames.output, output)
