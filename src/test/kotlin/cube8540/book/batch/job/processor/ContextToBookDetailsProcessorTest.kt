@@ -14,7 +14,7 @@ class ContextToBookDetailsProcessorTest {
     fun `to book details`() {
         val context: BookDetailsContext = mockk(relaxed = true)
 
-        every { context.resolveIsbn() } returns "isbn0000"
+        every { context.extractIsbn() } returns "isbn0000"
 
         val result = processor.process(context)
         assertThat(result.isbn).isEqualTo("isbn0000")

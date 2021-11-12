@@ -17,7 +17,7 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
         internal val mappingType = MappingType.NAVER_BOOK
     }
 
-    override fun resolveIsbn(): String {
+    override fun extractIsbn(): String {
         val node = jsonNode.get(NaverBookAPIResponseNames.isbn) ?: return ""
         val texts = node.asText().split(" ")
         return if (texts.size >= 2) {
@@ -27,35 +27,35 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
         }
     }
 
-    override fun resolveTitle(): String? = jsonNode.get(NaverBookAPIResponseNames.title)?.asText()
+    override fun extractTitle(): String? = jsonNode.get(NaverBookAPIResponseNames.title)?.asText()
 
-    override fun resolveSeriesCode(): String? = null
+    override fun extractSeriesCode(): String? = null
 
-    override fun resolveSeriesIsbn(): String? = null
+    override fun extractSeriesIsbn(): String? = null
 
-    override fun resolveDivisions(): Set<String>? = null
+    override fun extractDivisions(): Set<String>? = null
 
-    override fun resolvePublisher(): String? = publisherRawMapper
+    override fun extractPublisher(): String? = publisherRawMapper
         .mapping(jsonNode.get(NaverBookAPIResponseNames.publisher).asText())
 
-    override fun resolvePublishDate(): LocalDate? = jsonNode.get(NaverBookAPIResponseNames.publishDate)
+    override fun extractPublishDate(): LocalDate? = jsonNode.get(NaverBookAPIResponseNames.publishDate)
         ?.let { LocalDate.parse(it.asText(), DateTimeFormatter.BASIC_ISO_DATE) }
 
-    override fun resolveAuthors(): Set<String>? = null
+    override fun extractAuthors(): Set<String>? = null
 
-    override fun resolveThumbnail(): Thumbnail = Thumbnail(
+    override fun extractThumbnail(): Thumbnail = Thumbnail(
         smallThumbnail = jsonNode.get(NaverBookAPIResponseNames.image)?.let { URI.create(it.asText()) },
         largeThumbnail = null,
         mediumThumbnail = null
     )
 
-    override fun resolveDescription(): String? = null
+    override fun extractDescription(): String? = null
 
-    override fun resolveIndex(): List<String>? = null
+    override fun extractIndex(): List<String>? = null
 
-    override fun resolveKeywords(): Set<String>? = null
+    override fun extractKeywords(): Set<String>? = null
 
-    override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
+    override fun extractOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(NaverBookAPIResponseNames.isbn, mappingType)] =
             jsonNode.get(NaverBookAPIResponseNames.isbn)?.asText()
@@ -78,7 +78,7 @@ class NaverBookAPIJsonNodeContext(private val jsonNode: JsonNode, private val pu
         return map
     }
 
-    override fun resolveExternalLink(): Map<MappingType, BookExternalLink>? = null
+    override fun extractExternalLink(): Map<MappingType, BookExternalLink>? = null
 
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
 

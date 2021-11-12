@@ -17,23 +17,23 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
         internal val mappingType = MappingType.ALADIN
     }
 
-    override fun resolveIsbn(): String = jsonNode.get(AladinAPIResponseNames.isbn).asText()
+    override fun extractIsbn(): String = jsonNode.get(AladinAPIResponseNames.isbn).asText()
 
-    override fun resolveTitle(): String? = jsonNode.get(AladinAPIResponseNames.title).asText()
+    override fun extractTitle(): String? = jsonNode.get(AladinAPIResponseNames.title).asText()
 
-    override fun resolveSeriesCode(): String? = null
+    override fun extractSeriesCode(): String? = null
 
-    override fun resolveSeriesIsbn(): String? = null
+    override fun extractSeriesIsbn(): String? = null
 
-    override fun resolveDivisions(): Set<String>? = null
+    override fun extractDivisions(): Set<String>? = null
 
-    override fun resolvePublisher(): String? = jsonNode.get(AladinAPIResponseNames.publisher)?.asText()
+    override fun extractPublisher(): String? = jsonNode.get(AladinAPIResponseNames.publisher)?.asText()
         ?.let { publisherRawMapper.mapping(it) }
 
-    override fun resolvePublishDate(): LocalDate? = jsonNode.get(AladinAPIResponseNames.publishDate)?.asText()
+    override fun extractPublishDate(): LocalDate? = jsonNode.get(AladinAPIResponseNames.publishDate)?.asText()
         ?.let { LocalDate.parse(it, DateTimeFormatter.ISO_DATE) }
 
-    override fun resolveAuthors(): Set<String>? {
+    override fun extractAuthors(): Set<String>? {
         val node = jsonNode.get(AladinAPIResponseNames.author)?.asText()
 
         return if (node?.let { it.isNotEmpty() && it.isNotBlank() } == true) {
@@ -43,18 +43,18 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
         }
     }
 
-    override fun resolveThumbnail(): Thumbnail? = null
+    override fun extractThumbnail(): Thumbnail? = null
 
-    override fun resolveDescription(): String? = null
+    override fun extractDescription(): String? = null
 
-    override fun resolveIndex(): List<String>? = null
+    override fun extractIndex(): List<String>? = null
 
-    override fun resolveKeywords(): Set<String>? = null
+    override fun extractKeywords(): Set<String>? = null
 
-    override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
+    override fun extractOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
-        map[OriginalPropertyKey(AladinAPIResponseNames.isbn, mappingType)] = resolveIsbn()
-        map[OriginalPropertyKey(AladinAPIResponseNames.title, mappingType)] = resolveTitle()
+        map[OriginalPropertyKey(AladinAPIResponseNames.isbn, mappingType)] = extractIsbn()
+        map[OriginalPropertyKey(AladinAPIResponseNames.title, mappingType)] = extractTitle()
 
         map[OriginalPropertyKey(AladinAPIResponseNames.categoryId, mappingType)] =
             jsonNode.get(AladinAPIResponseNames.categoryId)?.asText()
@@ -69,7 +69,7 @@ class AladinAPIJsonNodeContext(private val jsonNode: JsonNode, private val publi
         return map
     }
 
-    override fun resolveExternalLink(): Map<MappingType, BookExternalLink> {
+    override fun extractExternalLink(): Map<MappingType, BookExternalLink> {
         val uri = jsonNode.get(AladinAPIResponseNames.link).let { URI.create(it.asText()) }
         val originalPrice = jsonNode.get(AladinAPIResponseNames.originalPrice)?.asDouble()
         val salePrice = jsonNode.get(AladinAPIResponseNames.salePrice)?.asDouble()

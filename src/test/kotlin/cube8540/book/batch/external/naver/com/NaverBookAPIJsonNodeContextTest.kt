@@ -11,40 +11,40 @@ class NaverBookAPIJsonNodeContextTest {
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
     @Test
-    fun `resolve isbn`() {
+    fun `extract isbn`() {
         val jsonNode = createBookJsonNode(isbn = defaultNaverBookAPIResponseIsbn)
         val context = NaverBookAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveIsbn()
+        val result = context.extractIsbn()
         assertThat(result).isEqualTo(defaultIsbn)
     }
 
     @Test
-    fun `resolve isbn is null`() {
+    fun `extract isbn is null`() {
         val jsonNode = createBookJsonNode(isbn = null)
         val context = NaverBookAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveIsbn()
+        val result = context.extractIsbn()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `resolve isbn is not has empty space`() {
+    fun `extract isbn is not has empty space`() {
         val jsonNode = createBookJsonNode(isbn = defaultIsbn)
         val context = NaverBookAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveIsbn()
+        val result = context.extractIsbn()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `resolve publisher`() {
+    fun `extract publisher`() {
         val jsonNode = createBookJsonNode(publisher = "publisherCode")
         val context = NaverBookAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        every { publisherRawMapper.mapping("publisherCode") } returns "resolvedPublisherCode"
+        every { publisherRawMapper.mapping("publisherCode") } returns "extractedPublisherCode"
 
-        val result = context.resolvePublisher()
-        assertThat(result).isEqualTo("resolvedPublisherCode")
+        val result = context.extractPublisher()
+        assertThat(result).isEqualTo("extractedPublisherCode")
     }
 }

@@ -62,7 +62,7 @@ class AladinAPIExchanger(private val webClient: WebClient, private val key: Alad
             .block()
 
         val booksBetweenThemRequestDate = result?.books
-            ?.filter { it.resolvePublishDate()?.let { d -> d <= request.to && d >= request.from } ?: false }
+            ?.filter { it.extractPublishDate()?.let { d -> d <= request.to && d >= request.from } ?: false }
 
         return booksBetweenThemRequestDate?.let { BookAPIResponse(result.totalCount, result.page, it) }
     }
