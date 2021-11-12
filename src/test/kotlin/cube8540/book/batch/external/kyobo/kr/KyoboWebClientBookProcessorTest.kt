@@ -68,7 +68,7 @@ class KyoboWebClientBookProcessorTest {
         val responseBody = createDocument().html()
         val responseBodyCaptor = slot<Document>()
 
-        val bookContext = createBookContext(isbn = "resolvedIsbn")
+        val bookContext = createBookContext(isbn = "extractedIsbn")
         val bookDetails = createBookDetails(isbn = "originalIsbn")
         val mergeCompletedResult: BookDetails = mockk(relaxed = true)
 
@@ -88,7 +88,7 @@ class KyoboWebClientBookProcessorTest {
         assertThat(responseBodyCaptor.captured.html())
             .isEqualTo(expectedDocument.html())
         assertThat(result).isEqualTo(mergeCompletedResult)
-        assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "resolvedIsbn"))
+        assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "extractedIsbn"))
     }
 
     @Test
@@ -98,7 +98,7 @@ class KyoboWebClientBookProcessorTest {
         val responseBody = createDocument().html()
         val responseBodyCaptor = slot<Document>()
 
-        val bookContext = createBookContext(isbn = "resolvedIsbn")
+        val bookContext = createBookContext(isbn = "extractedIsbn")
         val bookDetails = createBookDetails(isbn = "originalIsbn")
         val mergeCompletedResult: BookDetails = mockk(relaxed = true)
 
@@ -124,6 +124,6 @@ class KyoboWebClientBookProcessorTest {
             .isEqualTo(expectedDocument.outputSettings().prettyPrint())
         assertThat(responseBodyCaptor.captured.html())
             .isEqualTo(expectedDocument.html())
-        assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "resolvedIsbn"))
+        assertThat(mergeItemCaptor.captured).isEqualTo(createBookDetails(isbn = "extractedIsbn"))
     }
 }

@@ -10,44 +10,44 @@ class AladinAPIJsonNodeContextTest {
     private val publisherRawMapper: PublisherRawMapper = mockk(relaxed = true)
 
     @Test
-    fun `resolve authors empty string`() {
+    fun `extract authors empty string`() {
         val authors = emptySet<String>()
 
         val jsonNode = createBookJsonNode(author = authors)
         val context = AladinAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveAuthors()
+        val result = context.extractAuthors()
         assertThat(result).isNull()
     }
 
     @Test
-    fun `resolve authors`() {
+    fun `extract authors`() {
         val authors = setOf("author0", "author1", "author2")
 
         val jsonNode = createBookJsonNode(author = authors)
         val context = AladinAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveAuthors()
+        val result = context.extractAuthors()
         assertThat(result).isEqualTo(authors)
     }
 
     @Test
-    fun `resolve publisher`() {
+    fun `extract publisher`() {
         val jsonNode = createBookJsonNode(publisher = "publisherCode")
         val context = AladinAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        every { publisherRawMapper.mapping("publisherCode") } returns "resolvedPublisherCode"
+        every { publisherRawMapper.mapping("publisherCode") } returns "extractedPublisherCode"
 
-        val result = context.resolvePublisher()
-        assertThat(result).isEqualTo("resolvedPublisherCode")
+        val result = context.extractPublisher()
+        assertThat(result).isEqualTo("extractedPublisherCode")
     }
 
     @Test
-    fun `resolve external link`() {
+    fun `extract external link`() {
         val jsonNode = createBookJsonNode(link = defaultLink, originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
         val context = AladinAPIJsonNodeContext(jsonNode, publisherRawMapper)
 
-        val result = context.resolveExternalLink()
+        val result = context.extractExternalLink()
         assertThat(result.keys).containsExactly(MappingType.ALADIN)
         assertThat(result[MappingType.ALADIN]!!.productDetailPage).isEqualTo(defaultLinkUri)
         assertThat(result[MappingType.ALADIN]!!.originalPrice).isEqualTo(defaultOriginalPrice)

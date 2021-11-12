@@ -14,19 +14,19 @@ class KyoboBookJsoupDocumentContextTest {
     private val divisionMapper: DivisionRawMapper = mockk(relaxed = true)
 
     @Test
-    fun `resolve authors`() {
+    fun `extract authors`() {
         val documentAuthors = " author 0001 , author 0002 "
         val authors = setOf("author 0001", "author 0002")
 
         val document = createDocument(authors = documentAuthors)
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveAuthors()
+        val result = context.extractAuthors()
         assertThat(result).isEqualTo(authors)
     }
 
     @Test
-    fun `resolve categories`() {
+    fun `extract categories`() {
         val documentCategories = "010101"
         val categories = listOf("01", "0101", "010101")
 
@@ -37,181 +37,181 @@ class KyoboBookJsoupDocumentContextTest {
 
         every { divisionMapper.mapping(categories) } returns mappedCategories
 
-        val result = context.resolveDivisions()
+        val result = context.extractDivisions()
         assertThat(result).containsExactlyElementsOf(mappedCategories)
     }
 
     @Test
-    fun `resolve series code sBarcode is null`() {
+    fun `extract series code sBarcode is null`() {
         val document = createDocument(seriesBarcode = null)
 
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveSeriesCode()
+        val result = context.extractSeriesCode()
         assertThat(result).isEqualTo(defaultABarcode)
     }
 
     @Test
-    fun `resolve series code sBarcode is empty`() {
+    fun `extract series code sBarcode is empty`() {
         val document = createDocument(seriesBarcode = "")
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveSeriesCode()
+        val result = context.extractSeriesCode()
         assertThat(result).isEqualTo(defaultABarcode)
     }
 
     @Test
-    fun `resolve series code sBarcode is not null and is not empty`() {
+    fun `extract series code sBarcode is not null and is not empty`() {
         val document = createDocument()
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveSeriesCode()
+        val result = context.extractSeriesCode()
         assertThat(result).isEqualTo(defaultSeriesCode)
     }
 
     @Test
-    fun `resolve series code aBarcode is empty`() {
+    fun `extract series code aBarcode is empty`() {
         val document = createDocument(seriesBarcode = null, aBarcode = "")
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveSeriesCode()
+        val result = context.extractSeriesCode()
         assertThat(result).isNull()
     }
 
     @Test
-    fun `resolve thumbnail`() {
+    fun `extract thumbnail`() {
         val document = createDocument()
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveThumbnail()
+        val result = context.extractThumbnail()
         assertThat(result)
             .isEqualTo(Thumbnail(largeThumbnail = defaultLargeThumbnail, mediumThumbnail = defaultMediumThumbnail))
     }
 
     @Test
-    fun `resolve document with br tag`() {
+    fun `extract document with br tag`() {
         val descriptionText = "description0000000"
         val document = createDocument(description = "$descriptionText<br/>")
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveDescription()
+        val result = context.extractDescription()
         assertThat(result).isEqualTo("$descriptionText \\n")
     }
 
     @Test
-    fun `resolve document with p tag`() {
+    fun `extract document with p tag`() {
         val descriptionText = "description0000000"
         val document = createDocument(description = "<p>$descriptionText</p>")
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveDescription()
+        val result = context.extractDescription()
         assertThat(result).isEqualTo("\\n\\n$descriptionText")
     }
 
     @Test
-    fun `resolve document with new line`() {
+    fun `extract document with new line`() {
         val descriptionText = "description0000000\\n"
         val document = createDocument(description = descriptionText)
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveDescription()
+        val result = context.extractDescription()
         assertThat(result).isEqualTo(descriptionText)
     }
 
     @Test
-    fun `resolve document is empty`() {
+    fun `extract document is empty`() {
         val document = createDocument(description = null)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveDescription()
+        val result = context.extractDescription()
         assertThat(result).isNull()
     }
 
     @Test
-    fun `resolve index br tag with sapce`() {
+    fun `extract index br tag with sapce`() {
         val index = "index0001<br >index0002<br >index0003<br >index0004<br >"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
     }
 
     @Test
-    fun `resolve index br tag with out space`() {
+    fun `extract index br tag with out space`() {
         val index = "index0001<br>index0002<br>index0003<br>index0004<br>"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
     }
 
     @Test
-    fun `resolve index br tag with slash`() {
+    fun `extract index br tag with slash`() {
         val index = "index0001<br/>index0002<br/>index0003<br/>index0004<br/>"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
     }
 
     @Test
-    fun `resolve index title with escape characters`() {
+    fun `extract index title with escape characters`() {
         val index = "\t\r\nindex0001<br/>\n\t\rindex0002<br/>\t\r\nindex0003<br/>\t\n\rindex0004<br/>"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index0001", "index0002", "index0003", "index0004")
     }
 
     @Test
-    fun `resolve index title is empty`() {
+    fun `extract index title is empty`() {
         val index = "\t\r\nindex0001<br/><br/>\t\r\nindex0003<br/><br/>"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index0001", "index0003")
     }
 
     @Test
-    fun `resolve index title is multiple space`() {
+    fun `extract index title is multiple space`() {
         val index = "\t\r\n  index 0001<br/>\n\t\rindex 0002<br/>\t\r\n    index 0003<br/>\t\n\rindex 0004<br/>"
         val document = createDocument(indexHtml = index)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).containsExactly("index 0001", "index 0002", "index 0003", "index 0004")
     }
 
     @Test
-    fun `resolve index is empty`() {
+    fun `extract index is empty`() {
         val document = createDocument(indexHtml = null)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveIndex()
+        val result = context.extractIndex()
         assertThat(result).isNull()
     }
 
     @Test
-    fun `resolve external link`() {
+    fun `extract external link`() {
         val document = createDocument(isbn = defaultIsbn, originalPrice = defaultOriginalPrice, salePrice = defaultSalePrice)
             .outputSettings(Document.OutputSettings().prettyPrint(false))
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
-        val result = context.resolveExternalLink()
+        val result = context.extractExternalLink()
         assertThat(result.keys).containsExactly(MappingType.KYOBO)
         assertThat(result[MappingType.KYOBO]!!.productDetailPage.host)
             .isEqualTo(KyoboBookRequestNames.kyoboHost)

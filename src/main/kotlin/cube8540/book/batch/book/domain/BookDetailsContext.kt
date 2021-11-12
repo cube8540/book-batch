@@ -4,33 +4,33 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface BookDetailsContext {
-    fun resolveIsbn(): String
+    fun extractIsbn(): String
 
-    fun resolveTitle(): String?
+    fun extractTitle(): String?
 
-    fun resolveSeriesCode(): String?
+    fun extractSeriesCode(): String?
 
-    fun resolveSeriesIsbn(): String?
+    fun extractSeriesIsbn(): String?
 
-    fun resolveDivisions(): Set<String>?
+    fun extractDivisions(): Set<String>?
 
-    fun resolvePublisher(): String?
+    fun extractPublisher(): String?
 
-    fun resolvePublishDate(): LocalDate?
+    fun extractPublishDate(): LocalDate?
 
-    fun resolveAuthors(): Set<String>?
+    fun extractAuthors(): Set<String>?
 
-    fun resolveThumbnail(): Thumbnail?
+    fun extractThumbnail(): Thumbnail?
 
-    fun resolveDescription(): String?
+    fun extractDescription(): String?
 
-    fun resolveIndex(): List<String>?
+    fun extractIndex(): List<String>?
 
-    fun resolveKeywords(): Set<String>?
+    fun extractKeywords(): Set<String>?
 
-    fun resolveOriginal(): Map<OriginalPropertyKey, String?>?
+    fun extractOriginal(): Map<OriginalPropertyKey, String?>?
 
-    fun resolveExternalLink(): Map<MappingType, BookExternalLink>?
+    fun extractExternalLink(): Map<MappingType, BookExternalLink>?
 
     fun createdAt(): LocalDateTime?
 }

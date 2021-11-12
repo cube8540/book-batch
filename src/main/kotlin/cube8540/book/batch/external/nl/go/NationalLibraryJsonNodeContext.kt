@@ -19,7 +19,7 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         internal val mappingType = MappingType.NATIONAL_LIBRARY
     }
 
-    override fun resolveIsbn(): String {
+    override fun extractIsbn(): String {
         val isbnNode = jsonNode.get(NationalLibraryAPIResponseNames.isbn)
         val setIsbnNode = jsonNode.get(NationalLibraryAPIResponseNames.setIsbn)
 
@@ -33,7 +33,7 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         }
     }
 
-    override fun resolveTitle(): String {
+    override fun extractTitle(): String {
         val volume = jsonNode.get(NationalLibraryAPIResponseNames.seriesNo)?.asText() ?: 0
         val originalTitle = jsonNode.get(NationalLibraryAPIResponseNames.title).asText()
         val title = when {
@@ -50,9 +50,9 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         return title.trim()
     }
 
-    override fun resolveSeriesCode(): String? = null
+    override fun extractSeriesCode(): String? = null
 
-    override fun resolveSeriesIsbn(): String? {
+    override fun extractSeriesIsbn(): String? {
         val isbn = jsonNode.get(NationalLibraryAPIResponseNames.setIsbn)?.asText()
         return if (isbn != null && isbn.isNotEmpty()) {
             isbn
@@ -61,12 +61,12 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         }
     }
 
-    override fun resolveDivisions(): Set<String>? = null
+    override fun extractDivisions(): Set<String>? = null
 
-    override fun resolvePublisher(): String? = publisherRawMapper
+    override fun extractPublisher(): String? = publisherRawMapper
         .mapping(jsonNode.get(NationalLibraryAPIResponseNames.publisher).asText())
 
-    override fun resolvePublishDate(): LocalDate? {
+    override fun extractPublishDate(): LocalDate? {
         val realPublishDateNode = jsonNode.get(NationalLibraryAPIResponseNames.realPublishDate)
         val publishPreDateNode = jsonNode.get(NationalLibraryAPIResponseNames.publishPreDate)
         return when {
@@ -79,17 +79,17 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         }
     }
 
-    override fun resolveAuthors(): Set<String>?  = null
+    override fun extractAuthors(): Set<String>?  = null
 
-    override fun resolveThumbnail(): Thumbnail?  = null
+    override fun extractThumbnail(): Thumbnail?  = null
 
-    override fun resolveDescription(): String?  = null
+    override fun extractDescription(): String?  = null
 
-    override fun resolveIndex(): List<String>? = null
+    override fun extractIndex(): List<String>? = null
 
-    override fun resolveKeywords(): Set<String>?  = null
+    override fun extractKeywords(): Set<String>?  = null
 
-    override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
+    override fun extractOriginal(): Map<OriginalPropertyKey, String?> {
         val map = HashMap<OriginalPropertyKey, String?>()
         map[OriginalPropertyKey(NationalLibraryAPIResponseNames.isbn, mappingType)] =
             jsonNode.get(NationalLibraryAPIResponseNames.isbn)?.asText()
@@ -120,7 +120,7 @@ class NationalLibraryJsonNodeContext(private val jsonNode: JsonNode, private val
         return map
     }
 
-    override fun resolveExternalLink(): Map<MappingType, BookExternalLink>? = null
+    override fun extractExternalLink(): Map<MappingType, BookExternalLink>? = null
 
     override fun createdAt(): LocalDateTime = LocalDateTime.now(clock)
 

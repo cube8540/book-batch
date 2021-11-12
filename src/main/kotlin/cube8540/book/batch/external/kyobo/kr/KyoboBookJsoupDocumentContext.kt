@@ -33,13 +33,13 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
     private val metaTags = document.getElementsByTag(meta)
     private val inputTags = document.getElementsByTag(input)
 
-    override fun resolveIsbn(): String = metaTags
+    override fun extractIsbn(): String = metaTags
         .first { it.attr(property).equals(KyoboBookMetaTagPropertySelector.isbn) }.attr(content)
 
-    override fun resolveTitle(): String? = metaTags
+    override fun extractTitle(): String? = metaTags
         .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.title) }?.attr(content)
 
-    override fun resolveSeriesCode(): String? {
+    override fun extractSeriesCode(): String? {
         val seriesCode = inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.seriesBarcode) }?.attr(value)
         val aBarcode = inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }?.attr(value)
         return if (seriesCode != null && seriesCode.isNotEmpty()) {
@@ -51,25 +51,25 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         }
     }
 
-    override fun resolveSeriesIsbn(): String? = null
+    override fun extractSeriesIsbn(): String? = null
 
-    override fun resolveDivisions(): Set<String> {
+    override fun extractDivisions(): Set<String> {
         return inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }
             ?.attr(value)
             ?.let { divisionMapper.mapping(convertCategoryCodeToRawDivisions(it)).toSet() }
             ?: emptySet()
     }
 
-    override fun resolvePublisher(): String? = null
+    override fun extractPublisher(): String? = null
 
-    override fun resolvePublishDate(): LocalDate? = null
+    override fun extractPublishDate(): LocalDate? = null
 
-    override fun resolveAuthors(): Set<String> {
+    override fun extractAuthors(): Set<String> {
         return metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }
                 ?.attr(content)?.split(",")?.map { v -> v.trim() }?.filter { v-> v.isNotEmpty() }?.toSet() ?: emptySet()
     }
 
-    override fun resolveThumbnail(): Thumbnail {
+    override fun extractThumbnail(): Thumbnail {
         val largeThumbnail = metaTags
             .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
             ?.attr(content)
@@ -84,7 +84,7 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         )
     }
 
-    override fun resolveDescription(): String? {
+    override fun extractDescription(): String? {
         val element = findArticleByCommentText(KyoboBookCommentText.descriptionCommentText)
         element?.select("br")?.append("\\n")
         element?.select("p")?.prepend("\\n\\n")
@@ -92,7 +92,7 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         return element?.text()
     }
 
-    override fun resolveIndex(): List<String>? {
+    override fun extractIndex(): List<String>? {
         val element = findArticleByCommentText(KyoboBookCommentText.indexCommentText)
         val indexList = element?.html()
             ?.replace("\r", "")
@@ -103,13 +103,13 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         return indexList?.filter { it.isNotEmpty() && it.isNotBlank() }?.map { it.trim() }
     }
 
-    override fun resolveKeywords(): Set<String>? = null
+    override fun extractKeywords(): Set<String>? = null
 
-    override fun resolveOriginal(): Map<OriginalPropertyKey, String?> {
+    override fun extractOriginal(): Map<OriginalPropertyKey, String?> {
         val original = HashMap<OriginalPropertyKey, String?>()
         original[OriginalPropertyKey(KyoboBookMetaTagNameSelector.author, mappingType)] =
             metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }?.attr(content)
-        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.title, mappingType)] = resolveTitle()
+        original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.title, mappingType)] = extractTitle()
         original[OriginalPropertyKey(KyoboBookMetaTagPropertySelector.largeThumbnail, mappingType)] = metaTags
             .find { it.attr(property).equals(KyoboBookMetaTagPropertySelector.largeThumbnail) }
             ?.attr(content)
@@ -128,10 +128,10 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
         return original
     }
 
-    override fun resolveExternalLink(): Map<MappingType, BookExternalLink> {
+    override fun extractExternalLink(): Map<MappingType, BookExternalLink> {
         val uriComponentBuilder = UriComponentsBuilder.newInstance()
             .uri(URI.create(KyoboBookRequestNames.kyoboDomain + KyoboBookRequestNames.kyoboBookDetailsPath))
-            .queryParam(KyoboBookRequestNames.isbn, resolveIsbn())
+            .queryParam(KyoboBookRequestNames.isbn, extractIsbn())
             .build()
 
         val originalPrice = metaTags.find { it.attr(property) == KyoboBookMetaTagPropertySelector.originalPrice }

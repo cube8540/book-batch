@@ -74,27 +74,27 @@ fun createBookContext(
 ): BookDetailsContext {
     val context: BookDetailsContext = mockk(relaxed = true)
 
-    every { context.resolveIsbn() } returns isbn
-    every { context.resolveTitle() } returns title
-    every { context.resolvePublisher() } returns publisher
-    every { context.resolvePublishDate() } returns publishDate
-    every { context.resolveSeriesCode() } returns seriesCode
-    every { context.resolveSeriesIsbn() } returns seriesIsbn
+    every { context.extractIsbn() } returns isbn
+    every { context.extractTitle() } returns title
+    every { context.extractPublisher() } returns publisher
+    every { context.extractPublishDate() } returns publishDate
+    every { context.extractSeriesCode() } returns seriesCode
+    every { context.extractSeriesIsbn() } returns seriesIsbn
 
     if (largeThumbnail != null || mediumThumbnail != null || smallThumbnail != null) {
-        every { context.resolveThumbnail() } returns Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
+        every { context.extractThumbnail() } returns Thumbnail(largeThumbnail, mediumThumbnail, smallThumbnail)
     } else {
-        every { context.resolveThumbnail() } returns null
+        every { context.extractThumbnail() } returns null
     }
 
-    every { context.resolveDivisions() } returns divisions
-    every { context.resolveAuthors() } returns authors
-    every { context.resolveKeywords() } returns keywords
-    every { context.resolveDescription() } returns description
-    every { context.resolveIndex() } returns index
+    every { context.extractDivisions() } returns divisions
+    every { context.extractAuthors() } returns authors
+    every { context.extractKeywords() } returns keywords
+    every { context.extractDescription() } returns description
+    every { context.extractIndex() } returns index
 
-    every { context.resolveOriginal() } returns original
-    every { context.resolveExternalLink() } returns externalLink
+    every { context.extractOriginal() } returns original
+    every { context.extractExternalLink() } returns externalLink
 
     return context
 }
