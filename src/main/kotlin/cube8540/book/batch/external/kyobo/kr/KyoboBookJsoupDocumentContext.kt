@@ -129,6 +129,8 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
             inputTags.find { it.attr(name).equals(KyoboBookInputNameSelector.aBarcode) }?.attr(value)
         original[OriginalPropertyKey(KyoboBookInputNameSelector.categoryCode, mappingType)] = inputTags
             .find { it.attr(name).equals(KyoboBookInputNameSelector.categoryCode) }?.attr(value)
+        original[OriginalPropertyKey(KyoboBookClassSelector.publishDate, mappingType)] = document
+            .select(KyoboBookClassSelector.publishDate)?.first()?.text()
         return original
     }
 
