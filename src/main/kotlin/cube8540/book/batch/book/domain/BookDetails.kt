@@ -80,6 +80,9 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @Column(name = "upstream_target", nullable = false)
     var isUpstreamTarget: Boolean? = false
 
+    @Column(name = "confirmed_publication", nullable = false)
+    var confirmedPublication: Boolean? = false
+
     @Transient
     var newObject: Boolean
         private set
@@ -92,6 +95,10 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
     @PostPersist
     fun markingPersistedEntity() {
         this.newObject = false
+    }
+
+    fun markingConfirmedPublication() {
+        this.confirmedPublication = true
     }
 
     override fun getId(): String = isbn

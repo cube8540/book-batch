@@ -51,7 +51,7 @@ val upstreamFailedLogAssertIgnoringFields = listOf(UpstreamFailedLog::sequence.n
 val defaultBookIndex = listOf("index00000", "index00001", "index00002")
 
 const val defaultLink = "https://localhost:1234"
-val defaultLinkUri = URI.create(defaultLink)
+val defaultLinkUri: URI = URI.create(defaultLink)
 val defaultExternalLink = mapOf(MappingType.KYOBO to BookExternalLink(defaultLinkUri, defaultOriginalPrice, defaultSalePrice))
 
 fun createBookContext(
@@ -116,6 +116,7 @@ fun createBookDetails(
     index: List<String>? = defaultBookIndex,
     original: Map<OriginalPropertyKey, String>? = defaultOriginal,
     externalLink: Map<MappingType, BookExternalLink>? = defaultExternalLink,
+    confirmedPublication: Boolean = false,
     isUpstream: Boolean = false,
     isNew: Boolean = true
 ): BookDetails {
@@ -124,6 +125,7 @@ fun createBookDetails(
         book.markingPersistedEntity()
     }
     book.isUpstreamTarget = isUpstream
+    book.confirmedPublication = confirmedPublication
     return book
 }
 

@@ -1,5 +1,6 @@
 package cube8540.book.batch.external.naver.com
 
+import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.domain.OriginalPropertyKey
 import cube8540.book.batch.book.domain.createBookDetails
@@ -21,11 +22,16 @@ class NaverBookDetailsControllerTest {
             val original = createBookDetails(isbn = "originalIsbn", title = "originalTitle", publisher = "originalPublisher", publishDate = LocalDate.of(2021, 1, 1))
             val mergedData = createBookDetails(title = "mergedTitle", publisher = "mergedPublisher", publishDate = LocalDate.of(2021, 6, 5))
 
-            val comparingFields = listOf("title", "publisher", "publishDate").toTypedArray()
+            val comparingFields = listOf(
+                BookDetails::title.name,
+                BookDetails::publisher.name,
+                BookDetails::publishDate.name
+            ).toTypedArray()
 
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
                 .isEqualToComparingOnlyGivenFields(mergedData, *comparingFields)
+            assertThat(result.confirmedPublication).isTrue
         }
     }
 
