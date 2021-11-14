@@ -28,7 +28,8 @@ open class WebClientBookUpstreamWriter(
             authors = it.authors?.toList(),
             description = it.description,
             indexes = it.indexes,
-            externalLinks = it.externalLinks?.mapValues { pair -> convertToUpstreamExternalLink(pair.value) }
+            externalLinks = it.externalLinks?.mapValues { pair -> convertToUpstreamExternalLink(pair.value) },
+            confirmedPublication = it.confirmedPublication
         ) }
         externalUpstream.upstream(BookUpstreamAPIRequest(bookUpstreamRequestDetails))
 
