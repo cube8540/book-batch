@@ -97,10 +97,6 @@ class BookDetails(context: BookDetailsContext): Persistable<String> {
         this.newObject = false
     }
 
-    fun markingConfirmedPublication() {
-        this.confirmedPublication = true
-    }
-
     override fun getId(): String = isbn
 
     override fun isNew(): Boolean = newObject
