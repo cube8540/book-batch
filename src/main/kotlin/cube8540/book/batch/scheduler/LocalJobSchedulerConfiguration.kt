@@ -24,7 +24,7 @@ class LocalJobSchedulerConfiguration {
 
     @Scheduled(initialDelay = 1500, fixedDelay = 3600000)
     fun launchJob() {
-        val from = LocalDate.now(clock).minusDays(3)
+        val from = LocalDate.now(clock).withDayOfMonth(1)
         val to = LocalDate.now(clock).plusMonths(3)
 
         val launchParameter = JobSchedulerLaunchParameter(from, to)
