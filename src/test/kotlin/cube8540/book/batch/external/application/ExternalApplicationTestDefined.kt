@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.book.domain.*
 import cube8540.book.batch.external.BookUpstreamAPIRequest
 import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.external.BookUpstreamExternalLink
 import cube8540.book.batch.external.kyobo.kr.defaultIndexes
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -15,6 +16,11 @@ import java.net.URI
 import java.time.LocalDate
 
 val defaultObjectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+
+val defaultBookUpstreamExternalLink = mapOf(
+    MappingType.KYOBO to BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice),
+    MappingType.ALADIN to BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice)
+)
 
 fun createUpstreamResponseJson(
     successBooks: List<String> = emptyList(),
@@ -83,9 +89,11 @@ fun createUpstreamBookDetails(
     smallThumbnail: URI? = defaultSmallThumbnail,
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
-    indexes: List<String>? = defaultIndexes
+    indexes: List<String>? = defaultIndexes,
+    externalLink: Map<MappingType, BookUpstreamExternalLink>? = defaultBookUpstreamExternalLink,
+    confirmedPublication: Boolean? = false
 ): BookUpstreamAPIRequestDetails =
-    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, indexes)
+    BookUpstreamAPIRequestDetails(isbn, title, publishDate, publisher, seriesIsbn, seriesCode, largeThumbnail, mediumThumbnail, smallThumbnail, authors, description, indexes, externalLink, confirmedPublication)
 
 fun createExternalUpstreamDispatcher(
     params: BookUpstreamAPIRequest,
