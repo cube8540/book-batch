@@ -8,10 +8,24 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class KyoboBookJsoupDocumentContextTest {
 
     private val divisionMapper: DivisionRawMapper = mockk(relaxed = true)
+
+    @Test
+    fun `extract publish date with etc information`() {
+        val publishDate = LocalDate.of(2021, 11, 15)
+        val publishDateHtml = publishDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + " 출간 (1쇄 2021년 11월 15일)"
+
+        val document = createDocument(publishDate = publishDateHtml)
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.extractPublishDate()
+        assertThat(result).isEqualTo(publishDate)
+    }
 
     @Test
     fun `extract publish date`() {

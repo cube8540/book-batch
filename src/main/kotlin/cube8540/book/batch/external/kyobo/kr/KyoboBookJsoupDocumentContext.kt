@@ -65,7 +65,8 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
 
     override fun extractPublishDate(): LocalDate? = document.select(KyoboBookClassSelector.publishDate)
         ?.first()?.text()
-        ?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 출간")) }
+        ?.let { Regex("^\\d{4}년\\s\\d{2}월\\s\\d{2}일").find(it) }
+        ?.let { LocalDate.parse(it.value, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) }
 
     override fun extractAuthors(): Set<String> {
         return metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }
