@@ -7,7 +7,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.jsoup.nodes.Document
 import java.net.URI
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 const val defaultHeaderCookieName = "Set-Cookie"
 const val defaultHeaderCookieKey = "defaultCookieKey"
@@ -27,6 +29,9 @@ val defaultKyoboLoginIssuedAt: LocalDateTime = LocalDateTime.of(2021, 5, 5, 20, 
 val defaultKyoboLoginExpiredDateTime: LocalDateTime = defaultKyoboLoginIssuedAt.plusSeconds(KyoboLoginFilter.expiredSeconds.toLong()).plusNanos(1)
 val defaultKyoboLoginNotExpiredDateTime: LocalDateTime = defaultKyoboLoginIssuedAt.plusSeconds(KyoboLoginFilter.expiredSeconds.toLong()).minusNanos(1)
 
+val defaultPublishDate: LocalDate = LocalDate.of(2021, 11, 14)
+val defaultPublishDateHtml: String = defaultPublishDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + " 출간"
+
 val defaultIndexes = listOf("index0001", "index0002", "index0003")
 val defaultIndexesHtml = defaultIndexes.joinToString(separator = "<br >")
 
@@ -36,6 +41,7 @@ fun createDocument(
     originalBarcode: String? = defaultOriginalBarcode,
     authors: String? = defaultDocumentAuthors,
     title: String? = defaultTitle,
+    publishDate: String? = defaultPublishDateHtml,
     largeThumbnail: String? = defaultLargeThumbnail.toString(),
     mediumThumbnail: String? = defaultMediumThumbnail.toString(),
     originalPrice: Double? = defaultOriginalPrice,
@@ -70,6 +76,12 @@ fun createDocument(
         document.appendElement("meta")
             .attr("property", KyoboBookMetaTagPropertySelector.title)
             .attr("content", title)
+    }
+
+    publishDate?.let {
+        document.appendElement("span")
+            .addClass(KyoboBookClassSelector.publishDate.replace(".", ""))
+            .appendText(it)
     }
 
     largeThumbnail?.let {

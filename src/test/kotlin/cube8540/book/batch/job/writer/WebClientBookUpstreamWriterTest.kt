@@ -22,9 +22,9 @@ class WebClientBookUpstreamWriterTest {
     fun `upstream book`() {
         val bookExternalLink = BookExternalLink(defaultLinkUri, defaultOriginalPrice, defaultSalePrice)
         val bookDetails = mutableListOf(
-            createBookDetails(isbn = "isbn0000", externalLink = mapOf(MappingType.ALADIN to bookExternalLink)),
-            createBookDetails(isbn = "isbn0001", externalLink = mapOf(MappingType.ALADIN to bookExternalLink)),
-            createBookDetails(isbn = "isbn0002", externalLink = mapOf(MappingType.ALADIN to bookExternalLink))
+            createBookDetails(isbn = "isbn0000", externalLink = mapOf(MappingType.ALADIN to bookExternalLink), confirmedPublication = true),
+            createBookDetails(isbn = "isbn0001", externalLink = mapOf(MappingType.ALADIN to bookExternalLink), confirmedPublication = true),
+            createBookDetails(isbn = "isbn0002", externalLink = mapOf(MappingType.ALADIN to bookExternalLink), confirmedPublication = true)
         )
         val bookUpstreamRequestCaptor = slot<BookUpstreamAPIRequest>()
         val upstreamBookExternalLink = BookUpstreamExternalLink(defaultLink, defaultOriginalPrice, defaultSalePrice)
@@ -33,9 +33,9 @@ class WebClientBookUpstreamWriterTest {
 
         writer.write(bookDetails)
         assertThat(bookUpstreamRequestCaptor.captured).isEqualTo(createBookUpstreamRequest(
-            createBookUpstreamRequestDetails(isbn = "isbn0000", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink)),
-            createBookUpstreamRequestDetails(isbn = "isbn0001", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink)),
-            createBookUpstreamRequestDetails(isbn = "isbn0002", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink))
+            createBookUpstreamRequestDetails(isbn = "isbn0000", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink), confirmedPublication = true),
+            createBookUpstreamRequestDetails(isbn = "isbn0001", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink), confirmedPublication = true),
+            createBookUpstreamRequestDetails(isbn = "isbn0002", upstreamExternalLink = mapOf(MappingType.ALADIN to upstreamBookExternalLink), confirmedPublication = true)
         ))
     }
 

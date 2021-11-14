@@ -21,6 +21,7 @@ object KyoboBookInputNameSelector {
 }
 
 object KyoboBookClassSelector {
+    const val publishDate = ".date"
     const val bookContent = ".content_middle > .content_left > .box_detail_content > .box_detail_article"
 }
 

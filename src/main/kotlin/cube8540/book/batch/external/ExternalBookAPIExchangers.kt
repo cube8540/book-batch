@@ -41,7 +41,8 @@ data class BookUpstreamAPIRequestDetails(
     val authors: List<String>? = null,
     val description: String? = null,
     val indexes: List<String>? = null,
-    val externalLinks: Map<MappingType, BookUpstreamExternalLink>? = null
+    val externalLinks: Map<MappingType, BookUpstreamExternalLink>? = null,
+    val confirmedPublication: Boolean? = false
 )
 
 data class BookAPIResponse(
