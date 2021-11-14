@@ -11,6 +11,7 @@ import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class KyoboBookJsoupDocumentContext(private val document: Document, private val divisionMapper: DivisionRawMapper):
     BookDetailsContext {
@@ -62,7 +63,9 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
 
     override fun extractPublisher(): String? = null
 
-    override fun extractPublishDate(): LocalDate? = null
+    override fun extractPublishDate(): LocalDate? = document.select(KyoboBookClassSelector.publishDate)
+        ?.first()?.text()
+        ?.let { LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 출간")) }
 
     override fun extractAuthors(): Set<String> {
         return metaTags.find { it.attr(name).equals(KyoboBookMetaTagNameSelector.author) }

@@ -14,6 +14,15 @@ class KyoboBookJsoupDocumentContextTest {
     private val divisionMapper: DivisionRawMapper = mockk(relaxed = true)
 
     @Test
+    fun `extract publish date`() {
+        val document = createDocument()
+        val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
+
+        val result = context.extractPublishDate()
+        assertThat(result).isEqualTo(defaultPublishDate)
+    }
+
+    @Test
     fun `extract authors`() {
         val documentAuthors = " author 0001 , author 0002 "
         val authors = setOf("author 0001", "author 0002")
