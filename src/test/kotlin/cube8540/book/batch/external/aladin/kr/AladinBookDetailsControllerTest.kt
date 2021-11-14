@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URI
+import java.time.LocalDate
 
 class AladinBookDetailsControllerTest {
 
@@ -15,12 +16,15 @@ class AladinBookDetailsControllerTest {
 
         @Test
         fun `merged base and item`() {
+            val mergedPublishDate = LocalDate.of(2021, 11, 14)
+
             val original = createBookDetails(isbn = "isbn0000")
-            val mergedData = createBookDetails(title = "mergedTitle")
+            val mergedData = createBookDetails(title = "mergedTitle", publishDate = mergedPublishDate)
 
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
-                .isEqualToComparingOnlyGivenFields(mergedData, BookDetails::title.name)
+                .isEqualToComparingOnlyGivenFields(mergedData, BookDetails::title.name, BookDetails::publishDate.name)
+            assertThat(result.confirmedPublication).isTrue
         }
     }
 

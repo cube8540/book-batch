@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URI
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class KyoboBookDetailsControllerTest {
 
@@ -20,7 +22,8 @@ class KyoboBookDetailsControllerTest {
             val mergedIndex = listOf("mergedIndex0000")
 
             val original = createBookDetails(isbn = "isbn0000")
-            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000", authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex)
+            val mergedData = createBookDetails(title = "mergedTitle", seriesCode = "mergedSeriesCode0000",
+                authors = mergedAuthors, divisions = mergedDivision, description = "mergedDescription", index = mergedIndex)
 
             val comparingFields = listOf(
                 BookDetails::seriesCode.name,
@@ -33,6 +36,7 @@ class KyoboBookDetailsControllerTest {
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
                 .isEqualToComparingOnlyGivenFields(mergedData, *comparingFields)
+            assertThat(result.confirmedPublication).isTrue
         }
     }
     @Nested
@@ -140,6 +144,30 @@ class KyoboBookDetailsControllerTest {
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
             assertThat(result.externalLinks).isEqualTo(originalExternalLink + mergedExternalLink)
+        }
+    }
+
+    @Nested
+    inner class MergedPublishDate {
+
+        @Test
+        fun `merge when publish date is null`() {
+            val original = createBookDetails(publishDate = defaultPublishDate)
+            val mergedData = createBookDetails(publishDate = null)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result.publishDate).isEqualTo(defaultPublishDate)
+        }
+
+        @Test
+        fun `merge when publish date is not null`() {
+            val mergedPublishDate = LocalDate.of(2021, 11, 14)
+
+            val original = createBookDetails()
+            val mergedData = createBookDetails(publishDate = mergedPublishDate)
+
+            val result = controller.merge(original, mergedData)
+            assertThat(result.publishDate).isEqualTo(mergedPublishDate)
         }
     }
 }

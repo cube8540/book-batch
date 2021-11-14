@@ -98,6 +98,7 @@ create table if not exists book_details (
 alter table book_details alter column title varchar(256) not null;
 alter table book_details add column if not exists upstream_target boolean not null default false;
 alter table book_details add column if not exists series_isbn varchar(32);
+alter table book_details add column if not exists confirmed_publication boolean not null default false;
 create index if not exists book_publish_date_index on book_details (publish_date);
 create index if not exists book_created_at_index on book_details (created_at desc);
 create index if not exists book_series_code_index on book_details (series_code);

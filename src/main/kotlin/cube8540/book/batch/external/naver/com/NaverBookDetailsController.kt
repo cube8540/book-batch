@@ -21,6 +21,7 @@ class NaverBookDetailsController: BookDetailsController {
         } else if (item.original != null) {
             base.original = item.original
         }
+        base.confirmedPublication = true
 
         return base
     }

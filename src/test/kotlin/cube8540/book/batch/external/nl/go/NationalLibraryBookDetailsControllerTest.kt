@@ -1,5 +1,6 @@
 package cube8540.book.batch.external.nl.go
 
+import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.MappingType
 import cube8540.book.batch.book.domain.OriginalPropertyKey
 import cube8540.book.batch.book.domain.createBookDetails
@@ -21,7 +22,8 @@ class NationalLibraryBookDetailsControllerTest {
 
             val result = controller.merge(original, mergedData)
             assertThat(result).isEqualTo(original)
-                .isEqualToComparingOnlyGivenFields(mergedData, "seriesIsbn")
+                .isEqualToComparingOnlyGivenFields(mergedData, BookDetails::seriesIsbn.name)
+            assertThat(result.confirmedPublication).isFalse
         }
     }
 

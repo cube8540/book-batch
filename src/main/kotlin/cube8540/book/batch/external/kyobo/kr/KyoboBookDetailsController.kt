@@ -12,6 +12,8 @@ class KyoboBookDetailsController: BookDetailsController {
         base.authors = item.authors
         base.divisions = item.divisions
 
+        item.publishDate?.let { base.publishDate = it }
+
         if (base.thumbnail == null) {
             base.thumbnail = Thumbnail(item.thumbnail?.largeThumbnail, item.thumbnail?.mediumThumbnail, null)
         } else {
@@ -32,6 +34,7 @@ class KyoboBookDetailsController: BookDetailsController {
         } else if (item.externalLinks != null) {
             base.externalLinks = item.externalLinks
         }
+        base.confirmedPublication = true
 
         return base
     }

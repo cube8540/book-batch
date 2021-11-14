@@ -25,7 +25,8 @@ fun createBookUpstreamRequestDetails(
     authors: List<String>? = defaultAuthors.toList(),
     description: String? = defaultDescription,
     index: List<String>? = defaultBookIndex,
-    upstreamExternalLink: Map<MappingType, BookUpstreamExternalLink>? = defaultBookUpstreamExternalLink
+    upstreamExternalLink: Map<MappingType, BookUpstreamExternalLink>? = defaultBookUpstreamExternalLink,
+    confirmedPublication: Boolean? = false
 ): BookUpstreamAPIRequestDetails =
     BookUpstreamAPIRequestDetails(
         isbn,
@@ -40,7 +41,8 @@ fun createBookUpstreamRequestDetails(
         authors,
         description,
         index,
-        upstreamExternalLink
+        upstreamExternalLink,
+        confirmedPublication
     )
 
 fun createBookUpstreamRequest(
