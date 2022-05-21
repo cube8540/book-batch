@@ -1,4 +1,4 @@
-package cube8540.book.batch.external
+package cube8540.book.batch.interlock
 
 interface PageDecision {
     fun calculation(page: Int, pageSize: Int): Int

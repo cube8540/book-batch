@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.external.BookAPIResponse
-import cube8540.book.batch.external.exception.InternalBadRequestException
+import cube8540.book.batch.interlock.BookAPIResponse
+import cube8540.book.batch.interlock.client.InternalBadRequestException
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

@@ -1,8 +1,8 @@
-package cube8540.book.batch.external.naver.com
+package cube8540.book.batch.interlock.naver.com.application
 
-import cube8540.book.batch.external.PageDecision
+import cube8540.book.batch.interlock.PageDecision
 
-class NaverBookAPIPageDecision: PageDecision {
+class NaverBookPageDecision: PageDecision {
     override fun calculation(page: Int, pageSize: Int): Int = when (page == 1) {
         true -> page
         else -> (pageSize * (page - 1)) + 1

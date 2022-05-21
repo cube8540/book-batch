@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ArrayNode
 import cube8540.book.batch.book.domain.*
-import cube8540.book.batch.external.BookAPIErrorResponse
-import cube8540.book.batch.external.BookAPIRequest
-import cube8540.book.batch.external.BookAPIResponse
+import cube8540.book.batch.interlock.BookAPIErrorResponse
+import cube8540.book.batch.interlock.BookAPIRequest
+import cube8540.book.batch.interlock.BookAPIResponse
 import cube8540.book.batch.getQueryParams
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse

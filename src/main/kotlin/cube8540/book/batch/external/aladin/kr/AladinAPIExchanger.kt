@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.aladin.kr
 
-import cube8540.book.batch.external.*
+import cube8540.book.batch.interlock.*
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
@@ -8,7 +8,8 @@ import reactor.util.retry.Retry
 import java.net.URI
 import java.time.Duration
 
-class AladinAPIExchanger(private val webClient: WebClient, private val key: AladinAuthenticationInfo): ExternalBookAPIExchanger {
+class AladinAPIExchanger(private val webClient: WebClient, private val key: AladinAuthenticationInfo):
+    ExternalBookAPIExchanger {
 
     companion object {
         const val defaultRetryCount = 1

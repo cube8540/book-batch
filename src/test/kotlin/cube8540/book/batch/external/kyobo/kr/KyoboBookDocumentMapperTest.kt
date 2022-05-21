@@ -1,8 +1,8 @@
 package cube8540.book.batch.external.kyobo.kr
 
 import cube8540.book.batch.book.domain.DivisionRawMapper
-import cube8540.book.batch.external.exception.InternalBadRequestException
-import cube8540.book.batch.external.exception.InvalidAuthenticationException
+import cube8540.book.batch.interlock.client.InternalBadRequestException
+import cube8540.book.batch.interlock.client.InvalidAuthenticationException
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable

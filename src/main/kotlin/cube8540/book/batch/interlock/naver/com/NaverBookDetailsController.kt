@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.naver.com
+package cube8540.book.batch.interlock.naver.com
 
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.Thumbnail

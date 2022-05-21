@@ -30,6 +30,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-oauth2-client:5.4.5")
 
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:3.0.6")
+
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.7.1")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")

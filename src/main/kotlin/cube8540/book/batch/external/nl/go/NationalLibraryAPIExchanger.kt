@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.nl.go
 
-import cube8540.book.batch.external.*
+import cube8540.book.batch.interlock.*
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
@@ -9,7 +9,8 @@ import java.net.URI
 import java.time.Duration
 import java.time.format.DateTimeFormatter
 
-class NationalLibraryAPIExchanger(private val webClient: WebClient, private val key: NationalLibraryAPIKey): ExternalBookAPIExchanger {
+class NationalLibraryAPIExchanger(private val webClient: WebClient, private val key: NationalLibraryAPIKey):
+    ExternalBookAPIExchanger {
 
     companion object {
         const val defaultRetryCount = 1

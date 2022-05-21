@@ -1,13 +1,12 @@
 package cube8540.book.batch.job
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import cube8540.book.batch.APIConnectionProperty
-import cube8540.book.batch.AuthenticationProperty
 import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsContext
-import cube8540.book.batch.external.naver.com.NaverBookAPIExchanger
-import cube8540.book.batch.external.naver.com.NaverBookAPIRequestNames
+import cube8540.book.batch.book.domain.PublisherRawMapper
+import cube8540.book.batch.interlock.naver.com.application.NaverBookExchanger
+import cube8540.book.batch.interlock.naver.com.application.NaverBookPageDecision
+import cube8540.book.batch.interlock.naver.com.client.NaverBookClient
 import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
 import cube8540.book.batch.job.processor.BookDetailsPublisherNonNullProcessor
 import cube8540.book.batch.job.processor.ContextToBookDetailsProcessor
@@ -25,13 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.http.codec.json.Jackson2JsonDecoder
-import org.springframework.http.codec.json.Jackson2JsonEncoder
-import org.springframework.web.reactive.function.client.ExchangeStrategies
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.netty.http.client.HttpClient
-import java.time.Duration
 
 @Configuration
 class NaverBookAPIJobConfiguration {
@@ -43,8 +35,6 @@ class NaverBookAPIJobConfiguration {
         const val jobProcessorName = jobName + "JobProcessor"
         const val jobWriterName = jobName + "JobWriter"
         const val defaultChunkSize = 100
-
-        internal var endpointBase = NaverBookAPIRequestNames.endpointBase
     }
 
     @set:Autowired
@@ -54,16 +44,13 @@ class NaverBookAPIJobConfiguration {
     lateinit var stepBuilderFactory: StepBuilderFactory
 
     @set:Autowired
-    lateinit var authenticationProperty: AuthenticationProperty
+    lateinit var client: NaverBookClient
 
-    @set:Autowired
-    lateinit var connectionProperty: APIConnectionProperty
+    @set:[Autowired Qualifier("naverPublisherRawMapper")]
+    lateinit var publisherRawMapper: PublisherRawMapper
 
     @set:Autowired
     lateinit var jobParameter: BookAPIRequestJobParameter
-
-    @set:[Autowired Qualifier("naverBookAPIObjectMapper")]
-    lateinit var objectMapper: ObjectMapper
 
     @set:[Autowired Qualifier("naverBookAPICommandService")]
     lateinit var bookCommandService: BookCommandService
@@ -87,26 +74,7 @@ class NaverBookAPIJobConfiguration {
     @StepScope
     @Bean(jobReaderName)
     fun bookContextReader(): WebClientBookReader {
-        val webClient = WebClient.builder()
-            .baseUrl(endpointBase)
-            .exchangeStrategies(
-                ExchangeStrategies.builder().codecs {
-                    it.customCodecs().register(Jackson2JsonEncoder(objectMapper))
-                    it.customCodecs().register(Jackson2JsonDecoder(objectMapper))
-                }.build()
-            )
-            .clientConnector(
-                ReactorClientHttpConnector(
-                    HttpClient.create()
-                        .responseTimeout(Duration.ofSeconds(connectionProperty.maxWaitSecond!!.toLong()))
-                ))
-            .build()
-
-        val exchanger = NaverBookAPIExchanger(webClient, authenticationProperty.naverBook)
-        exchanger.retryCount = connectionProperty.retryCount!!
-        exchanger.retryDelaySecond = connectionProperty.retryDelaySecond!!
-
-        val reader = WebClientBookReader(exchanger, jobParameter)
+        val reader = WebClientBookReader(NaverBookExchanger(client, NaverBookPageDecision(), publisherRawMapper), jobParameter)
         reader.isSaveState = false
         reader.pageSize = chunkSize
 

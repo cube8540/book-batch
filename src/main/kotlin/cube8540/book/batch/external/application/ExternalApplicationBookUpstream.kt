@@ -1,8 +1,8 @@
 package cube8540.book.batch.external.application
 
 import cube8540.book.batch.EndpointProperty
-import cube8540.book.batch.external.BookUpstreamAPIRequest
-import cube8540.book.batch.external.ExternalBookAPIUpstream
+import cube8540.book.batch.interlock.BookUpstreamAPIRequest
+import cube8540.book.batch.interlock.ExternalBookAPIUpstream
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.ApplicationEventPublisher

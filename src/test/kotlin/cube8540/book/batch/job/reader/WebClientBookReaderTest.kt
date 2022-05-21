@@ -3,9 +3,9 @@ package cube8540.book.batch.job.reader
 import cube8540.book.batch.book.domain.createBookContext
 import cube8540.book.batch.book.domain.defaultIsbn
 import cube8540.book.batch.book.domain.defaultPublisherCode
-import cube8540.book.batch.external.BookAPIRequest
-import cube8540.book.batch.external.BookAPIResponse
-import cube8540.book.batch.external.ExternalBookAPIExchanger
+import cube8540.book.batch.interlock.BookAPIRequest
+import cube8540.book.batch.interlock.BookAPIResponse
+import cube8540.book.batch.interlock.ExternalBookAPIExchanger
 import cube8540.book.batch.job.BookAPIRequestJobParameter
 import io.mockk.every
 import io.mockk.mockk

@@ -2,9 +2,9 @@ package cube8540.book.batch.job.writer
 
 import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.*
-import cube8540.book.batch.external.BookUpstreamAPIRequest
-import cube8540.book.batch.external.BookUpstreamExternalLink
-import cube8540.book.batch.external.ExternalBookAPIUpstream
+import cube8540.book.batch.interlock.BookUpstreamAPIRequest
+import cube8540.book.batch.interlock.BookUpstreamExternalLink
+import cube8540.book.batch.interlock.ExternalBookAPIUpstream
 import cube8540.book.batch.job.createBookUpstreamRequest
 import cube8540.book.batch.job.createBookUpstreamRequestDetails
 import io.mockk.*

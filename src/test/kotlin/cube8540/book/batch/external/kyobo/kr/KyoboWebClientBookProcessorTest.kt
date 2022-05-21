@@ -5,7 +5,7 @@ import cube8540.book.batch.book.domain.BookDetailsController
 import cube8540.book.batch.book.domain.createBookContext
 import cube8540.book.batch.book.domain.createBookDetails
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.external.exception.ExternalException
+import cube8540.book.batch.interlock.client.ClientExchangeException
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -49,7 +49,7 @@ class KyoboWebClientBookProcessorTest {
         val bookDetails: BookDetails = createBookDetails()
         val bookDetailsPageResponse = MockResponse().setBody(responseBody)
 
-        every { bookDocumentMapper.convertValue(capture(responseBodyCaptor)) } throws ExternalException("TEST")
+        every { bookDocumentMapper.convertValue(capture(responseBodyCaptor)) } throws ClientExchangeException("TEST")
         mockWebServer.dispatcher = createKyoboBookRequestDispatcher(result = bookDetailsPageResponse)
 
         val result = processor.process(bookDetails)

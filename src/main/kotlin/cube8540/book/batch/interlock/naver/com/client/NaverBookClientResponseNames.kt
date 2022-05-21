@@ -1,6 +1,6 @@
-package cube8540.book.batch.external.naver.com
+package cube8540.book.batch.interlock.naver.com.client
 
-object NaverBookAPIResponseNames {
+object NaverBookClientResponseNames {
 
     const val errorCode = "errorCode"
     const val errorMessage = "errorMessage"

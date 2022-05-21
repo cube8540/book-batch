@@ -12,7 +12,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.external.aladin.kr.AladinAuthenticationInfo
 import cube8540.book.batch.external.application.ExternalApplicationEndpointInfo
 import cube8540.book.batch.external.kyobo.kr.KyoboAuthenticationInfo
-import cube8540.book.batch.external.naver.com.NaverBookAPIKey
 import cube8540.book.batch.external.nl.go.NationalLibraryAPIKey
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -60,7 +59,6 @@ class EndpointProperty(
 @ConfigurationProperties(prefix = "api.authentication")
 class AuthenticationProperty(
     val nationalLibrary: NationalLibraryAPIKey,
-    val naverBook: NaverBookAPIKey,
     val kyobo: KyoboAuthenticationInfo,
     val aladin: AladinAuthenticationInfo
 )

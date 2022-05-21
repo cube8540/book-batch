@@ -1,12 +1,13 @@
-package cube8540.book.batch.external.naver.com
+package cube8540.book.batch.interlock.naver.com
 
+import cube8540.book.batch.interlock.naver.com.application.NaverBookPageDecision
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
-class NaverBookAPIPageDecisionTest {
+class NaverBookPageDecisionTest {
 
-    private val pageDecision = NaverBookAPIPageDecision()
+    private val pageDecision = NaverBookPageDecision()
 
     @Test
     fun `page number when first page`() {
