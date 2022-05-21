@@ -3,7 +3,7 @@ package cube8540.book.batch.external.nl.go
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
-import cube8540.book.batch.interlock.BookAPIErrorResponse
+import cube8540.book.batch.translator.BookAPIErrorResponse
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

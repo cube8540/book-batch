@@ -2,8 +2,8 @@ package cube8540.book.batch.external.nl.go
 
 import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.book.domain.defaultPublisher
-import cube8540.book.batch.interlock.BookAPIRequest
-import cube8540.book.batch.interlock.PageDecision
+import cube8540.book.batch.translator.BookAPIRequest
+import cube8540.book.batch.translator.PageDecision
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.mockwebserver.MockResponse

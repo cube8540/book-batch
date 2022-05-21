@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.interlock.BookAPIResponse
+import cube8540.book.batch.translator.BookAPIResponse
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

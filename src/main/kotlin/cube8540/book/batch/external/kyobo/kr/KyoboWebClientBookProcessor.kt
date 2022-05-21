@@ -3,7 +3,7 @@ package cube8540.book.batch.external.kyobo.kr
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsController
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.interlock.client.ClientExchangeException
+import cube8540.book.batch.translator.client.ClientExchangeException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.springframework.batch.item.ItemProcessor

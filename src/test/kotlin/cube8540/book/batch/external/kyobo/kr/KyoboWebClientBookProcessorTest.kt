@@ -5,7 +5,7 @@ import cube8540.book.batch.book.domain.BookDetailsController
 import cube8540.book.batch.book.domain.createBookContext
 import cube8540.book.batch.book.domain.createBookDetails
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.interlock.client.ClientExchangeException
+import cube8540.book.batch.translator.client.ClientExchangeException
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

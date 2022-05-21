@@ -4,9 +4,9 @@ import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsContext
 import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.interlock.naver.com.application.NaverBookExchanger
-import cube8540.book.batch.interlock.naver.com.application.NaverBookPageDecision
-import cube8540.book.batch.interlock.naver.com.client.NaverBookClient
+import cube8540.book.batch.translator.naver.com.application.NaverBookExchanger
+import cube8540.book.batch.translator.naver.com.application.NaverBookPageDecision
+import cube8540.book.batch.translator.naver.com.client.NaverBookClient
 import cube8540.book.batch.job.processor.BookDetailsIsbnNonNullProcessor
 import cube8540.book.batch.job.processor.BookDetailsPublisherNonNullProcessor
 import cube8540.book.batch.job.processor.ContextToBookDetailsProcessor

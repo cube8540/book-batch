@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.nl.go
 
-import cube8540.book.batch.interlock.client.*
+import cube8540.book.batch.translator.client.*
 
 class NationalLibraryAPIErrorCodeExceptionCreator: ErrorCodeExternalExceptionCreator {
     override fun create(code: String, message: String): ClientExchangeException = when (code) {

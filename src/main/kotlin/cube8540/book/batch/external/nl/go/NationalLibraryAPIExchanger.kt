@@ -1,6 +1,6 @@
 package cube8540.book.batch.external.nl.go
 
-import cube8540.book.batch.interlock.*
+import cube8540.book.batch.translator.*
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder

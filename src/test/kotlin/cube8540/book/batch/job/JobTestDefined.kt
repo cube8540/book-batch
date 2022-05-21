@@ -1,9 +1,9 @@
 package cube8540.book.batch.job
 
 import cube8540.book.batch.book.domain.*
-import cube8540.book.batch.interlock.BookUpstreamAPIRequest
-import cube8540.book.batch.interlock.BookUpstreamAPIRequestDetails
-import cube8540.book.batch.interlock.BookUpstreamExternalLink
+import cube8540.book.batch.translator.BookUpstreamAPIRequest
+import cube8540.book.batch.translator.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.translator.BookUpstreamExternalLink
 import java.net.URI
 import java.time.LocalDate
 

@@ -3,8 +3,8 @@ package cube8540.book.batch.external.kyobo.kr
 import cube8540.book.batch.book.domain.BookDetailsContext
 import cube8540.book.batch.book.domain.DivisionRawMapper
 import cube8540.book.batch.external.BookDocumentMapper
-import cube8540.book.batch.interlock.client.InternalBadRequestException
-import cube8540.book.batch.interlock.client.InvalidAuthenticationException
+import cube8540.book.batch.translator.client.InternalBadRequestException
+import cube8540.book.batch.translator.client.InvalidAuthenticationException
 import org.jsoup.nodes.Document
 
 class KyoboBookDocumentMapper(private val divisionRawMapper: DivisionRawMapper): BookDocumentMapper {

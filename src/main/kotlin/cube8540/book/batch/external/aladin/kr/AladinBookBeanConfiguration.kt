@@ -10,7 +10,7 @@ import cube8540.book.batch.book.infra.DefaultPublisherRawMapper
 import cube8540.book.batch.book.repository.BookDetailsRepository
 import cube8540.book.batch.book.repository.BookOriginalFilterRepository
 import cube8540.book.batch.book.repository.PublisherRepository
-import cube8540.book.batch.interlock.BookAPIResponse
+import cube8540.book.batch.translator.BookAPIResponse
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import cube8540.book.batch.book.domain.PublisherRawMapper
-import cube8540.book.batch.interlock.BookAPIResponse
+import cube8540.book.batch.translator.BookAPIResponse
 
 class AladinAPIDeserializer(private val publisherRawMapper: PublisherRawMapper)
     : StdDeserializer<BookAPIResponse>(BookAPIResponse::class.java) {

@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.book.domain.*
-import cube8540.book.batch.interlock.BookUpstreamAPIRequest
-import cube8540.book.batch.interlock.BookUpstreamAPIRequestDetails
-import cube8540.book.batch.interlock.BookUpstreamExternalLink
+import cube8540.book.batch.translator.BookUpstreamAPIRequest
+import cube8540.book.batch.translator.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.translator.BookUpstreamExternalLink
 import cube8540.book.batch.external.kyobo.kr.defaultIndexes
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse

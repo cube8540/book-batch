@@ -1,6 +1,6 @@
 package cube8540.book.batch.job
 
-import cube8540.book.batch.interlock.BookAPIRequest
+import cube8540.book.batch.translator.BookAPIRequest
 import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

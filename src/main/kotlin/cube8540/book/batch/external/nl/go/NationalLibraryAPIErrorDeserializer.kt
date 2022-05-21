@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
-import cube8540.book.batch.interlock.BookAPIErrorResponse
+import cube8540.book.batch.translator.BookAPIErrorResponse
 
 class NationalLibraryAPIErrorDeserializer: StdDeserializer<BookAPIErrorResponse>(BookAPIErrorResponse::class.java) {
     override fun deserialize(p0: JsonParser, p1: DeserializationContext?): BookAPIErrorResponse {
