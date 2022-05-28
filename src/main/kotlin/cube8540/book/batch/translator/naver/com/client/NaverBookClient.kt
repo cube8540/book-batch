@@ -7,28 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import java.beans.ConstructorProperties
 import java.time.LocalDate
 
-const val errorCode = "errorCode"
-const val errorMessage = "errorMessage"
-
-const val totalCount = "total"
-const val start = "start"
-const val display = "display"
-const val item = "items"
-
-const val isbn = "isbn"
-const val title = "title"
-const val link = "link"
-const val image = "image"
-const val author = "author"
-const val price = "price"
-const val discount = "discount"
-const val publisher = "publisher"
-const val publishDate = "pubdate"
-const val description = "description"
-
 data class NaverBookClientError
-@ConstructorProperties(value = ["errorMessage", "errorCode"])
-constructor(var errorMessage: String, var errorCode: String)
+@ConstructorProperties(value = [errorMessage, errorCode])
+constructor(var errorMessage: String, var errorCode: String) {
+    companion object {
+        const val errorCode = "errorCode"
+        const val errorMessage = "errorMessage"
+    }
+}
 
 data class NaverBookClientRequest(
     val start: Int = 1,
@@ -56,6 +42,24 @@ constructor(
     val display: Int = 10,
     val items: List<Book>? = null
 ) {
+    companion object {
+        const val totalCount = "total"
+        const val start = "start"
+        const val display = "display"
+        const val item = "items"
+
+        const val isbn = "isbn"
+        const val title = "title"
+        const val link = "link"
+        const val image = "image"
+        const val author = "author"
+        const val price = "price"
+        const val discount = "discount"
+        const val publisher = "publisher"
+        const val publishDate = "pubdate"
+        const val description = "description"
+    }
+
     data class Book
     @ConstructorProperties(value = [title, link, image, author, price, display, publisher, publishDate, isbn, description])
     constructor(

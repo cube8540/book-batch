@@ -2,7 +2,7 @@ package cube8540.book.batch.translator.naver.com.application
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
-import cube8540.book.batch.translator.naver.com.client.*
+import cube8540.book.batch.translator.naver.com.client.NaverBookClientResponse
 import java.net.URI
 import java.time.Clock
 import java.time.LocalDate
@@ -50,15 +50,15 @@ class NaverBookResponseContext(private val book: NaverBookClientResponse.Book, p
     override fun extractKeywords(): Set<String>? = null
 
     override fun extractOriginal(): Map<OriginalPropertyKey, String?> = mapOf(
-        OriginalPropertyKey(isbn, mappingType) to book.isbn,
-        OriginalPropertyKey(title, mappingType) to book.title,
-        OriginalPropertyKey(link, mappingType) to book.link,
-        OriginalPropertyKey(image, mappingType) to book.image,
-        OriginalPropertyKey(author, mappingType) to book.author,
-        OriginalPropertyKey(price, mappingType) to book.price?.toString(),
-        OriginalPropertyKey(discount, mappingType) to book.discount?.toString(),
-        OriginalPropertyKey(publisher, mappingType) to book.publisher,
-        OriginalPropertyKey(publishDate, mappingType) to book.publishDate?.format(formatter)
+        OriginalPropertyKey(NaverBookClientResponse.isbn, mappingType) to book.isbn,
+        OriginalPropertyKey(NaverBookClientResponse.title, mappingType) to book.title,
+        OriginalPropertyKey(NaverBookClientResponse.link, mappingType) to book.link,
+        OriginalPropertyKey(NaverBookClientResponse.image, mappingType) to book.image,
+        OriginalPropertyKey(NaverBookClientResponse.author, mappingType) to book.author,
+        OriginalPropertyKey(NaverBookClientResponse.price, mappingType) to book.price?.toString(),
+        OriginalPropertyKey(NaverBookClientResponse.discount, mappingType) to book.discount?.toString(),
+        OriginalPropertyKey(NaverBookClientResponse.publisher, mappingType) to book.publisher,
+        OriginalPropertyKey(NaverBookClientResponse.publishDate, mappingType) to book.publishDate?.format(formatter)
     )
 
     override fun extractExternalLink(): Map<MappingType, BookExternalLink>? = null
