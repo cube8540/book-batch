@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.aladin.kr
+package cube8540.book.batch.translator.aladin.kr
 
 import cube8540.book.batch.book.domain.*
 import org.assertj.core.api.Assertions.assertThat

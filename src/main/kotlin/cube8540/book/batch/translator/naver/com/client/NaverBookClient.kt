@@ -76,6 +76,8 @@ constructor(
     )
 }
 
+data class AladinAuthenticationInfo(val ttbKey: String)
+
 @FeignClient(name = "naverBookClient", url = "https://openapi.naver.com", configuration = [NaverBookClientConfiguration::class])
 interface NaverBookClient {
 
