@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.nl.go
+package cube8540.book.batch.translator.nl.go.client
 
 import cube8540.book.batch.translator.client.*
 

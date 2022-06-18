@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.nl.go
+package cube8540.book.batch.translator.nl.go
 
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.MappingType
