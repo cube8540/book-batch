@@ -2,11 +2,7 @@ package cube8540.book.batch.translator.aladin.kr.application
 
 import cube8540.book.batch.book.domain.PublisherRawMapper
 import cube8540.book.batch.translator.*
-import cube8540.book.batch.translator.aladin.kr.client.AladinBookClient
-import cube8540.book.batch.translator.aladin.kr.client.AladinBookRequest
-import cube8540.book.batch.translator.aladin.kr.client.MAX_REQUEST_DATA_COUNT
-import cube8540.book.batch.translator.aladin.kr.client.MAX_RESULTS
-import cube8540.book.batch.translator.naver.com.client.AladinAuthenticationInfo
+import cube8540.book.batch.translator.aladin.kr.client.*
 
 class AladinBookExchanger(
     private val client: AladinBookClient,

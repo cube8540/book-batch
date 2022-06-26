@@ -89,6 +89,8 @@ constructor(
     )
 }
 
+data class AladinAuthenticationInfo(val ttbKey: String)
+
 @FeignClient(name = "aladinBookClient", url = "https://www.aladin.co.kr", configuration = [AladinBookClientConfiguration::class])
 interface AladinBookClient {
 
