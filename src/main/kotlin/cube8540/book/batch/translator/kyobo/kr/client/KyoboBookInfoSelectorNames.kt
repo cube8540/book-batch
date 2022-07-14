@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.client
 
 object KyoboBookMetaTagNameSelector {
     const val author = "author"

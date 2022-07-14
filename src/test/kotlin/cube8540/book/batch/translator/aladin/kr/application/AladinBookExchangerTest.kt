@@ -6,7 +6,6 @@ import cube8540.book.batch.translator.BookAPIRequest
 import cube8540.book.batch.translator.BookAPIResponse
 import cube8540.book.batch.translator.PageDecision
 import cube8540.book.batch.translator.aladin.kr.client.*
-import cube8540.book.batch.translator.naver.com.client.AladinAuthenticationInfo
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

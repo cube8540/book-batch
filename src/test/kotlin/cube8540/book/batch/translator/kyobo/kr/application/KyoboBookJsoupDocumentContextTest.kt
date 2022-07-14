@@ -1,13 +1,19 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.application
 
 import cube8540.book.batch.book.domain.*
+import cube8540.book.batch.translator.kyobo.kr.createDocument
+import cube8540.book.batch.translator.kyobo.kr.defaultABarcode
 import cube8540.book.batch.getQueryParams
+import cube8540.book.batch.translator.kyobo.kr.client.DETAILS_PATH
+import cube8540.book.batch.translator.kyobo.kr.client.ISBN_QUERY_PARAM_NAME
+import cube8540.book.batch.translator.kyobo.kr.client.KYOBO_HOST
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.jsoup.nodes.Document
 import org.junit.jupiter.api.Test
+import java.net.URI
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,7 +39,7 @@ class KyoboBookJsoupDocumentContextTest {
         val context = KyoboBookJsoupDocumentContext(document, divisionMapper)
 
         val result = context.extractPublishDate()
-        assertThat(result).isEqualTo(defaultPublishDate)
+        assertThat(result).isEqualTo(cube8540.book.batch.translator.kyobo.kr.defaultPublishDate)
     }
 
     @Test
@@ -237,11 +243,11 @@ class KyoboBookJsoupDocumentContextTest {
         val result = context.extractExternalLink()
         assertThat(result.keys).containsExactly(MappingType.KYOBO)
         assertThat(result[MappingType.KYOBO]!!.productDetailPage.host)
-            .isEqualTo(KyoboBookRequestNames.kyoboHost)
+            .isEqualTo(URI.create(KYOBO_HOST).host)
         assertThat(result[MappingType.KYOBO]!!.productDetailPage.path)
-            .isEqualTo(KyoboBookRequestNames.kyoboBookDetailsPath)
+            .isEqualTo(DETAILS_PATH)
         assertThat(result[MappingType.KYOBO]!!.productDetailPage.getQueryParams())
-            .containsExactly(entry(KyoboBookRequestNames.isbn, listOf(defaultIsbn)))
+            .containsExactly(entry(ISBN_QUERY_PARAM_NAME, listOf(defaultIsbn)))
         assertThat(result[MappingType.KYOBO]!!.originalPrice).isEqualTo(defaultOriginalPrice)
         assertThat(result[MappingType.KYOBO]!!.salePrice).isEqualTo(defaultSalePrice)
     }

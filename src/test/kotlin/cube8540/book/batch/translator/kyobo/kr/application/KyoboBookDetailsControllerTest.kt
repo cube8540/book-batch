@@ -1,4 +1,4 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.application
 
 import cube8540.book.batch.book.domain.*
 import org.assertj.core.api.Assertions.assertThat
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.net.URI
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class KyoboBookDetailsControllerTest {
 
@@ -152,11 +151,11 @@ class KyoboBookDetailsControllerTest {
 
         @Test
         fun `merge when publish date is null`() {
-            val original = createBookDetails(publishDate = defaultPublishDate)
+            val original = createBookDetails(publishDate = cube8540.book.batch.translator.kyobo.kr.defaultPublishDate)
             val mergedData = createBookDetails(publishDate = null)
 
             val result = controller.merge(original, mergedData)
-            assertThat(result.publishDate).isEqualTo(defaultPublishDate)
+            assertThat(result.publishDate).isEqualTo(cube8540.book.batch.translator.kyobo.kr.defaultPublishDate)
         }
 
         @Test

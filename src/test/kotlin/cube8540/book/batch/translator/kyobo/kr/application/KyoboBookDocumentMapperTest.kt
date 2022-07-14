@@ -1,6 +1,7 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.application
 
 import cube8540.book.batch.book.domain.DivisionRawMapper
+import cube8540.book.batch.translator.kyobo.kr.createDocument
 import cube8540.book.batch.translator.client.InternalBadRequestException
 import cube8540.book.batch.translator.client.InvalidAuthenticationException
 import io.mockk.mockk

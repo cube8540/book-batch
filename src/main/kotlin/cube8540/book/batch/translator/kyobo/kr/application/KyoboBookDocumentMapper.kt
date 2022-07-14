@@ -1,8 +1,8 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.application
 
 import cube8540.book.batch.book.domain.BookDetailsContext
 import cube8540.book.batch.book.domain.DivisionRawMapper
-import cube8540.book.batch.external.BookDocumentMapper
+import cube8540.book.batch.translator.kyobo.kr.client.KyoboBookMetaTagPropertySelector
 import cube8540.book.batch.translator.client.InternalBadRequestException
 import cube8540.book.batch.translator.client.InvalidAuthenticationException
 import org.jsoup.nodes.Document

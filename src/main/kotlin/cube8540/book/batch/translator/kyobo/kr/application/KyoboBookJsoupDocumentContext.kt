@@ -1,7 +1,8 @@
-package cube8540.book.batch.external.kyobo.kr
+package cube8540.book.batch.translator.kyobo.kr.application
 
 import cube8540.book.batch.BatchApplication
 import cube8540.book.batch.book.domain.*
+import cube8540.book.batch.translator.kyobo.kr.client.*
 import org.jsoup.nodes.Comment
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -136,8 +137,8 @@ class KyoboBookJsoupDocumentContext(private val document: Document, private val 
 
     override fun extractExternalLink(): Map<MappingType, BookExternalLink> {
         val uriComponentBuilder = UriComponentsBuilder.newInstance()
-            .uri(URI.create(KyoboBookRequestNames.kyoboDomain + KyoboBookRequestNames.kyoboBookDetailsPath))
-            .queryParam(KyoboBookRequestNames.isbn, extractIsbn())
+            .uri(URI.create(KYOBO_HOST + DETAILS_PATH))
+            .queryParam(ISBN_QUERY_PARAM_NAME, extractIsbn())
             .build()
 
         val originalPrice = metaTags.find { it.attr(property) == KyoboBookMetaTagPropertySelector.originalPrice }

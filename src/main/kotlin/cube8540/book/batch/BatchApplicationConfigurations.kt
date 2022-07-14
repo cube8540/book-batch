@@ -10,8 +10,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import cube8540.book.batch.external.application.ExternalApplicationEndpointInfo
-import cube8540.book.batch.external.kyobo.kr.KyoboAuthenticationInfo
 import cube8540.book.batch.translator.aladin.kr.client.AladinAuthenticationInfo
+import cube8540.book.batch.translator.kyobo.kr.KyoboAuthenticationInfo
 import cube8540.book.batch.translator.nl.go.client.NationalLibraryAPIKey
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
