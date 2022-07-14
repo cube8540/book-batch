@@ -2,7 +2,6 @@ package cube8540.book.batch.translator.kyobo.kr.client
 
 import cube8540.book.batch.BatchApplication.Companion.DEFAULT_TIME_ZONE
 import cube8540.book.batch.toDefaultInstance
-import cube8540.book.batch.translator.kyobo.kr.KyoboLoginInfo
 import feign.RequestTemplate
 import feign.Response
 import io.mockk.clearMocks

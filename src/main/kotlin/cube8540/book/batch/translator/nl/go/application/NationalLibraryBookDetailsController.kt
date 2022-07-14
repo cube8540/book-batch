@@ -1,4 +1,4 @@
-package cube8540.book.batch.translator.nl.go
+package cube8540.book.batch.translator.nl.go.application
 
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsController

@@ -1,11 +1,12 @@
 package cube8540.book.batch.translator.kyobo.kr.client
 
 import cube8540.book.batch.BatchApplication
-import cube8540.book.batch.translator.kyobo.kr.KyoboLoginInfo
 import feign.RequestInterceptor
 import feign.RequestTemplate
 import java.time.Clock
 import java.time.LocalDateTime
+
+data class KyoboLoginInfo(val cookies: Map<String, String?>, val issuedDateTime: LocalDateTime)
 
 class KyoboLoginInterceptor(
     private val username: String,

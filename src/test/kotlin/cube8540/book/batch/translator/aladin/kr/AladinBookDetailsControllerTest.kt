@@ -1,6 +1,7 @@
 package cube8540.book.batch.translator.aladin.kr
 
 import cube8540.book.batch.book.domain.*
+import cube8540.book.batch.translator.aladin.kr.application.AladinBookDetailsController
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
