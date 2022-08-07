@@ -50,8 +50,3 @@ data class BookAPIResponse(
     val page: Long = 0,
     val books: List<BookDetailsContext> = emptyList()
 )
-
-data class BookAPIErrorResponse(
-    val code: String,
-    val message: String
-)

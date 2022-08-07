@@ -18,11 +18,7 @@ import java.util.*
 @EnableBatchIntegration
 @EnableScheduling
 @EnableFeignClients
-@EnableConfigurationProperties(value = [
-    AuthenticationProperty::class,
-    APIConnectionProperty::class,
-    EndpointProperty::class
-])
+@EnableConfigurationProperties(value = [ AuthenticationProperty::class ])
 class BatchApplication {
     companion object {
         val DEFAULT_ZONE_OFFSET: ZoneOffset = ZoneOffset.of("+09:00")
