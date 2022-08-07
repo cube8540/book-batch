@@ -1,6 +1,6 @@
 package cube8540.book.batch.book.domain
 
-import cube8540.book.batch.external.nl.go.defaultErrorMessage
+import cube8540.book.batch.translator.nl.go.defaultErrorMessage
 import io.github.cube8540.validator.core.Operator
 import io.mockk.every
 import io.mockk.mockk

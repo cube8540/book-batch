@@ -3,7 +3,7 @@ package cube8540.book.batch.job
 import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.application.BookQueryService
 import cube8540.book.batch.book.domain.BookDetails
-import cube8540.book.batch.external.ExternalBookAPIUpstream
+import cube8540.book.batch.translator.ExternalBookAPIUpstream
 import cube8540.book.batch.job.reader.RepositoryBasedBookReader
 import cube8540.book.batch.job.writer.WebClientBookUpstreamWriter
 import org.springframework.batch.core.Job
@@ -40,7 +40,7 @@ class BookUpstreamRequestJobConfiguration {
     @set:[Autowired Qualifier("externalApplicationBookCommandService")]
     lateinit var bookCommandService: BookCommandService
 
-    @set:[Autowired Qualifier("externalApplicationBookUpstream")]
+    @set:[Autowired Qualifier("storeApplicationBookUpstream")]
     lateinit var upstream: ExternalBookAPIUpstream
 
     @set:Autowired
