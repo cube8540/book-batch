@@ -3,10 +3,10 @@ package cube8540.book.batch.job.writer
 import cube8540.book.batch.book.application.BookCommandService
 import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookExternalLink
-import cube8540.book.batch.external.BookUpstreamAPIRequest
-import cube8540.book.batch.external.BookUpstreamAPIRequestDetails
-import cube8540.book.batch.external.BookUpstreamExternalLink
-import cube8540.book.batch.external.ExternalBookAPIUpstream
+import cube8540.book.batch.translator.BookUpstreamAPIRequest
+import cube8540.book.batch.translator.BookUpstreamAPIRequestDetails
+import cube8540.book.batch.translator.BookUpstreamExternalLink
+import cube8540.book.batch.translator.ExternalBookAPIUpstream
 import org.springframework.batch.item.support.AbstractItemStreamItemWriter
 
 open class WebClientBookUpstreamWriter(
