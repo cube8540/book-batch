@@ -4,15 +4,13 @@ pipeline {
         stage('Gradle build') {
             steps {
                 sh 'gradle clean bootJar --stacktrace --debug --scan'
-            }
-            script {
-                version = '`gradle printVersion`'
+                sh 'buildVersion=$(gradle -q printVersion)'
             }
         }
         stage('Docker build') {
             steps {
                 script {
-                    app = docker.build("book-batch:$version", "-t book-batch:latest --build-arg V_PROFILE=$ACTIVE_PROFILE .")
+                    app = docker.build("book-batch:$buildVersion", "-t book-batch:latest --build-arg V_PROFILE=$ACTIVE_PROFILE .")
                 }
             }
         }

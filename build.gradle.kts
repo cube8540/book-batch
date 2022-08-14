@@ -79,5 +79,7 @@ tasks.withType<Test> {
 }
 
 task("printVersion") {
-    print(version)
+    doLast {
+        print(project.version)
+    }
 }
