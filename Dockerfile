@@ -19,12 +19,14 @@ RUN mkdir /var/log/batch/book
 RUN mkdir /var/log/batch/book/root
 RUN mkdir /var/log/batch/book/error
 
+ARG V_VERSION
 ARG V_PROFILE
 ARG V_BATCH_LOG_VOLUME=/var/log/batch/book
 
+ENV BATCH_VERSION=${V_VERSION}
 ENV BATCH_PROFILE=${V_PROFILE}
 
-ADD ./build/libs/book-batch-*.jar /lib/book-batch/book-batch.jar
+ADD ./build/libs/book-batch-${BATCH_VERSION}.jar /lib/book-batch/book-batch.jar
 
 VOLUME ["$V_BATCH_LOG_VOLUME"]
 ENTRYPOINT java -jar -Dspring.profiles.active=$BATCH_PROFILE /lib/book-batch/book-batch.jar

@@ -13,7 +13,7 @@ pipeline {
             steps {
                 script {
                     echo "buildVersion=${buildVersion}"
-                    app = docker.build("book-batch:${buildVersion}", "-t book-batch:latest --build-arg V_PROFILE=$ACTIVE_PROFILE .")
+                    app = docker.build("book-batch:${buildVersion}", "-t book-batch:latest --build-arg V_VERSION=${buildVersion} --build-arg V_PROFILE=$ACTIVE_PROFILE .")
                 }
             }
         }
