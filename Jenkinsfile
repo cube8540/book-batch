@@ -1,10 +1,12 @@
 pipeline {
     agent any
+    environment {
+        buildVersion = 'gradle -q printVersion'
+    }
     stages {
         stage('Gradle build') {
             steps {
                 sh 'gradle clean bootJar --stacktrace --debug --scan'
-                sh 'buildVersion=$(gradle -q printVersion)'
             }
         }
         stage('Docker build') {
