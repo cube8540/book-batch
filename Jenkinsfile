@@ -9,7 +9,7 @@ pipeline {
         stage('Docker build') {
             steps {
                 script {
-                    app = docker.build("book-batch:$BUILD_NUMBER", "-t book-batch:latest", "--build-arg V_PROFILE=$ENV", ".")
+                    app = docker.build("book-batch:$BUILD_NUMBER", "-t book-batch:latest --build-arg V_PROFILE=$ENV .")
                 }
             }
         }
