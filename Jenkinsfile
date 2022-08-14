@@ -6,7 +6,7 @@ pipeline {
                 sh 'gradle clean bootJar --stacktrace --debug --scan'
             }
             script {
-                env.BOOK_BATCH_VERSION = `gradle -q printVersion`
+                env.BOOK_BATCH_VERSION = 'gradle -q printVersion'
             }
         }
         stage('Docker build') {
