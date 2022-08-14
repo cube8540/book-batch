@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage('Setup profile') {
             steps {
-                sh 'cp ${PROFILE_LOCATION}/application-${ACTIVE_PROFILE}.yml ./src/main/resources'
+                sh 'cp ${CONFIG_LOCATION}/application-${ACTIVE_PROFILE}.yml ./src/main/resources'
+                sh 'cp ${CONFIG_LOCATION}/logback-${ACTIVE_PROFILE}.xml ./src/main/resources'
             }
         }
         stage('Gradle build') {
