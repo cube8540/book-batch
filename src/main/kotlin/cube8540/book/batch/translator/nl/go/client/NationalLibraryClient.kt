@@ -64,7 +64,7 @@ constructor(
         const val TOTAL_COUNT = "TOTAL_COUNT"
         const val DOCUMENTS = "docs"
         const val TITLE = "TITLE"
-        const val ISBN = "EN_ISBN"
+        const val ISBN = "EA_ISBN"
         const val SET_ISBN = "SET_ISBN"
         const val EA_ADD_CODE = "EA_ADD_CODE"
         const val SET_ADD_CODE = "SET_ADD_CODE"
