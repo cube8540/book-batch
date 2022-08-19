@@ -4,8 +4,10 @@ import cube8540.book.batch.book.domain.BookDetails
 import cube8540.book.batch.book.domain.BookDetailsController
 import cube8540.book.batch.book.domain.createBookContext
 import cube8540.book.batch.book.domain.createBookDetails
-import cube8540.book.batch.translator.kyobo.kr.createDocument
+import cube8540.book.batch.translator.client.InternalBadRequestException
+import cube8540.book.batch.translator.client.InvalidAuthenticationException
 import cube8540.book.batch.translator.kyobo.kr.client.KyoboBookClient
+import cube8540.book.batch.translator.kyobo.kr.createDocument
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -25,6 +27,30 @@ class KyoboClientBookProcessorTest {
 
     init {
         processor.controller = controller
+    }
+
+    @Test
+    fun `return null if throws InternalBadRequestException`() {
+        val exchangeHtml = createDocument().html()
+        val bookDetails = createBookDetails(isbn = "originalIsbn")
+
+        every { client.search("originalIsbn") } returns exchangeHtml
+        every { bookDocumentMapper.convertValue(any()) } throws InternalBadRequestException("TEST_EXCEPTION")
+
+        val result = processor.process(bookDetails)
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `return null if throws InvaldAuthenticationException`() {
+        val exchangeHtml = createDocument().html()
+        val bookDetails = createBookDetails(isbn = "originalIsbn")
+
+        every { client.search("originalIsbn") } returns exchangeHtml
+        every { bookDocumentMapper.convertValue(any()) } throws InvalidAuthenticationException("TEST_EXCEPTION")
+
+        val result = processor.process(bookDetails)
+        assertThat(result).isNull()
     }
 
     @Test

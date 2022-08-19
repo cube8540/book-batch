@@ -29,7 +29,6 @@ class JobSchedulerServiceConfiguration {
     @Bean
     fun regularJobSchedulerService(): JobSchedulerService = CompositeJobSchedulerService()
         .addDelegate(createNationalLibraryAPIJobSchedulerService())
-        .addDelegate(createNaverBookAPIJobSchedulerService())
         .addDelegate(createAladinBookAPIJobSchedulerService())
         .addDelegate(createKyoboBookRequestJobSchedulerService())
         .addDelegate(createSetUpstreamJobSchedulerService())
@@ -38,7 +37,6 @@ class JobSchedulerServiceConfiguration {
     @Bean
     fun nonRegularJobSchedulerService(): JobSchedulerService = CompositeJobSchedulerService()
         .addDelegate(createNationalLibraryAPIJobSchedulerService())
-        .addDelegate(createNaverBookAPIJobSchedulerService())
         .addDelegate(createKyoboBookRequestJobSchedulerService())
         .addDelegate(createSetUpstreamJobSchedulerService())
         .addDelegate(createUpstreamJobSchedulerService())
@@ -52,17 +50,6 @@ class JobSchedulerServiceConfiguration {
         nationalLibraryAPIJobSchedulerService.eventPublisher = applicationContext
 
         return nationalLibraryAPIJobSchedulerService
-    }
-
-    private fun createNaverBookAPIJobSchedulerService(): LocalDateWithPublisherSchedulerService {
-        val naverBookAPIJobSchedulerService = LocalDateWithPublisherSchedulerService(MappingType.NAVER_BOOK, publisherRepository)
-
-        naverBookAPIJobSchedulerService.job = applicationContext
-            .getBean(NaverBookAPIJobConfiguration.jobName, Job::class.java)
-        naverBookAPIJobSchedulerService.jobLauncher = jobLauncher
-        naverBookAPIJobSchedulerService.eventPublisher = applicationContext
-
-        return naverBookAPIJobSchedulerService
     }
 
     private fun createAladinBookAPIJobSchedulerService(): LocalDateWithPublisherSchedulerService {

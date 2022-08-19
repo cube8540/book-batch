@@ -23,7 +23,7 @@ internal class StoreClientAuthorizationInterceptorTest {
         val requestTemplate: RequestTemplate = mockk(relaxed = true)
         interceptor.apply(requestTemplate)
         verify {
-            requestTemplate.header("Authorization", authorizationToken)
+            requestTemplate.header("Authorization", "bearer $authorizationToken")
         }
     }
 }
