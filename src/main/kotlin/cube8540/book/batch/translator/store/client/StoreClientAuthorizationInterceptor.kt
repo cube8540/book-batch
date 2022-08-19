@@ -11,7 +11,7 @@ class StoreClientAuthorizationInterceptor(
 
     override fun apply(template: RequestTemplate) {
         provider.getAuthenticationToken(applicationId)?.let {
-            template.header("Authorization", it)
+            template.header("Authorization", "bearer $it")
         }
     }
 }
