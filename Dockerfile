@@ -23,16 +23,9 @@ RUN mkdir /var/log/batch/book/root
 RUN mkdir /var/log/batch/book/error
 
 ARG V_VERSION
-ARG V_JAVA_OPTION
-ARG V_PROFILE
-
 ARG V_BATCH_LOG_VOLUME=/var/log/batch/book
 
 ENV BATCH_VERSION=${V_VERSION}
-ENV BATCH_PROFIE=${V_PROFILE}
-ENV BATCH_JAVA_OPTION=${V_JAVA_OPTION}
 
 ADD ./build/libs/book-batch-${BATCH_VERSION}.jar /lib/book-batch/book-batch.jar
-
 VOLUME ["$V_BATCH_LOG_VOLUME"]
-ENTRYPOINT ['java', '-jar', '-Dspring.profiles.active=${BATCH_PROFIE}', '${BATCH_JAVA_OPTION}', '/lib/book-batch/book-batch.jar']
