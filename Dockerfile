@@ -33,4 +33,4 @@ ENV BATCH_VERSION=${V_VERSION}
 ADD ./build/libs/book-batch-${BATCH_VERSION}.jar /lib/book-batch/book-batch.jar
 
 VOLUME ["$V_BATCH_LOG_VOLUME"]
-ENTRYPOINT java -jar -DSpring.profiles.active=$V_PROFILE ${V_JAVA_OPTION} /lib/book-batch/book-batch.jar
+ENTRYPOINT ['java', '-jar', '-Dspring.profiles.active=${V_PROFILE}', '${V_JAVA_OPTION}', '/lib/book-batch/book-batch.jar']
